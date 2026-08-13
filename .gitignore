@@ -1,0 +1,12 @@
+# 系统/编辑器杂项
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+node_modules/
+deployment-backups/
+
+# 安装产生的临时文件
+*.log
+*.tmp
