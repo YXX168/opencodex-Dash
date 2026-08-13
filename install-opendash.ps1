@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
   OpenCodex 请求仪表盘安装脚本
 .DESCRIPTION
