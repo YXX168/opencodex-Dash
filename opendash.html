@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Cdefs%3E%3CradialGradient%20id='c'%20cx='.35'%20cy='.3'%20r='.9'%3E%3Cstop%20offset='0'%20stop-color='%23fff'/%3E%3Cstop%20offset='.35'%20stop-color='%237df0ff'/%3E%3Cstop%20offset='.75'%20stop-color='%234f7cff'/%3E%3Cstop%20offset='1'%20stop-color='%237c5cff'/%3E%3C/radialGradient%3E%3ClinearGradient%20id='a'%20x1='8'%20y1='56'%20x2='56'%20y2='8'%20gradientUnits='userSpaceOnUse'%3E%3Cstop%20offset='0'%20stop-color='%2338e1ff'/%3E%3Cstop%20offset='1'%20stop-color='%239d6bff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width='64'%20height='64'%20rx='14'%20fill='%230d1a30'/%3E%3Ccircle%20cx='32'%20cy='32'%20r='27'%20fill='none'%20stroke='rgba(140,235,255,.22)'%20stroke-width='2'/%3E%3Ccircle%20cx='32'%20cy='32'%20r='23.3'%20fill='none'%20stroke='url(%23a)'%20stroke-width='4'%20stroke-linecap='round'%20stroke-dasharray='117%2029.3'%20transform='rotate(-80%2032%2032)'/%3E%3Ccircle%20cx='36'%20cy='9.1'%20r='4'%20fill='%23eafcff'/%3E%3Ccircle%20cx='32'%20cy='32'%20r='14'%20fill='url(%23c)'/%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Cdefs%3E%3ClinearGradient%20id='w'%20x1='6'%20y1='32'%20x2='58'%20y2='32'%20gradientUnits='userSpaceOnUse'%3E%3Cstop%20offset='0'%20stop-color='%2338e1ff'/%3E%3Cstop%20offset='1'%20stop-color='%239d6bff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width='64'%20height='64'%20rx='14'%20fill='%230d1a30'/%3E%3Cline%20x1='8'%20y1='36'%20x2='56'%20y2='36'%20stroke='rgba(140,235,255,.2)'%20stroke-width='1.5'/%3E%3Cpolyline%20points='8,36%2019,36%2024,18%2029,47%2034,28%2039,36%2044,26%2048,42%2052,36%2056,36'%20fill='none'%20stroke='url(%23w)'%20stroke-width='3.6'%20stroke-linecap='round'%20stroke-linejoin='round'/%3E%3Ccircle%20cx='56'%20cy='36'%20r='3'%20fill='%23eafcff'/%3E%3C/svg%3E">
 <title>OPENDASH · LLM 请求观测台</title>
 <style>
   :root {
@@ -136,7 +136,8 @@ animation: bootCore 1.8s ease-in-out infinite;
     display: grid; place-items: center;
   }
   .logo svg { width: 34px; height: 34px; display: block; }
-  .logo svg .od-arc { transform-origin: 24px 24px; animation: coilSpin 16s linear infinite; }
+  .logo svg .od-dot { transform-box: fill-box; transform-origin: center; animation: odPulse 2.2s ease-in-out infinite; }
+  @keyframes odPulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .45; transform: scale(1.4); } }
   .logo::after {
     content: ""; position: absolute; inset: -4px; border-radius: 18px; z-index: -1;
     background: linear-gradient(135deg, rgba(56,225,255,.5), transparent 55%, rgba(157,107,255,.5));
@@ -513,31 +514,16 @@ box-shadow: none;
   <div class="wrap">
     <header class="topbar">
       <div class="brand">
-        <div class="logo"><svg viewBox="0 0 48 48" aria-hidden="true">
+        <div class="logo"><svg viewBox="0 0 64 64" aria-hidden="true">
           <defs>
-            <radialGradient id="od-core" cx=".35" cy=".3" r=".9">
-              <stop offset="0" stop-color="#ffffff"/>
-              <stop offset=".35" stop-color="#7df0ff"/>
-              <stop offset=".75" stop-color="#4f7cff"/>
-              <stop offset="1" stop-color="#7c5cff"/>
-            </radialGradient>
-            <radialGradient id="od-halo" cx=".5" cy=".5" r=".5">
-              <stop offset="0" stop-color="rgba(56,225,255,.4)"/>
-              <stop offset=".7" stop-color="rgba(56,225,255,.12)"/>
-              <stop offset="1" stop-color="rgba(56,225,255,0)"/>
-            </radialGradient>
-            <linearGradient id="od-arc" x1="6" y1="42" x2="42" y2="6" gradientUnits="userSpaceOnUse">
+            <linearGradient id="od-wave" x1="6" y1="32" x2="58" y2="32" gradientUnits="userSpaceOnUse">
               <stop offset="0" stop-color="#38e1ff"/>
               <stop offset="1" stop-color="#9d6bff"/>
             </linearGradient>
           </defs>
-          <circle cx="24" cy="24" r="21" fill="url(#od-halo)"/>
-          <circle cx="24" cy="24" r="17.5" fill="none" stroke="rgba(140,235,255,.22)" stroke-width="1.5"/>
-          <g class="od-arc">
-            <circle cx="24" cy="24" r="17.5" fill="none" stroke="url(#od-arc)" stroke-width="3" stroke-linecap="round" stroke-dasharray="88 22" transform="rotate(-80 24 24)"/>
-            <circle cx="27" cy="6.8" r="3" fill="#eafcff"/>
-          </g>
-          <circle cx="24" cy="24" r="10.5" fill="url(#od-core)"/>
+          <line x1="8" y1="36" x2="56" y2="36" stroke="rgba(140,235,255,.2)" stroke-width="1.5"/>
+          <polyline points="8,36 19,36 24,18 29,47 34,28 39,36 44,26 48,42 52,36 56,36" fill="none" stroke="url(#od-wave)" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle class="od-dot" cx="56" cy="36" r="3" fill="#eafcff"/>
         </svg></div>
         <div>
           <h1>OPENDASH<span style="color:var(--cyan)"> · 观测台</span></h1>
