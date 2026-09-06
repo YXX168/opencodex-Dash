@@ -17,7 +17,7 @@
 #>
 param(
   [string]$DistDir = "",
-  [int]$Port = 10100,
+  [ValidateRange(1, 65535)][int]$Port = 10100,
   [switch]$SkipVerify
 )
 $ErrorActionPreference = "Stop"
@@ -55,8 +55,8 @@ if ($DistDir) {
 }
 
 if (-not $found) {
-  $isWindows = $PSVersionTable.PSEdition -eq "Desktop" -or $IsWindows
-  if ($isWindows) {
+  $runningOnWindows = $PSVersionTable.PSEdition -eq "Desktop" -or $IsWindows
+  if ($runningOnWindows) {
     try {
       $connection = Get-NetTCPConnection -LocalPort $Port -State Listen -ErrorAction SilentlyContinue | Select-Object -First 1
       if ($connection) {
@@ -105,16 +105,31 @@ if (-not $found) {
 
 $targetRoot = Join-Path $found "opendash.html"
 $targetSub = Join-Path $found "opendash\index.html"
+$backupDir = Join-Path $scriptDir ("deployment-backups\" + (Get-Date -Format "yyyyMMdd-HHmmss-fff"))
+$sourceHash = (Get-FileHash -LiteralPath $sourceHtml -Algorithm SHA256).Hash
+foreach ($existingTarget in @($targetRoot, $targetSub)) {
+  if ((Test-Path -LiteralPath $existingTarget) -and (Get-FileHash -LiteralPath $existingTarget -Algorithm SHA256).Hash -ne $sourceHash) {
+    New-Item -ItemType Directory -Force -Path $backupDir | Out-Null
+    $backupName = if ($existingTarget -eq $targetRoot) { "opendash.html" } else { "index.html" }
+    Copy-Item -LiteralPath $existingTarget -Destination (Join-Path $backupDir $backupName)
+  }
+}
 New-Item -ItemType Directory -Force -Path (Split-Path $targetSub) | Out-Null
 Copy-Item -LiteralPath $sourceHtml -Destination $targetRoot -Force
 Copy-Item -LiteralPath $sourceHtml -Destination $targetSub -Force
+foreach ($installedTarget in @($targetRoot, $targetSub)) {
+  if ((Get-FileHash -LiteralPath $installedTarget -Algorithm SHA256).Hash -ne $sourceHash) {
+    throw "安装后文件校验失败：$installedTarget"
+  }
+}
 Write-Host "[OK] 已安装到 $found" -ForegroundColor Green
+if (Test-Path -LiteralPath $backupDir) { Write-Host "旧面板备份：$backupDir" -ForegroundColor DarkGray }
 
 if (-not $SkipVerify) {
   try {
     $url = "http://localhost:$Port/opendash.html"
     $response = Invoke-WebRequest -Uri $url -UseBasicParsing -TimeoutSec 8
-    if ($response.StatusCode -eq 200 -and $response.Content -match 'id="modelBars"') {
+    if ($response.StatusCode -eq 200 -and $response.Content -match 'id="motionToggle"' -and $response.Content -match 'id="scopeSelect"') {
       Write-Host "[OK] 安装验证通过：$url" -ForegroundColor Green
     } else {
       Write-Host "[提示] 文件已安装，但页面内容校验未通过，请确认 opencodex 服务已启动。" -ForegroundColor Yellow
