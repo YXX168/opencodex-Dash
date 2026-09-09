@@ -15,6 +15,9 @@ OpenCodex 请求仪表盘安装器
      如果自动查找失败，会提示你手动输入 opencodex 的 gui\dist 路径。
   5. 安装完成后访问：http://localhost:10100/opendash.html
 
+  注意：命令行方式请先 cd 进入本目录再运行 install-opendash.bat；
+  不要把带引号的目录路径直接当命令执行，cmd 会报"不是内部或外部命令"。
+
 直接指定主题
   install-opendash.bat dark          （或 light）
   powershell -NoProfile -ExecutionPolicy Bypass -File install-opendash.ps1 -Theme dark

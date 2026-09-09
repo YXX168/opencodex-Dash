@@ -24,7 +24,9 @@
 
 ## 安装
 
-确保 OpenCodex 已启动，双击 `install-opendash.bat`，按提示选择白天或黑夜主题。安装器会定位 GUI 静态目录、备份不同的旧面板、复制并校验 SHA256。
+确保 OpenCodex 已启动，**双击 `install-opendash.bat`**，按提示选择白天或黑夜主题。安装器会定位 GUI 静态目录、备份不同的旧面板、复制并校验 SHA256。
+
+> 命令行方式运行时，请先 `cd` 进入本目录再执行 `install-opendash.bat`；不要把带引号的目录路径直接当命令运行（如 `"C:\...\opencodex-Dash-master\" install-opendash.bat`），cmd 会把引号内的路径误当作命令并报"不是内部或外部命令"。
 
 访问 [本机面板](http://localhost:10100/opendash.html)，也可使用 [目录入口](http://localhost:10100/opendash/index.html)。修改后刷新浏览器即可，无需重启代理。
 
