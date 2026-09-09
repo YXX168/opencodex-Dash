@@ -1,10 +1,20 @@
 # <img src="assets/opendash.svg" width="30" alt="OPENDASH logo" align="absmiddle"> OPENDASH
 
-为 [OpenCodex](https://github.com/lidge-jun/opencodex) 打造的本地请求观测台。单文件、无构建步骤、无外部字体或图表依赖。
+为 [OpenCodex](https://github.com/lidge-jun/opencodex) 打造的本地请求观测台。单文件、无构建步骤、无外部字体或图表依赖。提供**白天 / 黑夜两套主题**，安装时自选，随时可换。
+
+## 主题
+
+| 主题 | 文件 | 风格 |
+| --- | --- | --- |
+| ☀️ 白天版 | `opendash-light.html` | macOS 26 Liquid Glass 启发的浅色玻璃：左暖杏、右冷蓝环境光，五层材质分级，光标边缘折射追光，玻璃数据环 |
+| 🌙 黑夜版 | `opendash-dark.html` | 深空极光：星海背景、极光漂移、霓虹曲线、能量核心环形图 |
+
+两套主题共用同一份数据逻辑，仅视觉不同；安装后入口统一为 `opendash.html`。
 
 ## 功能
 
-- 深空极光背景、卡片渐次入场、鼠标光晕、反应堆旋转、请求滑入与数值过渡。
+- 白天版：受 macOS 26 Liquid Glass 启发的浅色玻璃界面（Web CSS 模拟，不等价于 Apple 原生系统材质）；黑夜版：深空极光背景、能量核心、霓虹曲线。均含卡片渐次入场、请求滑入与数值过渡。
+- 渐进增强：不支持 `backdrop-filter` 时回退实色；`prefers-reduced-transparency` / `prefers-contrast: more` / `prefers-reduced-motion` 下自动降级，页面内动效开关与系统偏好都生效。
 - 动效开关会记住选择；首次打开遵循系统减少动画偏好，页面进入后台后停止连续绘图并暂停轮询。
 - 全部历史 / 当前启用模型切换，统一应用于累计、趋势、供应商和实时统计。默认显示全部历史，禁用模型不会让历史累计凭空减少。
 - 请求流支持异常 / 429 限流筛选。同一请求状态与用量更新时原位替换，阅读旧记录时保留滚动位置。
@@ -14,19 +24,28 @@
 
 ## 安装
 
-确保 OpenCodex 已启动，双击 `install-opendash.bat`。安装器会定位 GUI 静态目录、备份不同的旧面板、复制并校验 SHA256。
+确保 OpenCodex 已启动，双击 `install-opendash.bat`，按提示选择白天或黑夜主题。安装器会定位 GUI 静态目录、备份不同的旧面板、复制并校验 SHA256。
 
 访问 [本机面板](http://localhost:10100/opendash.html)，也可使用 [目录入口](http://localhost:10100/opendash/index.html)。修改后刷新浏览器即可，无需重启代理。
 
 ```powershell
+# 交互选择主题
 powershell -NoProfile -ExecutionPolicy Bypass -File install-opendash.ps1
+
+# 直接指定主题：light（白天）/ dark（黑夜）
+powershell -NoProfile -ExecutionPolicy Bypass -File install-opendash.ps1 -Theme dark
+powershell -NoProfile -ExecutionPolicy Bypass -File install-opendash.ps1 -Theme light
+
 # 找不到目录时指定 GUI dist 或 OpenCodex 包根目录
-powershell -NoProfile -ExecutionPolicy Bypass -File install-opendash.ps1 -DistDir "D:\opencodex\gui\dist"
+powershell -NoProfile -ExecutionPolicy Bypass -File install-opendash.ps1 -Theme dark -DistDir "D:\opencodex\gui\dist"
+
 # 其他端口
 powershell -NoProfile -ExecutionPolicy Bypass -File install-opendash.ps1 -Port 8080
 ```
 
-旧面板备份保存在本项目 `deployment-backups/<时间>/`（不提交到 Git）。OpenCodex 更新后可能覆盖静态文件，重新运行安装器即可恢复。安装仅替换面板，不修改模型、密钥、路由或请求账本。
+`install-opendash.bat` 也支持直接传主题：`install-opendash.bat dark`。
+
+想换主题时重新运行安装器选另一个即可，旧面板会自动备份。旧面板备份保存在本项目 `deployment-backups/<时间>-<主题>/`（不提交到 Git）。OpenCodex 更新后可能覆盖静态文件，重新运行安装器即可恢复。安装仅替换面板，不修改模型、密钥、路由或请求账本。
 
 ## 数据口径与限制
 
@@ -45,15 +64,16 @@ node --test tests/dashboard.test.cjs
 node tests/serve-fixtures.cjs
 ```
 
-本地测试页为 `http://127.0.0.1:10109/empty.html` 与 `/offline.html`。测试服务仅监听本机，用完按 Ctrl+C 关闭。
+本地测试页为 `http://127.0.0.1:10109/empty.html`（白天）、`/empty-dark.html`（黑夜）、`/offline.html` 与 `/offline-dark.html`。测试服务仅监听本机，用完按 Ctrl+C 关闭。
 
 ## 文件
 
 | 文件 | 用途 |
 | --- | --- |
-| `opendash.html` | 全部界面、样式、数据与动画逻辑 |
-| `install-opendash.ps1` / `.bat` | Windows 安装入口 |
-| `tests/dashboard.test.cjs` | 数据统计、过滤、会话续期与空态回归 |
+| `opendash-light.html` | 白天版面板（液态玻璃）：全部界面、样式、数据与动画逻辑 |
+| `opendash-dark.html` | 黑夜版面板（深空极光）：同一数据逻辑的深色主题 |
+| `install-opendash.ps1` / `.bat` | Windows 安装入口，支持 `-Theme light/dark` |
+| `tests/dashboard.test.cjs` | 数据统计、过滤、会话续期与空态回归（双主题各跑一遍核心用例） |
 | `tests/serve-fixtures.cjs` | 隔离浏览器测试服务 |
 
 MIT License。

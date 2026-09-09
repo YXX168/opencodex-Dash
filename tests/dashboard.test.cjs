@@ -1,9 +1,15 @@
 const {test} = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
+const path = require('node:path');
 const vm = require('node:vm');
-const source = fs.readFileSync(require('node:path').join(__dirname,'../opendash.html'),'utf8').match(/<script>([\s\S]*?)<\/script>/)[1].replace(/\nboot\(\);\s*$/, '');
-function env() {
+
+function loadSource(file) {
+  return fs.readFileSync(path.join(__dirname, '..', file), 'utf8').match(/<script>([\s\S]*?)<\/script>/)[1].replace(/\nboot\(\);\s*$/, '');
+}
+const source = loadSource('opendash-light.html');
+const sourceDark = loadSource('opendash-dark.html');
+function env(src = source) {
   const els = new Map();
   const el = id => {if (!els.has(id)) els.set(id,{textContent:'—',innerHTML:'',title:'',classList:{add(){},contains(){return false},toggle(){}},setAttribute(){},querySelectorAll(){return []}});return els.get(id)};
   const c = vm.createContext({console:{warn(){}},Date,Map,Set,JSON,Number,Math,Array,String,performance:{now:()=>1},AbortController, setTimeout,clearTimeout,requestAnimationFrame:()=>1,cancelAnimationFrame(){},window:{setTimeout,clearTimeout},document:{hidden:false,getElementById:el,body:{classList:{toggle(){}}},querySelectorAll:()=>[]},location:{origin:'http://localhost:10100'}});
@@ -52,6 +58,14 @@ test('授权过期时只重取一次会话并重试读取',async()=>{
   run(`let renewed=0;renewSession=async()=>{renewed++}`);const result=await run(`fetchJsonTimeout('/api/logs',1000)`);assert.equal(result.ok,true);assert.equal(run('renewed'),1);assert.equal(calls,2);
 });
 test('数据接口故障不会自动生成演示业务数据',()=>{assert.doesNotMatch(source,/seedDemo|demoLogs|Math\.random/)});
+test('黑夜版（深空极光）核心数据逻辑与白天版一致',()=>{
+  const {run,el}=env(sourceDark);
+  const value=run(`(()=>{const now=Date.now();const first=Array.from({length:200},(_,i)=>({requestId:String(i),timestamp:now-200000+i*100,status:200}));const second=first.slice(-120).map(l=>({...l,status:429}));return [mergeLogs(first,second,now).length,mergeLogs(first,second,now).at(-1).status,mergeLogs(first,[],now+HISTORY_MS+1).length]})()`);
+  assert.deepEqual(Array.from(value),[200,429,0]);
+  run(`drawFlowChart=()=>{}; state.initialLogsLoaded=true; state.liveWindowLogs=[200,400,429].map(status=>({status}));renderFlowCard()`);
+  assert.equal(el('flowOk').textContent,'1'); assert.equal(el('flowThr').textContent,'1'); assert.equal(el('flowFail').textContent,'1');
+  assert.doesNotMatch(sourceDark,/seedDemo|demoLogs|Math\.random/);
+});
 test('动画首帧早于起点时数字不出现负值',()=>{
   const {run,c,el}=env();const frames=[];c.requestAnimationFrame=fn=>{frames.push(fn);return frames.length};
   run(`animateKpi('requests',100,fmtFull)`);frames[0](0);

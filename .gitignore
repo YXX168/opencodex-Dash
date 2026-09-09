@@ -5,6 +5,8 @@ Thumbs.db
 .idea/
 .vscode/
 node_modules/
+
+# 安装器备份（替换面板时自动产生）
 deployment-backups/
 
 # 安装产生的临时文件
