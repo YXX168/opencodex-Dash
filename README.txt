@@ -2,18 +2,18 @@ OpenCodex 请求仪表盘安装器
 ============================
 
 文件说明
-  opendash-light.html      白天版面板（macOS 26 液态玻璃风格浅色界面）
-  opendash-dark.html       黑夜版面板（深空极光风格深色界面）
+  opendash.html            一体化双主题面板（内置白天液态玻璃 + 黑夜深空极光）
   install-opendash.ps1     安装脚本
   install-opendash.bat     双击运行入口（Windows）
 
 安装方法（Windows）
   1. 把整个文件夹拷贝到其他电脑（例如通过 U 盘或压缩包）。
   2. 确保那台电脑已经安装并启动 opencodex（端口默认 10100）。
-  3. 双击 install-opendash.bat，按提示选择白天或黑夜主题。
+  3. 双击 install-opendash.bat 即可一键自动安装。
   4. 脚本会自动查找 opencodex 安装目录并安装；
      如果自动查找失败，会提示你手动输入 opencodex 的 gui\dist 路径。
   5. 安装完成后访问：http://localhost:10100/opendash.html
+     可在页面右上角点击按钮在白天/黑夜主题间即时秒切，自动记忆偏好。
 
   注意：命令行方式请先 cd 进入本目录再运行 install-opendash.bat；
   不要把带引号的目录路径直接当命令执行，cmd 会报"不是内部或外部命令"。

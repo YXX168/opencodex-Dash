@@ -12,3 +12,4 @@ deployment-backups/
 # 安装产生的临时文件
 *.log
 *.tmp
+tests/*.png

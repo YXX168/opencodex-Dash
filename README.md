@@ -1,15 +1,15 @@
 # <img src="assets/opendash.svg" width="30" alt="OPENDASH logo" align="absmiddle"> OPENDASH
 
-为 [OpenCodex](https://github.com/lidge-jun/opencodex) 打造的本地请求观测台。单文件、无构建步骤、无外部字体或图表依赖。提供**白天 / 黑夜两套主题**，安装时自选，随时可换。
+为 [OpenCodex](https://github.com/lidge-jun/opencodex) 打造的本地请求观测台。单文件、无构建步骤、无外部字体或图表依赖。**一体化双主题**设计，默认白天版（液态玻璃），页面内支持随时一键无感切换黑夜版（深空极光）。
 
 ## 主题
 
-| 主题 | 文件 | 风格 |
-| --- | --- | --- |
-| ☀️ 白天版 | `opendash-light.html` | macOS 26 Liquid Glass 启发的浅色玻璃：左暖杏、右冷蓝环境光，五层材质分级，光标边缘折射追光，玻璃数据环 |
-| 🌙 黑夜版 | `opendash-dark.html` | 深空极光：星海背景、极光漂移、霓虹曲线、能量核心环形图 |
+| 主题 | 风格 |
+| --- | --- |
+| ☀️ 白天版（默认） | macOS 26 Liquid Glass 启发的浅色玻璃：左暖杏、右冷蓝环境光，五层材质分级，光标边缘折射追光，玻璃数据环 |
+| 🌙 黑夜版 | 深空极光：星海背景、极光漂移、霓虹曲线、能量核心环形图 |
 
-两套主题共用同一份数据逻辑，仅视觉不同；安装后入口统一为 `opendash.html`。
+入口统一为 `opendash.html`，点击右上角「☾ 深空极光」或「☼ 液态玻璃」按钮即可在两套主题间秒切，自动记忆偏好。
 
 ## 功能
 
@@ -24,7 +24,7 @@
 
 ## 安装
 
-确保 OpenCodex 已启动，**双击 `install-opendash.bat`**，按提示选择白天或黑夜主题。安装器会定位 GUI 静态目录、备份不同的旧面板、复制并校验 SHA256。
+确保 OpenCodex 已启动，**双击 `install-opendash.bat`** 即可自动安装一体化双主题面板。安装器会定位 GUI 静态目录、备份旧面板、复制并校验 SHA256。
 
 > 命令行方式运行时，请先 `cd` 进入本目录再执行 `install-opendash.bat`；不要把带引号的目录路径直接当命令运行（如 `"C:\...\opencodex-Dash-master\" install-opendash.bat`），cmd 会把引号内的路径误当作命令并报"不是内部或外部命令"。
 
@@ -72,10 +72,12 @@ node tests/serve-fixtures.cjs
 
 | 文件 | 用途 |
 | --- | --- |
+| `opendash.html` | 一体化面板：内置白天液态玻璃 + 黑夜深空极光双主题，页面内一键即时无感切换，默认白天版 |
 | `opendash-light.html` | 白天版面板（液态玻璃）：全部界面、样式、数据与动画逻辑 |
 | `opendash-dark.html` | 黑夜版面板（深空极光）：同一数据逻辑的深色主题 |
-| `install-opendash.ps1` / `.bat` | Windows 安装入口，支持 `-Theme light/dark` |
-| `tests/dashboard.test.cjs` | 数据统计、过滤、会话续期与空态回归（双主题各跑一遍核心用例） |
+| `opendash.bat` / `install-opendash.bat` | Windows 一键安装批处理入口（双击即可自动部署） |
+| `install-opendash.ps1` | PowerShell 自动化安装脚本，支持自动化路径解析与状态校验 |
+| `tests/dashboard.test.cjs` | 数据统计、过滤、会话续期与空态回归测试套件 |
 | `tests/serve-fixtures.cjs` | 隔离浏览器测试服务 |
 
 MIT License。
