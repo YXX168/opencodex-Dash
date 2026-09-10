@@ -24,30 +24,18 @@
 
 ## 安装
 
-确保 OpenCodex 已启动，**双击 `install-opendash.bat`** 即可自动安装一体化双主题面板。安装器会定位 GUI 静态目录、备份旧面板、复制并校验 SHA256。
+确保 OpenCodex 已启动：
 
-> 命令行方式运行时，请先 `cd` 进入本目录再执行 `install-opendash.bat`；不要把带引号的目录路径直接当命令运行（如 `"C:\...\opencodex-Dash-master\" install-opendash.bat`），cmd 会把引号内的路径误当作命令并报"不是内部或外部命令"。
+1. **双击 `opendash.bat`**（或 `install-opendash.bat`）；
+2. 脚本会自动定位本地 OpenCodex 的 GUI 静态目录并安全完成部署；
+3. 打开浏览器访问：[本机面板](http://localhost:10100/opendash.html)（也可使用 [目录入口](http://localhost:10100/opendash/index.html)）。
 
-访问 [本机面板](http://localhost:10100/opendash.html)，也可使用 [目录入口](http://localhost:10100/opendash/index.html)。修改后刷新浏览器即可，无需重启代理。
+> 命令行方式运行：请先 `cd` 进入本项目目录，再执行 `opendash.bat`；如需指定自定义路径或端口：
+> ```powershell
+> powershell -NoProfile -ExecutionPolicy Bypass -File install-opendash.ps1 -DistDir "D:\opencodex\gui\dist" -Port 10100
+> ```
 
-```powershell
-# 交互选择主题
-powershell -NoProfile -ExecutionPolicy Bypass -File install-opendash.ps1
-
-# 直接指定主题：light（白天）/ dark（黑夜）
-powershell -NoProfile -ExecutionPolicy Bypass -File install-opendash.ps1 -Theme dark
-powershell -NoProfile -ExecutionPolicy Bypass -File install-opendash.ps1 -Theme light
-
-# 找不到目录时指定 GUI dist 或 OpenCodex 包根目录
-powershell -NoProfile -ExecutionPolicy Bypass -File install-opendash.ps1 -Theme dark -DistDir "D:\opencodex\gui\dist"
-
-# 其他端口
-powershell -NoProfile -ExecutionPolicy Bypass -File install-opendash.ps1 -Port 8080
-```
-
-`install-opendash.bat` 也支持直接传主题：`install-opendash.bat dark`。
-
-想换主题时重新运行安装器选另一个即可，旧面板会自动备份。旧面板备份保存在本项目 `deployment-backups/<时间>-<主题>/`（不提交到 Git）。OpenCodex 更新后可能覆盖静态文件，重新运行安装器即可恢复。安装仅替换面板，不修改模型、密钥、路由或请求账本。
+想换主题无需重新安装，直接在页面右上角点击按钮即可即时秒切；更新面板时重新运行脚本即可，旧面板会自动备份在 `deployment-backups/` 目录中。
 
 ## 数据口径与限制
 
