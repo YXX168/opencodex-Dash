@@ -241,6 +241,65 @@
   .header-actions a.theme-toggle:active { transform: translateY(1px); }
   .header-actions button:disabled { opacity: .55; cursor: wait; }
   .dock-sep { width: 1px; height: 16px; background: var(--edge); margin: 0 3px; flex: none; }
+
+  /* ── 顶部操作栏展开/收起控制抽屉 ── */
+  .controls-toggle {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    height: 28px; padding: 0 12px; min-width: 88px; box-sizing: border-box; border-radius: 999px;
+    background: rgba(255,255,255,.66); color: var(--muted);
+    border: 1px solid var(--edge);
+    font: 600 11.5px var(--font); cursor: pointer; white-space: nowrap;
+    transition: background-color .2s ease, color .2s ease, border-color .2s ease, box-shadow .2s ease;
+  }
+  .controls-toggle:hover {
+    background: #fff; color: var(--text); border-color: rgba(40,104,216,.28); box-shadow: var(--lift-sm);
+  }
+  .controls-toggle.active {
+    background: rgba(40, 104, 216, .10); color: var(--blue); border-color: rgba(40, 104, 216, .35);
+    box-shadow: 0 2px 8px rgba(40, 104, 216, .12), inset 0 1px 0 rgba(255,255,255,.8);
+  }
+  .controls-toggle .toggle-icon { font-size: 13px; line-height: 1; opacity: .85; }
+  .controls-toggle .toggle-chevron {
+    width: 9px; height: 5px; flex: none; opacity: .75;
+    transition: transform .28s cubic-bezier(.34, 1.56, .64, 1);
+  }
+  .controls-toggle.active .toggle-chevron {
+    transform: rotate(180deg);
+  }
+  .controls-drawer {
+    display: inline-flex; align-items: center; gap: 6px;
+    max-width: 0; opacity: 0; margin: 0;
+    pointer-events: none; overflow: hidden;
+    transform-origin: right center;
+    transform: scale(0.96) translateX(10px);
+    transition: max-width .38s cubic-bezier(.16, 1, .3, 1),
+                opacity .28s cubic-bezier(.16, 1, .3, 1),
+                transform .38s cubic-bezier(.16, 1, .3, 1),
+                margin .38s cubic-bezier(.16, 1, .3, 1);
+  }
+  .controls-drawer.open {
+    max-width: 650px; opacity: 1; margin: 0 6px 0 0;
+    pointer-events: auto; transform: scale(1) translateX(0);
+  }
+  .controls-drawer.expanded-visible {
+    overflow: visible;
+  }
+  .controls-drawer.open > * {
+    animation: drawerItemEnter .32s cubic-bezier(.16, 1, .3, 1) both;
+  }
+  /* 从右往左弹出：靠右侧（靠近按钮）的元素先弹出，靠左侧的依次向左展开 */
+  .controls-drawer.open > *:nth-last-child(1) { animation-delay: 20ms; }
+  .controls-drawer.open > *:nth-last-child(2) { animation-delay: 45ms; }
+  .controls-drawer.open > *:nth-last-child(3) { animation-delay: 70ms; }
+  .controls-drawer.open > *:nth-last-child(4) { animation-delay: 95ms; }
+  .controls-drawer.open > *:nth-last-child(5) { animation-delay: 120ms; }
+  .controls-drawer.open > *:nth-last-child(6) { animation-delay: 145ms; }
+
+  @keyframes drawerItemEnter {
+    from { opacity: 0; transform: translateX(12px) scale(0.95); }
+    to   { opacity: 1; transform: none; }
+  }
+
   .topbar-sep { width: 1px; height: 26px; background: var(--edge); flex: none; }
 
   /* ── 自绘下拉（浮层级：接近实色，保证可读） ── */
@@ -344,6 +403,8 @@
     color: var(--blue); background: #fff;
     box-shadow: 0 1px 3px rgba(32, 44, 64, .12), inset 0 1px 0 rgba(255,255,255,.9);
   }
+  .segmented.sm { padding: 2px; border-radius: 8px; gap: 2px; }
+  .segmented.sm button { min-width: 44px; height: 22px; padding: 0 7px; font-size: 10.5px; border-radius: 5px; }
 
   /* ── 指标卡 ─────────────────────────────── */
   .kpis { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px; }
@@ -851,6 +912,58 @@ animation: bootCore 1.8s ease-in-out infinite;
   .header-actions button.primary:hover { background:rgba(23,74,88,.95); }
   .header-actions button:disabled { opacity:.55; cursor:wait; }
   .dock-sep { width:1px; height:16px; background:var(--line); margin:0 3px; flex:none; }
+
+  /* ── 顶部操作栏展开/收起控制抽屉 ── */
+  .controls-toggle {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    height: 28px; padding: 0 12px; min-width: 88px; box-sizing: border-box; border-radius: 999px;
+    background: rgba(13,26,44,.6); color: #c2d2e9;
+    border: 1px solid transparent;
+    font: 600 11.5px var(--font); cursor: pointer; white-space: nowrap;
+    transition: background .2s ease, color .2s ease, border-color .2s ease, box-shadow .2s ease;
+  }
+  .controls-toggle:hover {
+    background: #192e48; color: #fff; border-color: #38e1ff55;
+  }
+  .controls-toggle.active {
+    background: #1a3a5c; color: #8ff2f4; border-color: rgba(56, 225, 255, .5);
+    box-shadow: 0 0 12px rgba(56, 225, 255, .18);
+  }
+  .controls-toggle .toggle-icon { font-size: 13px; line-height: 1; opacity: .85; }
+  .controls-toggle .toggle-chevron {
+    width: 9px; height: 5px; flex: none; opacity: .75;
+    transition: transform .28s cubic-bezier(.34, 1.56, .64, 1);
+  }
+  .controls-toggle.active .toggle-chevron {
+    transform: rotate(180deg);
+  }
+  .controls-drawer {
+    display: inline-flex; align-items: center; gap: 6px;
+    max-width: 0; opacity: 0; margin: 0;
+    pointer-events: none; overflow: hidden;
+    transform: scale(0.96) translateX(-4px);
+    transition: max-width .38s cubic-bezier(.16, 1, .3, 1),
+                opacity .28s cubic-bezier(.16, 1, .3, 1),
+                transform .38s cubic-bezier(.16, 1, .3, 1),
+                margin .38s cubic-bezier(.16, 1, .3, 1);
+  }
+  .controls-drawer.open {
+    max-width: 650px; opacity: 1; margin: 0 1px;
+    pointer-events: auto; transform: scale(1) translateX(0);
+  }
+  .controls-drawer.expanded-visible {
+    overflow: visible;
+  }
+  .controls-drawer.open > * {
+    animation: drawerItemEnter .32s cubic-bezier(.16, 1, .3, 1) both;
+  }
+  .controls-drawer.open > *:nth-child(1) { animation-delay: 20ms; }
+  .controls-drawer.open > *:nth-child(2) { animation-delay: 45ms; }
+  .controls-drawer.open > *:nth-child(3) { animation-delay: 70ms; }
+  .controls-drawer.open > *:nth-child(4) { animation-delay: 95ms; }
+  .controls-drawer.open > *:nth-child(5) { animation-delay: 120ms; }
+  .controls-drawer.open > *:nth-child(6) { animation-delay: 145ms; }
+
   .topbar-sep { width:1px; height:26px; background:var(--line); flex:none; }
   /* 自绘下拉：彻底替换原生弹层，避免 Windows 系统菜单的亮色选中项破坏深色主题 */
   .dropdown { position: relative; }
@@ -916,6 +1029,8 @@ animation: bootCore 1.8s ease-in-out infinite;
   .segmented button { min-width: 52px; height: 25px; border: 0; border-radius: 6px; padding: 0 9px; color: var(--muted); background: transparent; font: 600 11px var(--font); cursor: pointer; transition: color .2s ease, background .2s ease, box-shadow .2s ease; }
   .segmented button:hover { color: var(--text); }
   .segmented button.active { color: #fff; background: linear-gradient(135deg, rgba(41,113,255,.9), rgba(105,77,255,.88)); box-shadow: 0 3px 12px rgba(61,100,255,.28), inset 0 1px 0 rgba(255,255,255,.22); }
+  .segmented.sm { padding: 2px; border-radius: 8px; gap: 2px; }
+  .segmented.sm button { min-width: 44px; height: 22px; padding: 0 7px; font-size: 10.5px; border-radius: 5px; }
 
   /* ── 指标卡 ───────────────────────────── */
   .kpis {
@@ -1465,6 +1580,65 @@ box-shadow: none;
   .header-actions a.theme-toggle:active { transform: translateY(1px); }
   .header-actions button:disabled { opacity: .55; cursor: wait; }
   .dock-sep { width: 1px; height: 16px; background: var(--edge); margin: 0 3px; flex: none; }
+
+  /* ── 顶部操作栏展开/收起控制抽屉 ── */
+  .controls-toggle {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    height: 28px; padding: 0 12px; min-width: 88px; box-sizing: border-box; border-radius: 999px;
+    background: rgba(255,255,255,.66); color: var(--muted);
+    border: 1px solid var(--edge);
+    font: 600 11.5px var(--font); cursor: pointer; white-space: nowrap;
+    transition: background-color .2s ease, color .2s ease, border-color .2s ease, box-shadow .2s ease;
+  }
+  .controls-toggle:hover {
+    background: #fff; color: var(--text); border-color: rgba(40,104,216,.28); box-shadow: var(--lift-sm);
+  }
+  .controls-toggle.active {
+    background: rgba(40, 104, 216, .10); color: var(--blue); border-color: rgba(40, 104, 216, .35);
+    box-shadow: 0 2px 8px rgba(40, 104, 216, .12), inset 0 1px 0 rgba(255,255,255,.8);
+  }
+  .controls-toggle .toggle-icon { font-size: 13px; line-height: 1; opacity: .85; }
+  .controls-toggle .toggle-chevron {
+    width: 9px; height: 5px; flex: none; opacity: .75;
+    transition: transform .28s cubic-bezier(.34, 1.56, .64, 1);
+  }
+  .controls-toggle.active .toggle-chevron {
+    transform: rotate(180deg);
+  }
+  .controls-drawer {
+    display: inline-flex; align-items: center; gap: 6px;
+    max-width: 0; opacity: 0; margin: 0;
+    pointer-events: none; overflow: hidden;
+    transform-origin: right center;
+    transform: scale(0.96) translateX(10px);
+    transition: max-width .38s cubic-bezier(.16, 1, .3, 1),
+                opacity .28s cubic-bezier(.16, 1, .3, 1),
+                transform .38s cubic-bezier(.16, 1, .3, 1),
+                margin .38s cubic-bezier(.16, 1, .3, 1);
+  }
+  .controls-drawer.open {
+    max-width: 650px; opacity: 1; margin: 0 6px 0 0;
+    pointer-events: auto; transform: scale(1) translateX(0);
+  }
+  .controls-drawer.expanded-visible {
+    overflow: visible;
+  }
+  .controls-drawer.open > * {
+    animation: drawerItemEnter .32s cubic-bezier(.16, 1, .3, 1) both;
+  }
+  /* 从右往左弹出：靠右侧（靠近按钮）的元素先弹出，靠左侧的依次向左展开 */
+  .controls-drawer.open > *:nth-last-child(1) { animation-delay: 20ms; }
+  .controls-drawer.open > *:nth-last-child(2) { animation-delay: 45ms; }
+  .controls-drawer.open > *:nth-last-child(3) { animation-delay: 70ms; }
+  .controls-drawer.open > *:nth-last-child(4) { animation-delay: 95ms; }
+  .controls-drawer.open > *:nth-last-child(5) { animation-delay: 120ms; }
+  .controls-drawer.open > *:nth-last-child(6) { animation-delay: 145ms; }
+
+  @keyframes drawerItemEnter {
+    from { opacity: 0; transform: translateX(12px) scale(0.95); }
+    to   { opacity: 1; transform: none; }
+  }
+
   .topbar-sep { width: 1px; height: 26px; background: var(--edge); flex: none; }
 
   /* ── 自绘下拉（浮层级：接近实色，保证可读） ── */
@@ -1568,6 +1742,8 @@ box-shadow: none;
     color: var(--blue); background: #fff;
     box-shadow: 0 1px 3px rgba(32, 44, 64, .12), inset 0 1px 0 rgba(255,255,255,.9);
   }
+  .segmented.sm { padding: 2px; border-radius: 8px; gap: 2px; }
+  .segmented.sm button { min-width: 44px; height: 22px; padding: 0 7px; font-size: 10.5px; border-radius: 5px; }
 
   /* ── 指标卡 ─────────────────────────────── */
   .kpis { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px; }
@@ -1948,17 +2124,33 @@ box-shadow: none;
       </div>
       <div class="topright" data-page-node-id="yaKqk5pdkM6HCFkdUoVwTz">
         <div class="header-actions" role="toolbar" aria-label="观测控制" data-page-node-id="nOPcI89nayfSFPfBU7hheF">
-          <div class="dropdown" id="scopeDrop" data-page-node-id="bqBkfbNkhlHcBpCFVR5UB8">
-            <button type="button" class="dropdown-toggle" id="scopeSelect" aria-haspopup="listbox" aria-expanded="false" data-page-node-id="CQ6JIP0FQbKMiJOHTE0WvU">全部历史</button>
-            <div class="dropdown-menu" role="listbox" aria-label="统计范围" data-page-node-id="xYVPDvaFGELIjIZkzcItQx">
-              <div class="dropdown-option selected" role="option" aria-selected="true" data-value="all" data-page-node-id="KWCufhrfcceJS03hEr5LSR">全部历史</div>
-              <div class="dropdown-option" role="option" aria-selected="false" data-value="active" data-page-node-id="3qYgMevvpHiyGsBEzzMpWs">当前启用模型</div>
+          <div class="controls-drawer" id="controlsDrawer" aria-hidden="true">
+            <div class="dropdown" id="rangeDrop">
+              <button type="button" class="dropdown-toggle" id="rangeSelect" aria-haspopup="listbox" aria-expanded="false">近 7 天</button>
+              <div class="dropdown-menu" role="listbox" aria-label="时间范围">
+                <div class="dropdown-option" role="option" aria-selected="false" data-value="today">今日</div>
+                <div class="dropdown-option selected" role="option" aria-selected="true" data-value="7d">近 7 天</div>
+                <div class="dropdown-option" role="option" aria-selected="false" data-value="30d">近 30 天</div>
+                <div class="dropdown-option" role="option" aria-selected="false" data-value="all">所有时间</div>
+              </div>
             </div>
+            <div class="dropdown" id="scopeDrop" data-page-node-id="bqBkfbNkhlHcBpCFVR5UB8">
+              <button type="button" class="dropdown-toggle" id="scopeSelect" aria-haspopup="listbox" aria-expanded="false" data-page-node-id="CQ6JIP0FQbKMiJOHTE0WvU">全部模型</button>
+              <div class="dropdown-menu" role="listbox" aria-label="统计范围" data-page-node-id="xYVPDvaFGELIjIZkzcItQx">
+                <div class="dropdown-option selected" role="option" aria-selected="true" data-value="all" data-page-node-id="KWCufhrfcceJS03hEr5LSR">全部模型</div>
+                <div class="dropdown-option" role="option" aria-selected="false" data-value="active" data-page-node-id="3qYgMevvpHiyGsBEzzMpWs">启用模型</div>
+              </div>
+            </div>
+            <span class="dock-sep" data-page-node-id="ZMxzMHOEOxtZUstUdvsI4h"></span>
+            <button type="button" id="motionToggle" aria-pressed="true" data-page-node-id="4xX5ZalcO3qkCwOBogA2VI">✧ 动效开</button>
+            <button type="button" id="pauseToggle" aria-pressed="false" data-page-node-id="w26hcrjkof4o9mfwDMSg4h">Ⅱ 暂停</button>
+            <button type="button" id="themeToggle" class="theme-toggle" title="切换到深空极光黑夜版" aria-label="切换到深空极光黑夜版">☾ 深空极光</button>
           </div>
-          <span class="dock-sep" data-page-node-id="ZMxzMHOEOxtZUstUdvsI4h"></span>
-          <button type="button" id="motionToggle" aria-pressed="true" data-page-node-id="4xX5ZalcO3qkCwOBogA2VI">✧ 动效开</button>
-          <button type="button" id="pauseToggle" aria-pressed="false" data-page-node-id="w26hcrjkof4o9mfwDMSg4h">Ⅱ 暂停</button>
-          <button type="button" id="themeToggle" class="theme-toggle" title="切换到深空极光黑夜版" aria-label="切换到深空极光黑夜版">☾ 深空极光</button>
+          <button type="button" class="controls-toggle" id="controlsToggle" aria-expanded="false" aria-controls="controlsDrawer" title="展开控制选项">
+            <span class="toggle-icon">⚙</span>
+            <span class="toggle-label" id="controlsToggleLabel">控制选项</span>
+            <svg class="toggle-chevron" viewBox="0 0 10 6" width="9" height="5" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
           <button type="button" id="refreshNow" class="primary" title="立即刷新" aria-label="立即刷新" data-page-node-id="0ardcHK2mCrQ27c0GniF9J"><svg class="refresh-icon" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" data-page-node-id="NieEriT3YJyReaS2KzM7Fr"><path d="M17.65 6.35A7.95 7.95 0 0 0 12 4a8 8 0 1 0 7.73 10h-2.08A6 6 0 1 1 12 6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" fill="currentColor" data-page-node-id="dM7IrZHfIeCKSh7aJE0jAa"/></svg></button>
         </div>
         <span class="topbar-sep" data-page-node-id="10BkywsInsRUgFG8QaeC5X"></span>
@@ -2013,17 +2205,25 @@ box-shadow: none;
 
     <div class="grid-side" id="sidebar" data-page-node-id="e4f3LOXc3vDTLGnJ67hRnL">
       <section class="panel" data-page-node-id="5hcIYzTr6fJ1nDlRlqPYCs">
-        <h2 data-page-node-id="4LfSZqJlZRlT4GVGE0WCCf"><span class="bar" style="background:linear-gradient(180deg,#E08000,#D0342C)" data-page-node-id="18cGXEo1fgEiCKsbGJFwOS"></span>模型热度 <span class="hint" data-page-node-id="cANGt95VNh6bmnND9ZFNiF">TOP 20 · 按请求量</span></h2>
+        <h2 data-page-node-id="4LfSZqJlZRlT4GVGE0WCCf"><span class="bar" style="background:linear-gradient(180deg,#E08000,#D0342C)" data-page-node-id="18cGXEo1fgEiCKsbGJFwOS"></span>模型热度
+          <span class="panel-title-tools">
+            <span class="hint" id="heatHint" data-page-node-id="cANGt95VNh6bmnND9ZFNiF">TOP 20 · 按请求量</span>
+            <span class="segmented sm" id="heatLimitSeg" role="group" aria-label="模型显示数量">
+              <button type="button" data-limit="20" class="active">Top 20</button>
+              <button type="button" data-limit="all">全部</button>
+            </span>
+          </span>
+        </h2>
         <div class="bars" id="modelBars" data-page-node-id="ctGonJRBzucf6r5qmBYps4"></div>
       </section>
 
       <section class="panel" id="trendPanel" data-page-node-id="CNSgSOSkHQB1CrvqXUhEUN">
-        <h2 data-page-node-id="vBPrSska1evEEACSKVbROu"><span class="bar" style="background:linear-gradient(180deg,#0B9A6A,#0E86B8)" data-page-node-id="vGy2p97HehXsMZmElXoE41"></span>7 天趋势 <span class="hint" id="trendHint" data-page-node-id="ZSgOK7jm4IugoWO8AACG7G">每日请求</span></h2>
+        <h2 data-page-node-id="vBPrSska1evEEACSKVbROu"><span class="bar" style="background:linear-gradient(180deg,#0B9A6A,#0E86B8)" data-page-node-id="vGy2p97HehXsMZmElXoE41"></span><span id="trendTitle">7 天趋势</span> <span class="hint" id="trendHint" data-page-node-id="ZSgOK7jm4IugoWO8AACG7G">每日请求</span></h2>
         <div class="chart-body" data-page-node-id="iQfIs4LY2Drzjubf3QgntP"><canvas role="img" aria-label="最近七天每日请求趋势" id="trendChart" height="210" data-page-node-id="nI0zISShwcq41pUUcWSxWG"></canvas></div>
       </section>
 
       <section class="panel" data-page-node-id="FOi2d47Fef6guvFKZBEyZO">
-        <h2 data-page-node-id="hcXExDAAcdvtFPCkb97Ftq"><span class="bar" style="background:linear-gradient(180deg,#0B9A6A,#2868D8)" data-page-node-id="tPwmoaWwD0u3BL3fI7p8Bq"></span>供应商分布 <span class="hint" data-page-node-id="NXkjqlh3dPkkzx4zpdB03W">7 天请求占比</span></h2>
+        <h2 data-page-node-id="hcXExDAAcdvtFPCkb97Ftq"><span class="bar" style="background:linear-gradient(180deg,#0B9A6A,#2868D8)" data-page-node-id="tPwmoaWwD0u3BL3fI7p8Bq"></span>供应商分布 <span class="hint" id="donutHint" data-page-node-id="NXkjqlh3dPkkzx4zpdB03W">7 天请求占比</span></h2>
         <div class="donut-wrap" data-page-node-id="E4ycORHoobyxaNUnq1YhfM">
           <div class="donut" data-page-node-id="u3TZICYF3iBynRm6o5aKNV">
             <svg width="146" height="146" id="donutSvg" data-page-node-id="ALYZPcMk1EU8827N9hgr3z"></svg>
@@ -2071,7 +2271,7 @@ box-shadow: none;
 "use strict";
 /* ── 常量与状态 ─────────────────────────────── */
 const API = {
-  usage: () => "/api/usage?range=7d",
+  usage: (range = state.usageRange || "7d") => `/api/usage?range=${range}`,
   logs:  (limit = 120) => `/api/logs?limit=${limit}`,
 };
 const POLL_MS = 3000;
@@ -2241,6 +2441,8 @@ function applyTheme(theme) {
   modelBarsAnimationPlayed: false,
   initialLogsLoaded: false,
   scope: "all",
+  usageRange: "7d",
+  heatLimit: "20",
   motion: true,
   paused: false,
   logFollow: true,
@@ -2514,7 +2716,8 @@ async function renewSession() {
 
 async function pollUsage() {
   await runPoll("usage", 12000, async () => {
-    const u = await fetchJsonTimeout(API.usage(), 12000);
+    const range = state.usageRange || "7d";
+    const u = await fetchJsonTimeout(API.usage(range), 15000);
     if (!u?.summary || !Array.isArray(u.models) || !Array.isArray(u.days)) throw new Error("用量数据格式异常");
     hideBootOverlay();
     state.usage = u;
@@ -2715,18 +2918,25 @@ function renderUsage() {
   const cached = sum("cachedInputTokens") || sum("cacheReadInputTokens");
 
   animateKpi("requests", req, (v) => fmtFull(v));
-  $("k-requests-d").textContent = `近 7 天 · ${scopeLabel()}`;
+  $("k-requests-d").textContent = `${rangeLabel()} · ${scopeLabel()}`;
   animateKpi("tokens", tokens, (v) => fmt(v, 1));
   $("k-tokens-d").innerHTML = `输入 ${fmt(input)} · 缓存 ${fmt(cached)} · 输出 ${fmt(out)}`;
   animateKpi("models", models, (v) => Math.round(v) + "");
-  $("k-models-d").textContent = `近 7 天有请求 · 按供应商区分`;
+  $("k-models-d").textContent = `${rangeLabel()}有请求 · 按供应商区分`;
   animateKpi("cost", cost, (v) => fmtUsd(v));
   const priced = sum("pricedRequests");
   $("k-cost-d").textContent = `估算 · 计价覆盖 ${req ? (100 * priced / req).toFixed(1) : "0"}%`;
   $("k-cost").title = "估算费用，不等于账单；未计价请求不计入费用";
 
-  renderModelBars(heat.slice(0, 20));
-  state.lastHeatKeys = heat.map(m => m.provider + "/" + m.model);
+  const limit = state.heatLimit === "all" ? heat.length : 20;
+  renderModelBars(heat.slice(0, limit));
+  state.lastHeatKeys = heat.slice(0, limit).map(m => m.provider + "/" + m.model);
+  const hintEl = $("heatHint");
+  if (hintEl) {
+    hintEl.textContent = state.heatLimit === "all"
+      ? `${rangeLabel()} · 全部 ${heat.length} 个模型`
+      : (heat.length > 20 ? `${rangeLabel()} · TOP 20 / 共 ${heat.length} 个` : `${rangeLabel()} · 共 ${heat.length} 个模型`);
+  }
 }
 
 /* 模型排行只使用用量账本，避免将请求别名当成额外模型。 */
@@ -2824,9 +3034,11 @@ function renderDonut(providers, svgEl, listEl) {
     const realTotal = known.reduce((a, p) => a + (p.requests || 0), 0);
     clearNode(centerEl);
     appendTextElement(centerEl, "b", "", fmt(realTotal));
-    appendTextElement(centerEl, "span", "", "7 天请求");
+    appendTextElement(centerEl, "span", "", `${rangeLabel()}请求`);
   }
 
+  const donutHint = $("donutHint");
+  if (donutHint) donutHint.textContent = `${rangeLabel()}请求占比`;
   const list = listEl || $("donutList");
 
   // 列表也尽量原地更新：数量一致时只改文字，不重建 DOM
@@ -3305,7 +3517,19 @@ function renderTrend(days) {
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   ctx.clearRect(0, 0, W, H);
 
-  if (!days || !days.length) { ctx.fillStyle = CHART.empty; ctx.font = "13px sans-serif"; ctx.fillText("暂无趋势数据", 16, 40); return; }
+  const titleEl = $("trendTitle");
+  if (titleEl) {
+    if (state.usageRange === "all") titleEl.textContent = "全量趋势";
+    else if (state.usageRange === "30d") titleEl.textContent = "30 天趋势";
+    else if (state.usageRange === "today") titleEl.textContent = "今日趋势";
+    else titleEl.textContent = "7 天趋势";
+  }
+  if (!days || !days.length) {
+    ctx.fillStyle = CHART.empty; ctx.font = "13px sans-serif"; ctx.fillText("暂无趋势数据", 16, 40);
+    const hintEl = $("trendHint");
+    if (hintEl) hintEl.textContent = `${rangeLabel()}暂无记录`;
+    return;
+  }
   const vals = days.map(d => d.requests || 0);
   const max = Math.max(...vals, 1);
   const padL = 6, padR = 6, padT = 16, padB = 24;
@@ -3313,7 +3537,7 @@ function renderTrend(days) {
   const bw = iw / vals.length;
   const barMaxW = 28;             // 柱子最宽不超过 28px，数据点少时保持纤细精致
   const barW = Math.min(bw * 0.68, barMaxW);
-  const labelEvery = vals.length > 10 ? 5 : 1;   // 数据点多时稀疏标注，少时每根都标
+  const labelEvery = vals.length > 25 ? Math.ceil(vals.length / 6) : (vals.length > 10 ? 5 : 1);   // 数据点多时稀疏标注，少时每根都标
 
   const animate = state.motion && !state.trendAnimated;  // 页面首次打开才播放生长动画
   state.trendAnimated = true;
@@ -3358,7 +3582,8 @@ function drawTrend(ctx, vals, days, o) {
     if (i === vals.length - 1) {
       ctx.shadowColor = CHART.barGlow; ctx.shadowBlur = 8;
     }
-    ctx.roundRect(x, y, w, h, [3, 3, 0, 0]); ctx.fill(); ctx.shadowBlur = 0;
+    const r = Math.min(3, w / 2);
+    ctx.roundRect(x, y, w, h, [r, r, 0, 0]); ctx.fill(); ctx.shadowBlur = 0;
     if (i % labelEvery === 0 || i === vals.length - 1) {
       ctx.fillStyle = CHART.axis;
       ctx.textAlign = "center";
@@ -3367,7 +3592,9 @@ function drawTrend(ctx, vals, days, o) {
     }
   });
   const total = vals.reduce((a, b) => a + b, 0);
-  $("trendHint").textContent = `7 天共 ${fmtFull(total)} 次`;
+  const rangeTxt = state.usageRange === "all" ? `共 ${vals.length} 天` : rangeLabel();
+  const hintEl = $("trendHint");
+  if (hintEl) hintEl.textContent = `${rangeTxt} · 累计 ${fmtFull(total)} 次`;
 }
 
 /* ── 渲染：实时流 ─────────────────────────── */
@@ -3476,7 +3703,64 @@ function initDropdown(id, onPick) {
   }));
 }
 
-function scopeLabel() { return state.scope === "all" ? "全部历史" : (state.catalog.providersReady && state.catalog.modelsReady ? "当前启用模型" : "全部历史（清单待同步）"); }
+function rangeLabel() {
+  switch (state.usageRange) {
+    case "today": return "今日";
+    case "30d": return "近 30 天";
+    case "all": return "所有时间";
+    default: return "近 7 天";
+  }
+}
+
+function scopeLabel() {
+  return state.scope === "all"
+    ? "全部模型"
+    : (state.catalog.providersReady && state.catalog.modelsReady ? "启用模型" : "全部模型（待同步）");
+}
+
+function syncRangeUI(range) {
+  const rangeToggle = $("rangeSelect");
+  if (rangeToggle) rangeToggle.textContent = rangeLabel();
+  const rangeDrop = $("rangeDrop");
+  if (rangeDrop) {
+    rangeDrop.querySelectorAll(".dropdown-option").forEach(opt => {
+      const isSel = opt.dataset.value === range;
+      opt.classList.toggle("selected", isSel);
+      opt.setAttribute("aria-selected", String(isSel));
+    });
+  }
+}
+
+function syncHeatLimitUI(limit) {
+  document.querySelectorAll("#heatLimitSeg button").forEach(btn => {
+    const isAct = btn.dataset.limit === limit;
+    btn.classList.toggle("active", isAct);
+    btn.setAttribute("aria-pressed", String(isAct));
+  });
+}
+
+async function changeUsageRange(range) {
+  if (state.usageRange === range) return;
+  state.usageRange = range;
+  try { localStorage.setItem("opendash-range", range); } catch {}
+  syncRangeUI(range);
+  const slot = state.pollSlots.usage;
+  if (slot?.timer) clearTimeout(slot.timer);
+  let waited = 0;
+  while (slot?.busy && waited < 20) {
+    await new Promise(r => setTimeout(r, 100));
+    waited++;
+  }
+  await pollUsage();
+}
+
+function changeHeatLimit(limit) {
+  if (state.heatLimit === limit) return;
+  state.heatLimit = limit;
+  try { localStorage.setItem("opendash-heat-limit", limit); } catch {}
+  syncHeatLimitUI(limit);
+  if (state.usage) renderUsage();
+}
 
 function applyMotion(enabled) {
   state.motion = enabled;
@@ -3507,6 +3791,67 @@ async function refreshNow() {
   }
 }
 
+
+function initControlsDrawer() {
+  const toggleBtn = $("controlsToggle");
+  const drawer = $("controlsDrawer");
+  const toggleLabel = $("controlsToggleLabel");
+  if (!toggleBtn || !drawer) return;
+
+  let drawerTimer = 0;
+  function updateToggleTitle() {
+    if (!toggleBtn) return;
+    const isExpanded = drawer.classList.contains("open");
+    toggleBtn.setAttribute("title", isExpanded ? "收起控制面板" : `展开控制面板 (${rangeLabel()} · ${scopeLabel()})`);
+  }
+
+  function setControlsExpanded(expanded, animate = true) {
+    if (drawerTimer) { clearTimeout(drawerTimer); drawerTimer = 0; }
+    toggleBtn.classList.toggle("active", expanded);
+    toggleBtn.setAttribute("aria-expanded", String(expanded));
+    if (toggleLabel) toggleLabel.textContent = expanded ? "收起选项" : "控制选项";
+    updateToggleTitle();
+    drawer.setAttribute("aria-hidden", String(!expanded));
+
+    if (expanded) {
+      drawer.classList.remove("expanded-visible");
+      drawer.classList.add("open");
+      drawerTimer = setTimeout(() => {
+        if (drawer.classList.contains("open")) {
+          drawer.classList.add("expanded-visible");
+        }
+      }, animate && state.motion ? 380 : 0);
+    } else {
+      drawer.classList.remove("expanded-visible");
+      drawer.querySelectorAll(".dropdown.open").forEach(d => {
+        d.classList.remove("open");
+        d.querySelector(".dropdown-toggle")?.setAttribute("aria-expanded", "false");
+      });
+      drawer.classList.remove("open");
+    }
+    try { localStorage.setItem("opendash-controls-expanded", expanded ? "1" : "0"); } catch {}
+  }
+
+  let savedExpanded = false;
+  try { savedExpanded = localStorage.getItem("opendash-controls-expanded") === "1"; } catch {}
+  setControlsExpanded(savedExpanded, false);
+
+  toggleBtn.addEventListener("click", () => {
+    const isExpanded = drawer.classList.contains("open");
+    setControlsExpanded(!isExpanded, true);
+  });
+
+  // 点击抽屉外部且非 toggle 按钮时不自动收起，避免用户调节多个选项时频繁被打断；但按 Esc 时收起抽屉
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape" && drawer.classList.contains("open")) {
+      // 如果有下拉菜单开着，优先关下拉菜单，否则收起抽屉
+      if (!drawer.querySelector(".dropdown.open")) {
+        setControlsExpanded(false, true);
+      }
+    }
+  });
+}
+
 function boot() {
   let savedTheme;
   try { savedTheme = typeof localStorage !== "undefined" ? localStorage.getItem("opendash-theme") : null; } catch {}
@@ -3519,6 +3864,7 @@ function boot() {
   }
   tickClock(); setInterval(tickClock, 1000);
   bindRateControls();
+  initControlsDrawer();
   const media = matchMedia("(prefers-reduced-motion: reduce)");
   let saved;
   try { saved = localStorage.getItem("opendash-motion"); } catch {}
@@ -3536,6 +3882,33 @@ function boot() {
     updateConnectionStatus();
     if (!state.paused) refreshNow();
   });
+  let savedRange = "7d";
+  try { savedRange = typeof localStorage !== "undefined" ? (localStorage.getItem("opendash-range") || "7d") : "7d"; } catch {}
+  if (!["today", "7d", "30d", "all"].includes(savedRange)) savedRange = "7d";
+  state.usageRange = savedRange;
+
+  let savedHeatLimit = "20";
+  try { savedHeatLimit = typeof localStorage !== "undefined" ? (localStorage.getItem("opendash-heat-limit") || "20") : "20"; } catch {}
+  if (!["20", "all"].includes(savedHeatLimit)) savedHeatLimit = "20";
+  state.heatLimit = savedHeatLimit;
+
+  syncRangeUI(state.usageRange);
+  syncHeatLimitUI(state.heatLimit);
+
+  initDropdown("rangeDrop", value => {
+    changeUsageRange(value);
+  });
+
+
+  const heatLimitSeg = $("heatLimitSeg");
+  if (heatLimitSeg) {
+    heatLimitSeg.addEventListener("click", e => {
+      const btn = e.target.closest("button[data-limit]");
+      if (!btn || btn.dataset.limit === state.heatLimit) return;
+      changeHeatLimit(btn.dataset.limit);
+    });
+  }
+
   initDropdown("scopeDrop", value => {
     state.scope = value;
     rebuildLiveData(state.logs); renderUsage(); renderLogs(); renderLiveKpis(); updateRateTarget(true); updateConnectionStatus();

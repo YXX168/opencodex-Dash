@@ -12,7 +12,7 @@ const sourceDark = loadSource('opendash-dark.html');
 function env(src = source) {
   const els = new Map();
   const el = id => {if (!els.has(id)) els.set(id,{textContent:'—',innerHTML:'',title:'',classList:{add(){},contains(){return false},toggle(){}},setAttribute(){},querySelectorAll(){return []}});return els.get(id)};
-  const c = vm.createContext({console:{warn(){}},Date,Map,Set,JSON,Number,Math,Array,String,performance:{now:()=>1},AbortController, setTimeout,clearTimeout,requestAnimationFrame:()=>1,cancelAnimationFrame(){},window:{setTimeout,clearTimeout},document:{hidden:false,getElementById:el,body:{classList:{toggle(){}}},querySelectorAll:()=>[]},location:{origin:'http://localhost:10100'}});
+  const c = vm.createContext({console:{warn(){}},Date,Map,Set,JSON,Number,Math,Array,String,performance:{now:()=>1},AbortController, setTimeout,clearTimeout,requestAnimationFrame:()=>1,cancelAnimationFrame(){},window:{setTimeout,clearTimeout},document:{hidden:false,getElementById:el,addEventListener:()=>{},removeEventListener:()=>{},body:{classList:{toggle(){}}},querySelectorAll:()=>[]},location:{origin:'http://localhost:10100'}});
   vm.runInContext(source,c);
   const run = code => vm.runInContext(code,c);
   return {c,run,el};
@@ -70,4 +70,63 @@ test('动画首帧早于起点时数字不出现负值',()=>{
   const {run,c,el}=env();const frames=[];c.requestAnimationFrame=fn=>{frames.push(fn);return frames.length};
   run(`animateKpi('requests',100,fmtFull)`);frames[0](0);
   assert.equal(el('k-requests').textContent,'0');frames[1](1000);assert.equal(el('k-requests').textContent,'100');
+});
+test('API.usage 支持动态时间范围传参，默认为 7d', () => {
+  const {run} = env();
+  assert.equal(run('API.usage()'), '/api/usage?range=7d');
+  assert.equal(run('API.usage("all")'), '/api/usage?range=all');
+  assert.equal(run('API.usage("30d")'), '/api/usage?range=30d');
+  assert.equal(run('API.usage("today")'), '/api/usage?range=today');
+  run('state.usageRange = "all"');
+  assert.equal(run('API.usage()'), '/api/usage?range=all');
+});
+
+test('rangeLabel 和 scopeLabel 在各范围下文案准确', () => {
+  const {run} = env();
+  run('state.usageRange = "all"; state.scope = "all"');
+  assert.equal(run('rangeLabel()'), '所有时间');
+  assert.equal(run('scopeLabel()'), '全部模型');
+  run('state.usageRange = "30d"');
+  assert.equal(run('rangeLabel()'), '近 30 天');
+  run('state.usageRange = "today"');
+  assert.equal(run('rangeLabel()'), '今日');
+});
+
+test('模型热度表支持 TOP 20 与 全部 数量切换', () => {
+  const {run} = env();
+  const fakeModels = [];
+  for (let i = 0; i < 35; i++) {
+    fakeModels.push({provider: 'openai', model: 'm-' + i, requests: 100 - i, totalTokens: 1000});
+  }
+  run('state.heatLimit = "20"; state.usageRange = "all"');
+  const res20 = run('modelHeatData({models: ' + JSON.stringify(fakeModels) + '}, []).slice(0, state.heatLimit === "all" ? 35 : 20)');
+  assert.equal(res20.length, 20);
+  run('state.heatLimit = "all"');
+  const resAll = run('modelHeatData({models: ' + JSON.stringify(fakeModels) + '}, []).slice(0, state.heatLimit === "all" ? 35 : 20)');
+  assert.equal(resAll.length, 35);
+});
+test('顶部控制抽屉支持展开与收起，且保留 controlsToggle 与 controlsDrawer 对应属性', () => {
+  const {run, el} = env();
+  const drawer = el('controlsDrawer');
+  const toggle = el('controlsToggle');
+  drawer.classList = { contains: c => !!drawer.classList[c], add: c => drawer.classList[c] = true, remove: c => drawer.classList[c] = false };
+  drawer.querySelectorAll = () => [];
+  toggle.classList = { contains: c => !!toggle.classList[c], add: c => toggle.classList[c] = true, remove: c => toggle.classList[c] = false, toggle: (c, v) => toggle.classList[c] = v };
+  let clickHandler = null;
+  toggle.addEventListener = (evt, fn) => { if (evt === 'click') clickHandler = fn; };
+  const attrs = new Map();
+  drawer.setAttribute = (k, v) => attrs.set('d:' + k, String(v));
+  drawer.getAttribute = (k) => attrs.get('d:' + k);
+  toggle.setAttribute = (k, v) => attrs.set('t:' + k, String(v));
+  toggle.getAttribute = (k) => attrs.get('t:' + k);
+  run('initControlsDrawer()');
+  assert.equal(typeof clickHandler, 'function');
+  // 模拟点击展开
+  clickHandler();
+  assert.equal(toggle.getAttribute('aria-expanded'), 'true');
+  assert.equal(drawer.getAttribute('aria-hidden'), 'false');
+  // 模拟再次点击收起
+  clickHandler();
+  assert.equal(toggle.getAttribute('aria-expanded'), 'false');
+  assert.equal(drawer.getAttribute('aria-hidden'), 'true');
 });
