@@ -34,9 +34,6 @@ $ErrorActionPreference = "Stop"
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $sourceHtml = Join-Path $scriptDir "opendash.html"
 if (-not (Test-Path $sourceHtml)) {
-  $sourceHtml = Join-Path $scriptDir "opendash-light.html"
-}
-if (-not (Test-Path $sourceHtml)) {
   Write-Host "[错误] 未找到 opendash.html，请把本脚本和仪表盘 HTML 放在同一目录。" -ForegroundColor Red
   exit 1
 }
@@ -144,8 +141,9 @@ foreach ($existingTarget in @($targetRoot, $targetSub)) {
 New-Item -ItemType Directory -Force -Path (Split-Path $targetSub) | Out-Null
 Copy-Item -LiteralPath $sourceHtml -Destination $targetRoot -Force
 Copy-Item -LiteralPath $sourceHtml -Destination $targetSub -Force
-Copy-Item -LiteralPath (Join-Path $scriptDir "opendash-light.html") -Destination (Join-Path $found "opendash-light.html") -Force
-Copy-Item -LiteralPath (Join-Path $scriptDir "opendash-dark.html") -Destination (Join-Path $found "opendash-dark.html") -Force
+# 兼容可能存在的旧版书签或外部引用，将一体化面板同步别名复制一份
+Copy-Item -LiteralPath $sourceHtml -Destination (Join-Path $found "opendash-light.html") -Force
+Copy-Item -LiteralPath $sourceHtml -Destination (Join-Path $found "opendash-dark.html") -Force
 foreach ($installedTarget in @($targetRoot, $targetSub)) {
   if ((Get-Sha256 $installedTarget) -ne $sourceHash) {
     throw "安装后文件校验失败：$installedTarget"

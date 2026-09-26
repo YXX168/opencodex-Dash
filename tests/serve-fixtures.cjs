@@ -2,9 +2,10 @@
 const http = require('node:http');
 const fs = require('node:fs');
 const path = require('node:path');
+const html = fs.readFileSync(path.join(__dirname,'../opendash.html'),'utf8');
 const themes = {
-  light: fs.readFileSync(path.join(__dirname,'../opendash-light.html'),'utf8'),
-  dark: fs.readFileSync(path.join(__dirname,'../opendash-dark.html'),'utf8'),
+  light: html,
+  dark: html,
 };
 const server = http.createServer((req,res)=>{
   const url = new URL(req.url,'http://127.0.0.1:10109');

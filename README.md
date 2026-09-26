@@ -29,11 +29,11 @@
 
 确保 OpenCodex 已启动：
 
-1. **双击 `opendash.bat`**（或 `install-opendash.bat`）；
+1. **双击 `install-opendash.bat`**；
 2. 脚本会自动定位本地 OpenCodex 的 GUI 静态目录并安全完成部署；
 3. 打开浏览器访问：[本机面板](http://localhost:10100/opendash.html)（也可使用 [目录入口](http://localhost:10100/opendash/index.html)）。
 
-> 命令行方式运行：请先 `cd` 进入本项目目录，再执行 `opendash.bat`；如需指定自定义路径或端口：
+> 命令行方式运行：请先 `cd` 进入本项目目录，再执行 `install-opendash.bat`；如需指定自定义路径或端口：
 > ```powershell
 > powershell -NoProfile -ExecutionPolicy Bypass -File install-opendash.ps1 -DistDir "D:\opencodex\gui\dist" -Port 10100
 > ```
@@ -63,12 +63,10 @@ node tests/serve-fixtures.cjs
 
 | 文件 | 用途 |
 | --- | --- |
-| `opendash.html` | 一体化面板：内置白天液态玻璃 + 黑夜深空极光双主题，页面内一键即时无感切换，默认白天版 |
-| `opendash-light.html` | 白天版面板（液态玻璃）：全部界面、样式、数据与动画逻辑 |
-| `opendash-dark.html` | 黑夜版面板（深空极光）：同一数据逻辑的深色主题 |
-| `opendash.bat` / `install-opendash.bat` | Windows 一键安装批处理入口（双击即可自动部署） |
+| `opendash.html` | 一体化核心面板：内置白天液态玻璃 + 黑夜深空极光双主题，页面内一键即时秒切与偏好记忆 |
+| `install-opendash.bat` | Windows 一键安装批处理入口（双击即可自动部署） |
 | `install-opendash.ps1` | PowerShell 自动化安装脚本，支持自动化路径解析与状态校验 |
-| `tests/dashboard.test.cjs` | 数据统计、过滤、会话续期与空态回归测试套件 |
+| `tests/dashboard.test.cjs` | 数据统计、过滤、时间范围、控制抽屉及核心逻辑回归测试套件 |
 | `tests/serve-fixtures.cjs` | 隔离浏览器测试服务 |
 
 MIT License。
