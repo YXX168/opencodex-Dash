@@ -11,7 +11,7 @@ const source = loadSource('opendash.html');
 function env(src = source) {
   const els = new Map();
   const el = id => {if (!els.has(id)) els.set(id,{textContent:'—',innerHTML:'',title:'',classList:{add(){},contains(){return false},toggle(){}},setAttribute(){},querySelectorAll(){return []}});return els.get(id)};
-  const c = vm.createContext({console:{warn(){}},Date,Map,Set,JSON,Number,Math,Array,String,performance:{now:()=>1},AbortController, setTimeout,clearTimeout,requestAnimationFrame:()=>1,cancelAnimationFrame(){},window:{setTimeout,clearTimeout},document:{hidden:false,getElementById:el,addEventListener:()=>{},removeEventListener:()=>{},body:{classList:{toggle(){}}},querySelectorAll:()=>[]},location:{origin:'http://localhost:10100'}});
+  const c = vm.createContext({console:{warn(){}},Date,Map,Set,JSON,Number,Math,Array,String,performance:{now:()=>1},AbortController, setTimeout,clearTimeout,requestAnimationFrame:()=>1,cancelAnimationFrame(){},getComputedStyle:()=>({fontFamily:"sans-serif"}),window:{setTimeout,clearTimeout,getComputedStyle:()=>({fontFamily:"sans-serif"})},requestAnimationFrame:fn=>setTimeout(fn,0),document:{hidden:false,getElementById:el,addEventListener:()=>{},removeEventListener:()=>{},body:{classList:{toggle(){}}},querySelectorAll:()=>[]},location:{origin:'http://localhost:10100'}});
   vm.runInContext(source,c);
   const run = code => vm.runInContext(code,c);
   return {c,run,el};
@@ -140,4 +140,39 @@ test('Token与用量数值格式化：单位上限为M，不使用B，且大数�
   assert.equal(run('fmt(5e9)'), '5000M');
   assert.doesNotMatch(run('fmt(1e9, 1)'), /B$/);
   assert.doesNotMatch(run('fmt(50e9, 1)'), /B$/);
+});
+
+test('KPI单位与数字之间包含不换行空格分隔&nbsp;', () => {
+  const {run} = env();
+  assert.match(run('formatKpiHtml("100.0%")'), /100\.0&nbsp;<span class="unit">%/);
+  assert.match(run('formatKpiHtml("8.0s")'), /8\.0&nbsp;<span class="unit">s/);
+  assert.match(run('formatKpiHtml("2496.8M")'), /2496\.8&nbsp;<span class="unit">M/);
+  assert.match(run('formatKpiHtml("$1,274.87")'), /<span class="unit">\$<\/span>&nbsp;1,274\.87/);
+});
+
+test('全量趋势数据多于 50 天时，激活横向滚动容器并按最多 50 根柱子计算槽宽', () => {
+  const {run, el} = env();
+  const scrollEl = el("trendScroll");
+  let hasScrollable = false;
+  scrollEl.classList = {
+    toggle: (c, v) => { if (c === "scrollable") hasScrollable = !!v; },
+    contains: (c) => c === "scrollable" && hasScrollable
+  };
+  scrollEl.clientWidth = 500;
+  const canvas = el("trendChart"); canvas.style = {};
+  canvas.getContext = () => ({ setTransform(){}, clearRect(){}, fillText(){}, beginPath(){}, moveTo(){}, lineTo(){}, stroke(){}, fill(){}, roundRect(){}, createLinearGradient(){ return { addColorStop(){} }; } });
+  const yCanvas = el("trendYAxis"); yCanvas.style = {};
+  yCanvas.getContext = () => ({ setTransform(){}, clearRect(){}, fillText(){} });
+
+  // 7 天数据：不激活横向滚动
+  const days7 = Array.from({length: 7}, (_, i) => ({date: "2026-09-0" + (i+1), requests: 10}));
+  run('renderTrend')(days7);
+  assert.equal(hasScrollable, false);
+
+  // 80 天全量数据：激活横向滚动，canvas 宽度展开为 80 根柱子
+  const days80 = Array.from({length: 80}, (_, i) => ({date: "2026-08-01", requests: 15}));
+  run('renderTrend')(days80);
+  assert.equal(hasScrollable, true);
+  // 500px 视口 / 50 根 = 10px 一根；80 根 = 800px
+  assert.equal(canvas.style.width, "800px");
 });
