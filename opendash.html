@@ -78,9 +78,9 @@
   .bg {
     position: fixed; inset: 0; z-index: -3;
     background:
-      radial-gradient(70rem 45rem at -8% 6%, rgba(255, 210, 157, .46), transparent 55%),
-      radial-gradient(70rem 44rem at 108% 9%, rgba(160, 207, 255, .50), transparent 58%),
-      #f7f9fc;
+      radial-gradient(72rem 48rem at -6% 5%, rgba(255, 196, 130, .62), transparent 56%),
+      radial-gradient(72rem 46rem at 106% 8%, rgba(140, 196, 255, .66), transparent 60%),
+      linear-gradient(180deg, #F0F4FA 0%, #F7F9FD 48%, #EBF1FA 100%);
   }
   /* 极淡的网格：保留工具感，不参与对比度竞争 */
   .grid {
@@ -95,7 +95,7 @@
   /* 环境光团：给玻璃提供"可透的东西"，同时不越过中央阅读区 */
   .aurora { position: fixed; inset: 0; z-index: -2; pointer-events: none; overflow: hidden; }
   .aurora span {
-    position: absolute; border-radius: 50%; filter: blur(70px); opacity: .42;
+    position: absolute; border-radius: 50%; filter: blur(65px); opacity: .54;
     animation: float 22s ease-in-out infinite alternate;
   }
   .aurora span:nth-child(1) { width: 460px; height: 460px; left: -110px; top: 10%; background: #F7B267; }
@@ -458,14 +458,16 @@
     -webkit-text-fill-color: transparent; color: transparent;
   }
   .kpi .value .unit, .kpi .value small {
-    font-size: 0.68em;
-    font-weight: 500;
-    opacity: 0.78;
-    margin-left: 2px;
-    vertical-align: baseline;
+    display: inline-block;
+    font-size: 0.82em;
+    font-weight: 600;
+    margin-left: 4px;
     letter-spacing: normal;
+    color: var(--accent, var(--cyan));
+    -webkit-text-fill-color: var(--accent, var(--cyan));
+    vertical-align: baseline;
   }
-  .kpi .value .unit:first-child { margin-left: 0; margin-right: 2px; }
+  .kpi .value .unit:first-child { margin-left: 0; margin-right: 3px; font-size: 0.78em; }
   .kpi .delta { font-size: 10.5px; line-height: 1.55; margin-top: 9px; padding-top: 8px; border-top: 1px dashed var(--edge); color: var(--muted); font-variant-numeric: tabular-nums; }
   .kpi .delta b { font-weight: 700; color: var(--text); }
   .kpi .delta .up { color: var(--green); }
@@ -780,9 +782,9 @@
   .bg {
     position: fixed; inset: 0; z-index: -2;
     background:
-      radial-gradient(900px 520px at 12% -10%, rgba(46, 105, 255, 0.28), transparent 60%),
-      radial-gradient(800px 480px at 88% 8%, rgba(139, 60, 255, 0.20), transparent 60%),
-      radial-gradient(1000px 700px at 50% 115%, rgba(0, 210, 255, 0.13), transparent 60%),
+      radial-gradient(900px 520px at 12% -10%, rgba(46, 105, 255, 0.38), transparent 60%),
+      radial-gradient(800px 480px at 88% 8%, rgba(139, 60, 255, 0.30), transparent 60%),
+      radial-gradient(1000px 700px at 50% 115%, rgba(0, 210, 255, 0.20), transparent 60%),
       linear-gradient(180deg, #05070f 0%, #080d1d 55%, #05070f 100%);
   }
   .grid {
@@ -798,7 +800,7 @@
     position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden;
   }
   .aurora span {
-    position: absolute; border-radius: 50%; filter: blur(70px); opacity: 0.35;
+    position: absolute; border-radius: 50%; filter: blur(65px); opacity: 0.48;
     animation: float 16s ease-in-out infinite alternate;
   }
   .aurora span:nth-child(1) { width: 420px; height: 420px; left: -90px; top: 12%; background: #1d4ed8; }
@@ -1070,7 +1072,18 @@ animation: bootCore 1.8s ease-in-out infinite;
     -webkit-background-clip: text; background-clip: text;
     -webkit-text-fill-color: transparent; color: transparent;
   }
-  .kpi .value small { font-size: 14px; font-weight: 600; margin-left: 3px; color: var(--muted); -webkit-text-fill-color: var(--muted); }
+  .kpi .value .unit, .kpi .value small {
+    display: inline-block;
+    font-size: 0.82em;
+    font-weight: 600;
+    margin-left: 4px;
+    letter-spacing: normal;
+    color: var(--accent, var(--cyan));
+    -webkit-text-fill-color: var(--accent, var(--cyan));
+    text-shadow: 0 0 10px color-mix(in srgb, var(--accent, var(--cyan)) 40%, transparent);
+    vertical-align: baseline;
+  }
+  .kpi .value .unit:first-child { margin-left: 0; margin-right: 3px; font-size: 0.78em; }
   .kpi .delta { font-size: 10.5px; line-height: 1.55; margin-top: 9px; padding-top: 8px; border-top: 1px dashed rgba(140, 178, 234, .16); color: var(--muted); font-variant-numeric: tabular-nums; }
   .kpi .delta b { font-weight: 700; color: #cdd9f2; }
   .kpi .delta .up { color: var(--green); }
@@ -1417,9 +1430,9 @@ box-shadow: none;
   .bg {
     position: fixed; inset: 0; z-index: -3;
     background:
-      radial-gradient(70rem 45rem at -8% 6%, rgba(255, 210, 157, .46), transparent 55%),
-      radial-gradient(70rem 44rem at 108% 9%, rgba(160, 207, 255, .50), transparent 58%),
-      #f7f9fc;
+      radial-gradient(72rem 48rem at -6% 5%, rgba(255, 196, 130, .62), transparent 56%),
+      radial-gradient(72rem 46rem at 106% 8%, rgba(140, 196, 255, .66), transparent 60%),
+      linear-gradient(180deg, #F0F4FA 0%, #F7F9FD 48%, #EBF1FA 100%);
   }
   /* 极淡的网格：保留工具感，不参与对比度竞争 */
   .grid {
@@ -1434,7 +1447,7 @@ box-shadow: none;
   /* 环境光团：给玻璃提供"可透的东西"，同时不越过中央阅读区 */
   .aurora { position: fixed; inset: 0; z-index: -2; pointer-events: none; overflow: hidden; }
   .aurora span {
-    position: absolute; border-radius: 50%; filter: blur(70px); opacity: .42;
+    position: absolute; border-radius: 50%; filter: blur(65px); opacity: .54;
     animation: float 22s ease-in-out infinite alternate;
   }
   .aurora span:nth-child(1) { width: 460px; height: 460px; left: -110px; top: 10%; background: #F7B267; }
@@ -1797,14 +1810,16 @@ box-shadow: none;
     -webkit-text-fill-color: transparent; color: transparent;
   }
   .kpi .value .unit, .kpi .value small {
-    font-size: 0.68em;
-    font-weight: 500;
-    opacity: 0.78;
-    margin-left: 2px;
-    vertical-align: baseline;
+    display: inline-block;
+    font-size: 0.82em;
+    font-weight: 600;
+    margin-left: 4px;
     letter-spacing: normal;
+    color: var(--accent, var(--cyan));
+    -webkit-text-fill-color: var(--accent, var(--cyan));
+    vertical-align: baseline;
   }
-  .kpi .value .unit:first-child { margin-left: 0; margin-right: 2px; }
+  .kpi .value .unit:first-child { margin-left: 0; margin-right: 3px; font-size: 0.78em; }
   .kpi .delta { font-size: 10.5px; line-height: 1.55; margin-top: 9px; padding-top: 8px; border-top: 1px dashed var(--edge); color: var(--muted); font-variant-numeric: tabular-nums; }
   .kpi .delta b { font-weight: 700; color: var(--text); }
   .kpi .delta .up { color: var(--green); }
@@ -2464,8 +2479,18 @@ function applyTheme(theme) {
 const $ = (id) => document.getElementById(id);
 function fmt(n, digits = 0) {
   if (!Number.isFinite(n)) return "—";
-  if (Math.abs(n) >= 1e6) return (n / 1e6).toFixed(digits) + "M";
-  if (Math.abs(n) >= 1e3) return (n / 1e3).toFixed(digits) + "K";
+  if (Math.abs(n) >= 1e6) {
+    const val = n / 1e6;
+    const str = val.toFixed(digits);
+    const trimmed = digits > 0 && str.endsWith(".0") && Math.abs(val) >= 100 ? str.slice(0, -2) : str;
+    return trimmed + "M";
+  }
+  if (Math.abs(n) >= 1e3) {
+    const val = n / 1e3;
+    const str = val.toFixed(digits);
+    const trimmed = digits > 0 && str.endsWith(".0") && Math.abs(val) >= 100 ? str.slice(0, -2) : str;
+    return trimmed + "K";
+  }
   return String(Math.round(n));
 }
 /** 完整数字版：不做 K/M/B 缩写，可直接用于指标卡主数值。 */
