@@ -129,3 +129,13 @@ test('顶部控制抽屉支持展开与收起，且保留 controlsToggle 与 con
   assert.equal(toggle.getAttribute('aria-expanded'), 'false');
   assert.equal(drawer.getAttribute('aria-hidden'), 'true');
 });
+
+test('Token与用量数值格式化：单位上限为M，不使用B', () => {
+  const {run} = env();
+  assert.equal(run('fmt(1e8, 1)'), '100.0M');
+  assert.equal(run('fmt(1e9, 1)'), '1000.0M');
+  assert.equal(run('fmt(1234567890, 1)'), '1234.6M');
+  assert.equal(run('fmt(5e9)'), '5000M');
+  assert.doesNotMatch(run('fmt(1e9, 1)'), /B$/);
+  assert.doesNotMatch(run('fmt(50e9, 1)'), /B$/);
+});
