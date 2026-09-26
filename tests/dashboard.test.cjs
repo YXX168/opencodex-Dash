@@ -142,12 +142,12 @@ test('Token与用量数值格式化：单位上限为M，不使用B，且大数�
   assert.doesNotMatch(run('fmt(50e9, 1)'), /B$/);
 });
 
-test('KPI单位与数字之间包含不换行空格分隔&nbsp;', () => {
+test('KPI单位与数字结构规范，由CSS提供4px精致间距', () => {
   const {run} = env();
-  assert.match(run('formatKpiHtml("100.0%")'), /100\.0&nbsp;<span class="unit">%/);
-  assert.match(run('formatKpiHtml("8.0s")'), /8\.0&nbsp;<span class="unit">s/);
-  assert.match(run('formatKpiHtml("2496.8M")'), /2496\.8&nbsp;<span class="unit">M/);
-  assert.match(run('formatKpiHtml("$1,274.87")'), /<span class="unit">\$<\/span>&nbsp;1,274\.87/);
+  assert.match(run('formatKpiHtml("100.0%")'), /100\.0<span class="unit">%/);
+  assert.match(run('formatKpiHtml("8.0s")'), /8\.0<span class="unit">s/);
+  assert.match(run('formatKpiHtml("2496.8M")'), /2496\.8<span class="unit">M/);
+  assert.match(run('formatKpiHtml("$1,274.87")'), /<span class="unit">\$<\/span>1,274\.87/);
 });
 
 test('全量趋势数据多于 50 天时，激活横向滚动容器并按最多 50 根柱子计算槽宽', () => {

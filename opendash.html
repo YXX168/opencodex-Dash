@@ -461,13 +461,13 @@
     display: inline-block;
     font-size: 0.82em;
     font-weight: 600;
-    margin-left: 2px;
+    margin-left: 4px;
     letter-spacing: normal;
     color: var(--accent, var(--cyan));
     -webkit-text-fill-color: var(--accent, var(--cyan));
     vertical-align: baseline;
   }
-  .kpi .value .unit:first-child { margin-left: 0; margin-right: 2px; font-size: 0.78em; }
+  .kpi .value .unit:first-child { margin-left: 0; margin-right: 4px; font-size: 0.78em; }
   .kpi .delta { font-size: 10.5px; line-height: 1.55; margin-top: 9px; padding-top: 8px; border-top: 1px dashed var(--edge); color: var(--muted); font-variant-numeric: tabular-nums; }
   .kpi .delta b { font-weight: 700; color: var(--text); }
   .kpi .delta .up { color: var(--green); }
@@ -484,17 +484,15 @@
   .grid-side .chart-body, .grid-main .chart-body { flex: 1 1 auto; display: flex; flex-direction: column; min-height: 0; }
   canvas { width: 100%; display: block; }
   #rateChart { flex: 1 1 0%; width: 100%; min-height: 0; }
-  .trend-layout { display: flex; width: 100%; height: 210px; position: relative; }
-  #trendYAxis { width: 28px; height: 210px; flex: none; }
-  .trend-scroll { flex: 1; min-width: 0; height: 210px; overflow-x: hidden; overflow-y: hidden; scrollbar-width: thin; scrollbar-color: var(--edge) transparent; }
-  .trend-scroll.scrollable { overflow-x: auto; }
-  .trend-scroll::-webkit-scrollbar { height: 5px; }
-  .trend-scroll::-webkit-scrollbar-track { background: transparent; }
-  .trend-scroll::-webkit-scrollbar-thumb { background: var(--edge); border-radius: 3px; }
-  .trend-scroll::-webkit-scrollbar-thumb:hover { background: var(--muted); }
-  #trendChart { flex: none; height: 210px; }
+  .trend-layout { flex: 1 1 0%; width: 100%; min-height: 0; display: flex; position: relative; }
+  #trendYAxis { width: 28px; height: 100%; flex: none; display: block; }
+  .trend-scroll { flex: 1; min-width: 0; height: 100%; overflow-x: hidden; overflow-y: hidden; scrollbar-width: none; -ms-overflow-style: none; cursor: default; }
+  .trend-scroll.scrollable { overflow-x: auto; cursor: grab; }
+  .trend-scroll.dragging { cursor: grabbing; user-select: none; }
+  .trend-scroll::-webkit-scrollbar { display: none; width: 0; height: 0; }
+  #trendChart { flex: none; height: 100%; display: block; }
   .legend { display: flex; gap: 14px; flex-wrap: wrap; padding: 0 20px 12px; font-size: 12px; color: var(--muted); }
-  .legend i { display: inline-block; width: 9px; height: 9px; border-radius: 3px; margin-right: 2px; }
+  .legend i { display: inline-block; width: 9px; height: 9px; border-radius: 3px; margin-right: 4px; }
 
   /* ── 模型热度 ───────────────────────────── */
   .bars {
@@ -1084,14 +1082,14 @@ animation: bootCore 1.8s ease-in-out infinite;
     display: inline-block;
     font-size: 0.82em;
     font-weight: 600;
-    margin-left: 2px;
+    margin-left: 4px;
     letter-spacing: normal;
     color: var(--accent, var(--cyan));
     -webkit-text-fill-color: var(--accent, var(--cyan));
     text-shadow: 0 0 10px color-mix(in srgb, var(--accent, var(--cyan)) 40%, transparent);
     vertical-align: baseline;
   }
-  .kpi .value .unit:first-child { margin-left: 0; margin-right: 2px; font-size: 0.78em; }
+  .kpi .value .unit:first-child { margin-left: 0; margin-right: 4px; font-size: 0.78em; }
   .kpi .delta { font-size: 10.5px; line-height: 1.55; margin-top: 9px; padding-top: 8px; border-top: 1px dashed rgba(140, 178, 234, .16); color: var(--muted); font-variant-numeric: tabular-nums; }
   .kpi .delta b { font-weight: 700; color: #cdd9f2; }
   .kpi .delta .up { color: var(--green); }
@@ -1110,17 +1108,15 @@ animation: bootCore 1.8s ease-in-out infinite;
   .grid-side .chart-body, .grid-main .chart-body { flex: 1 1 auto; display: flex; flex-direction: column; min-height: 0; }
   canvas { width: 100%; display: block; }
   #rateChart { flex: 1 1 0%; width: 100%; min-height: 0; }
-  .trend-layout { display: flex; width: 100%; height: 210px; position: relative; }
-  #trendYAxis { width: 28px; height: 210px; flex: none; }
-  .trend-scroll { flex: 1; min-width: 0; height: 210px; overflow-x: hidden; overflow-y: hidden; scrollbar-width: thin; scrollbar-color: var(--edge) transparent; }
-  .trend-scroll.scrollable { overflow-x: auto; }
-  .trend-scroll::-webkit-scrollbar { height: 5px; }
-  .trend-scroll::-webkit-scrollbar-track { background: transparent; }
-  .trend-scroll::-webkit-scrollbar-thumb { background: var(--edge); border-radius: 3px; }
-  .trend-scroll::-webkit-scrollbar-thumb:hover { background: var(--muted); }
-  #trendChart { flex: none; height: 210px; }
+  .trend-layout { flex: 1 1 0%; width: 100%; min-height: 0; display: flex; position: relative; }
+  #trendYAxis { width: 28px; height: 100%; flex: none; display: block; }
+  .trend-scroll { flex: 1; min-width: 0; height: 100%; overflow-x: hidden; overflow-y: hidden; scrollbar-width: none; -ms-overflow-style: none; cursor: default; }
+  .trend-scroll.scrollable { overflow-x: auto; cursor: grab; }
+  .trend-scroll.dragging { cursor: grabbing; user-select: none; }
+  .trend-scroll::-webkit-scrollbar { display: none; width: 0; height: 0; }
+  #trendChart { flex: none; height: 100%; display: block; }
   .legend { display: flex; gap: 14px; flex-wrap: wrap; padding: 0 18px 12px; font-size: 12px; color: var(--muted); }
-  .legend i { display: inline-block; width: 9px; height: 9px; border-radius: 3px; margin-right: 2px; }
+  .legend i { display: inline-block; width: 9px; height: 9px; border-radius: 3px; margin-right: 4px; }
 
   /* 模型热度 */
   .bars {
@@ -1829,13 +1825,13 @@ box-shadow: none;
     display: inline-block;
     font-size: 0.82em;
     font-weight: 600;
-    margin-left: 2px;
+    margin-left: 4px;
     letter-spacing: normal;
     color: var(--accent, var(--cyan));
     -webkit-text-fill-color: var(--accent, var(--cyan));
     vertical-align: baseline;
   }
-  .kpi .value .unit:first-child { margin-left: 0; margin-right: 2px; font-size: 0.78em; }
+  .kpi .value .unit:first-child { margin-left: 0; margin-right: 4px; font-size: 0.78em; }
   .kpi .delta { font-size: 10.5px; line-height: 1.55; margin-top: 9px; padding-top: 8px; border-top: 1px dashed var(--edge); color: var(--muted); font-variant-numeric: tabular-nums; }
   .kpi .delta b { font-weight: 700; color: var(--text); }
   .kpi .delta .up { color: var(--green); }
@@ -1852,17 +1848,15 @@ box-shadow: none;
   .grid-side .chart-body, .grid-main .chart-body { flex: 1 1 auto; display: flex; flex-direction: column; min-height: 0; }
   canvas { width: 100%; display: block; }
   #rateChart { flex: 1 1 0%; width: 100%; min-height: 0; }
-  .trend-layout { display: flex; width: 100%; height: 210px; position: relative; }
-  #trendYAxis { width: 28px; height: 210px; flex: none; }
-  .trend-scroll { flex: 1; min-width: 0; height: 210px; overflow-x: hidden; overflow-y: hidden; scrollbar-width: thin; scrollbar-color: var(--edge) transparent; }
-  .trend-scroll.scrollable { overflow-x: auto; }
-  .trend-scroll::-webkit-scrollbar { height: 5px; }
-  .trend-scroll::-webkit-scrollbar-track { background: transparent; }
-  .trend-scroll::-webkit-scrollbar-thumb { background: var(--edge); border-radius: 3px; }
-  .trend-scroll::-webkit-scrollbar-thumb:hover { background: var(--muted); }
-  #trendChart { flex: none; height: 210px; }
+  .trend-layout { flex: 1 1 0%; width: 100%; min-height: 0; display: flex; position: relative; }
+  #trendYAxis { width: 28px; height: 100%; flex: none; display: block; }
+  .trend-scroll { flex: 1; min-width: 0; height: 100%; overflow-x: hidden; overflow-y: hidden; scrollbar-width: none; -ms-overflow-style: none; cursor: default; }
+  .trend-scroll.scrollable { overflow-x: auto; cursor: grab; }
+  .trend-scroll.dragging { cursor: grabbing; user-select: none; }
+  .trend-scroll::-webkit-scrollbar { display: none; width: 0; height: 0; }
+  #trendChart { flex: none; height: 100%; display: block; }
   .legend { display: flex; gap: 14px; flex-wrap: wrap; padding: 0 20px 12px; font-size: 12px; color: var(--muted); }
-  .legend i { display: inline-block; width: 9px; height: 9px; border-radius: 3px; margin-right: 2px; }
+  .legend i { display: inline-block; width: 9px; height: 9px; border-radius: 3px; margin-right: 4px; }
 
   /* ── 模型热度 ───────────────────────────── */
   .bars {
@@ -2909,9 +2903,9 @@ const kpiAnim = {
 function formatKpiHtml(str) {
   if (!str || str === "—") return str;
   if (typeof str !== "string") str = String(str);
-  if (str.startsWith("$")) return `<span class="unit">$</span>&nbsp;${str.slice(1)}`;
+  if (str.startsWith("$")) return `<span class="unit">$</span>${str.slice(1)}`;
   const m = str.match(/^(.+?)(%|ms|s|m|B|M|K)$/);
-  if (m) return `${m[1]}&nbsp;<span class="unit">${m[2]}</span>`;
+  if (m) return `${m[1]}<span class="unit">${m[2]}</span>`;
   return str;
 }
 function renderKpiValue(el, formattedStr) {
@@ -3568,7 +3562,7 @@ function renderTrend(days) {
   if (!canvas || !scrollEl) return;
 
   const dpr = window.devicePixelRatio || 1;
-  const H = 210;
+  const H = Math.max(scrollEl.clientHeight || 0, 200);
   const visibleW = Math.max(scrollEl.clientWidth || 0, 320);
 
   const titleEl = $("trendTitle");
@@ -3583,7 +3577,7 @@ function renderTrend(days) {
     canvas.width = visibleW * dpr; canvas.height = H * dpr;
     if (canvas.style) canvas.style.width = visibleW + "px";
     if (yCanvas && yCanvas.getContext) {
-      yCanvas.width = 28 * dpr; yCanvas.height = H * dpr; if (yCanvas.style) yCanvas.style.width = "28px";
+      yCanvas.width = 28 * dpr; yCanvas.height = H * dpr; if (yCanvas.style) { yCanvas.style.width = "28px"; yCanvas.style.height = H + "px"; }
       const yCtx = yCanvas.getContext("2d");
       if (yCtx) { yCtx.setTransform(dpr, 0, 0, dpr, 0, 0); yCtx.clearRect(0, 0, 28, H); }
     }
@@ -3634,7 +3628,7 @@ function renderTrend(days) {
 
   canvas.width = totalW * dpr;
   canvas.height = H * dpr;
-  if (canvas.style) canvas.style.width = totalW + "px";
+  if (canvas.style) { canvas.style.width = totalW + "px"; canvas.style.height = H + "px"; }
   const ctx = canvas.getContext ? canvas.getContext("2d") : null;
   if (!ctx) return;
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -3659,12 +3653,10 @@ function renderTrend(days) {
 
   // 若超出 50 根柱子，默认平滑滚动至最右侧（显示最新的历史）
   if (isScrollable) {
-    const raf = typeof requestAnimationFrame === "function" ? requestAnimationFrame : (typeof window !== "undefined" ? window.requestAnimationFrame : null);
-    if (typeof raf === "function") {
-      raf(() => { scrollEl.scrollLeft = scrollEl.scrollWidth - scrollEl.clientWidth; });
-    } else {
-      scrollEl.scrollLeft = scrollEl.scrollWidth - scrollEl.clientWidth;
-    }
+    const doScroll = () => { scrollEl.scrollLeft = Math.max(0, scrollEl.scrollWidth - scrollEl.clientWidth); };
+    doScroll();
+    if (typeof requestAnimationFrame === "function") requestAnimationFrame(doScroll);
+    setTimeout(doScroll, 80);
   }
 }
 
@@ -3980,6 +3972,7 @@ function boot() {
   bindRateControls();
   const trendScroll = $("trendScroll");
   if (trendScroll && trendScroll.addEventListener) {
+    // 鼠标滚轮横滚
     trendScroll.addEventListener("wheel", (e) => {
       if (trendScroll.scrollWidth > trendScroll.clientWidth) {
         if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
@@ -3988,6 +3981,26 @@ function boot() {
         }
       }
     }, { passive: false });
+
+    // 鼠标拖拽横向滑动（支持直接点住图表往左/右拖拽）
+    let isDown = false, startX = 0, scrollStart = 0;
+    trendScroll.addEventListener("mousedown", (e) => {
+      if (trendScroll.scrollWidth <= trendScroll.clientWidth) return;
+      isDown = true;
+      trendScroll.classList.add("dragging");
+      startX = e.pageX;
+      scrollStart = trendScroll.scrollLeft;
+    });
+    window.addEventListener("mousemove", (e) => {
+      if (!isDown) return;
+      const walk = e.pageX - startX;
+      trendScroll.scrollLeft = scrollStart - walk;
+    });
+    window.addEventListener("mouseup", () => {
+      if (!isDown) return;
+      isDown = false;
+      trendScroll.classList.remove("dragging");
+    });
   }
   initControlsDrawer();
   const media = matchMedia("(prefers-reduced-motion: reduce)");
