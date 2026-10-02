@@ -636,6 +636,25 @@
   .flow-status .st b { font-family: var(--mono); font-weight: 700; }
   #flowChart { flex: 1 1 auto; height: auto; min-height: 64px; }
 
+  /* ── 供应商 × 实时吞吐：合并指挥舱 ──────── */
+  #providerFlowPanel { grid-column: 1 / -1; }
+  .pf-scan {
+    position: absolute; top: 0; left: -30%; width: 30%; height: 2px; border-radius: 2px;
+    background: linear-gradient(90deg, transparent, var(--blue), var(--violet), transparent);
+    opacity: .5; filter: blur(.4px); pointer-events: none; z-index: 3;
+    animation: pfScan 7s linear infinite;
+  }
+  @keyframes pfScan { from { left: -30%; } to { left: 100%; } }
+  .pf-grid { flex: 1; display: grid; grid-template-columns: minmax(380px, 450px) 1px minmax(0, 1fr); min-height: 0; }
+  .pf-sec { display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+  .pf-cap { font-size: 10.5px; color: var(--faint); letter-spacing: 1.5px; padding: 2px 22px 0; white-space: nowrap; }
+  .pf-donut { flex: 1; display: flex; align-items: center; justify-content: center; gap: 26px; padding: 6px 22px 14px; min-height: 0; }
+  .pf-divider {
+    background: linear-gradient(180deg, transparent, var(--edge-soft) 18%, var(--edge-soft) 82%, transparent);
+    margin: 16px 0;
+  }
+  .pf-flow { flex: 1; display: flex; flex-direction: column; gap: 10px; padding: 6px 22px 14px; min-height: 0; min-width: 0; }
+
   footer { text-align: center; color: var(--muted); font: 500 10px/1.6 var(--mono); letter-spacing: 1px; padding: 6px 0; }
   .footer-spark { color: var(--blue); padding: 0 10px; }
   #logCount { font: 10px var(--mono); color: var(--muted); white-space: nowrap; }
@@ -1323,6 +1342,25 @@ box-shadow: none;
   .flow-k { padding:12px; }
   .flow-k b { font-size:26px; }
   #flowChart { flex:1 1 auto; height:auto; min-height:64px; }
+
+  /* ── 供应商 × 实时吞吐：合并指挥舱（深色） ── */
+  #providerFlowPanel { grid-column:1 / -1; }
+  .pf-scan {
+    position:absolute; top:0; left:-30%; width:30%; height:2px; border-radius:2px;
+    background:linear-gradient(90deg, transparent, var(--cyan), var(--violet), transparent);
+    opacity:.55; filter:blur(.4px); pointer-events:none; z-index:3;
+    animation:pfScan-d 7s linear infinite;
+  }
+  @keyframes pfScan-d { from { left:-30%; } to { left:100%; } }
+  .pf-grid { flex:1; display:grid; grid-template-columns:minmax(380px, 450px) 1px minmax(0, 1fr); min-height:0; }
+  .pf-sec { display:flex; flex-direction:column; min-width:0; min-height:0; }
+  .pf-cap { font-size:10.5px; color:var(--muted); letter-spacing:1.5px; padding:2px 22px 0; white-space:nowrap; opacity:.75; }
+  .pf-donut { flex:1; display:flex; align-items:center; justify-content:center; gap:26px; padding:6px 22px 14px; min-height:0; }
+  .pf-divider {
+    background:linear-gradient(180deg, transparent, var(--line) 18%, var(--line) 82%, transparent);
+    margin:16px 0;
+  }
+  .pf-flow { flex:1; display:flex; flex-direction:column; gap:10px; padding:6px 22px 14px; min-height:0; min-width:0; }
   .footer-spark { color:var(--cyan); padding:0 10px; }
   footer { font:10px var(--mono); letter-spacing:1px; padding:6px 0; }
   .not-live .live-mark { color:var(--muted); }
@@ -1523,44 +1561,55 @@ try {
         </div>
       </section>
 
-      <section class="panel">
-        <h2><span class="bar" style="background:linear-gradient(180deg,#0B9A6A,#2868D8)"></span>供应商分布 <span class="hint" id="donutHint">7 天请求占比</span></h2>
-        <div class="donut-wrap">
-          <div class="donut">
-            <svg width="146" height="146" viewBox="0 0 146 146" id="donutSvg"></svg>
-            <div class="center"></div>
-                      </div>
-                      <div class="donut-list" id="donutList"></div>
-                    </div>
-                  </section>
-
-                  <section class="panel">
-                    <h2><span class="bar" style="background:linear-gradient(180deg,#0E86B8,#5B3FE0)"></span>实时吞吐 <span class="hint">最近 10 分钟</span></h2>
-                    <div class="flow-wrap">
-                      <div class="flow-head">
-                        <div class="flow-k alt">
-                          <b id="flowRps">—</b>
-                          <span>实时请求</span>
-                        </div>
-                        <div class="flow-k">
-                          <b id="flowTokens">—</b>
-                          <span>实时 Token</span>
-                        </div>
-                      </div>
-                      <canvas role="img" aria-label="最近十分钟最后四十条请求的 Token 用量" id="flowChart" height="70"></canvas>
-                      <div class="flow-meta">
-                        <span>输入 <b id="flowIn">—</b></span>
-                        <span>输出 <b id="flowOut">—</b></span>
-                        <span>P50 <b id="flowP50">—</b></span>
-                        <span>P95 <b id="flowP95">—</b></span>
-                      </div>
-                      <div class="flow-status">
-                        <span class="st"><i style="background:#0B9A6A"></i>成功 <b id="flowOk">0</b></span>
-                        <span class="st"><i style="background:#E08000"></i>限流 <b id="flowThr">0</b></span>
-                        <span class="st"><i style="background:#D0342C"></i>失败 <b id="flowFail">0</b></span>
-                      </div>
-                    </div>
-                  </section>
+      <section class="panel" id="providerFlowPanel">
+        <div class="pf-scan" aria-hidden="true"></div>
+        <h2><span class="bar" style="background:linear-gradient(180deg,#0B9A6A,#0E86B8)"></span>供应商 · 实时吞吐
+          <span class="panel-title-tools">
+            <span class="live-mark">LIVE</span>
+            <span class="hint" id="pfProviders">— 个供应商</span>
+          </span>
+        </h2>
+        <div class="pf-grid">
+          <div class="pf-sec">
+            <div class="pf-cap" id="donutHint">近 7 天请求占比</div>
+            <div class="pf-donut">
+              <div class="donut">
+                <svg width="146" height="146" viewBox="0 0 146 146" id="donutSvg"></svg>
+                <div class="center"></div>
+              </div>
+              <div class="donut-list" id="donutList"></div>
+            </div>
+          </div>
+          <div class="pf-divider" aria-hidden="true"></div>
+          <div class="pf-sec">
+            <div class="pf-cap">最近 10 分钟 · 按供应商堆叠</div>
+            <div class="pf-flow">
+              <div class="flow-head">
+                <div class="flow-k alt">
+                  <b id="flowRps">—</b>
+                  <span>实时请求</span>
+                </div>
+                <div class="flow-k">
+                  <b id="flowTokens">—</b>
+                  <span>实时 Token</span>
+                </div>
+              </div>
+              <canvas role="img" aria-label="最近十分钟最后四十条请求的 Token 用量" id="flowChart" height="70"></canvas>
+              <div class="flow-meta">
+                <span>输入 <b id="flowIn">—</b></span>
+                <span>输出 <b id="flowOut">—</b></span>
+                <span>P50 <b id="flowP50">—</b></span>
+                <span>P95 <b id="flowP95">—</b></span>
+              </div>
+              <div class="flow-status">
+                <span class="st"><i style="background:#0B9A6A"></i>成功 <b id="flowOk">0</b></span>
+                <span class="st"><i style="background:#E08000"></i>限流 <b id="flowThr">0</b></span>
+                <span class="st"><i style="background:#D0342C"></i>失败 <b id="flowFail">0</b></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
                 </div>
 
     <footer>OPENDASH <span class="footer-spark">✧</span> REQUEST OBSERVATORY · 日志 3 秒 / 用量 15 秒同步</footer>
@@ -1738,6 +1787,8 @@ function applyTheme(theme) {
   byMinute: new Map(),
   byTenSeconds: new Map(),
   liveStats: { total: 0, ok: 0, err: 0, ms: [], models: new Set() },
+  flowStreams: [],            // 实时吞吐堆叠层：[{ provider, color, values }]
+  flowHighlightProvider: null, // 环形图悬停联动高亮的供应商（null = 无）
   online: false,
   lastPoll: 0,
   lastHeatKeys: null,
@@ -2399,6 +2450,9 @@ function renderDonut(providers, svgEl, listEl) {
 
   const donutHint = $("donutHint");
   if (donutHint) donutHint.textContent = `${rangeLabel()}请求占比`;
+  // 合并卡片：头部显示供应商数量
+  const pfProviders = $("pfProviders");
+  if (pfProviders) pfProviders.textContent = known.length ? `${known.length} 个供应商` : "— 个供应商";
   const list = listEl || $("donutList");
 
   // 列表也尽量原地更新：数量一致时只改文字，不重建 DOM
@@ -2453,6 +2507,12 @@ function renderDonut(providers, svgEl, listEl) {
       } else {
         delete svg.dataset.glow;
       }
+      // 联动：高亮流量图里同一供应商的堆叠层（index 是环形图内序号，转成供应商名再匹配）
+      const pname = index == null ? null : (String((top[Number(index)] || {}).provider || "") || null);
+      if (state.flowHighlightProvider !== pname) {
+        state.flowHighlightProvider = pname;
+        redrawFlowChart();
+      }
     };
     // 延迟清除：鼠标快速划过项与项之间的空白时，不会立刻熄灭导致闪烁
     const clearActive = () => {
@@ -2492,6 +2552,18 @@ function flowTokensOf(l) {
   const sum = inT + outT;
   return tot > 0 ? tot : sum;
 }
+/* hex 颜色转 rgba（堆叠流量图的渐变填充用） */
+function hexToRgba(hex, alpha) {
+  const h = String(hex || "").replace("#", "");
+  const v = h.length === 3 ? h.split("").map(c => c + c).join("") : h;
+  const n = parseInt(v, 16);
+  if (!Number.isFinite(n) || v.length !== 6) return `rgba(120,140,180,${alpha})`;
+  return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${alpha})`;
+}
+/* 轻量重绘流量图（悬停联动高亮时用，不重算数据） */
+function redrawFlowChart() {
+  drawFlowChart(state.flowStreams || []);
+}
 function pctile(arr, q) {
   if (!arr.length) return null;
   const s = arr.slice().sort((a, b) => a - b);
@@ -2502,8 +2574,6 @@ function renderFlowCard() {
   const recent = state.liveWindowLogs || [];
   let ok = 0, throttled = 0, failed = 0, tokens = 0, input = 0, output = 0;
   const ms = [];
-  const series = [];
-  const maxPoints = 40;
   for (const l of recent) {
     const st = Number(l && l.status) || 0;
     if (isOk(st)) ok++;
@@ -2518,10 +2588,37 @@ function renderFlowCard() {
       input += inT;
       output += outT;
     }
-    series.push(t);
     if (Number.isFinite(l.durationMs)) ms.push(l.durationMs);
   }
-  if (series.length > maxPoints) series.splice(0, series.length - maxPoints);
+  // ── 按供应商 × 时间桶堆叠：最近 10 分钟分成 40 桶 ──
+  const BUCKETS = 40;
+  const nowMs = Date.now();
+  const winStart = nowMs - LIVE_WINDOW_MS;
+  const byProv = new Map();
+  for (const l of recent) {
+    const ts = Number(l && l.timestamp);
+    if (!Number.isFinite(ts)) continue;
+    const t = flowTokensOf(l);
+    if (t <= 0) continue;
+    const p = String((l && l.provider) || "未知");
+    if (!byProv.has(p)) byProv.set(p, { total: 0, vals: new Array(BUCKETS).fill(0) });
+    const e = byProv.get(p);
+    e.total += t;
+    const b = Math.max(0, Math.min(BUCKETS - 1, Math.floor((ts - winStart) / LIVE_WINDOW_MS * BUCKETS)));
+    e.vals[b] += t;
+  }
+  const ranked = [...byProv.entries()].sort((a, b) => b[1].total - a[1].total);
+  const TOP_STREAMS = 4;
+  const streams = [];
+  ranked.slice(0, TOP_STREAMS).forEach(([p, e], i) => {
+    streams.push({ provider: p, color: PALETTE[i % PALETTE.length][0], values: e.vals });
+  });
+  if (ranked.length > TOP_STREAMS) {
+    const other = new Array(BUCKETS).fill(0);
+    ranked.slice(TOP_STREAMS).forEach(([, e]) => e.vals.forEach((v, i) => { other[i] += v; }));
+    streams.push({ provider: "其他", color: PALETTE[TOP_STREAMS % PALETTE.length][0], values: other });
+  }
+  state.flowStreams = streams;
   const sum = ok + throttled + failed;
   const set = (id, v) => { const el = $(id); if (el) el.textContent = v; };
   set("flowRps", state.initialLogsLoaded ? fmtFull(sum) : "—");
@@ -2535,12 +2632,14 @@ function renderFlowCard() {
   set("flowP50", p50 == null ? "—" : fmtDur(p50));
   set("flowP95", p95 == null ? "—" : fmtDur(p95));
   const flowCanvas = $("flowChart");
+  const streamDesc = streams.filter(s => s.values.some(v => v > 0)).slice(0, 4)
+    .map(s => `${shortProvider(s.provider)} ${fmt(s.values.reduce((a, b) => a + b, 0))}`).join("、");
   if (flowCanvas) flowCanvas.setAttribute("aria-label",
-    sum > 0 ? `最近十分钟请求：成功 ${ok} 次，限流 ${throttled} 次，失败 ${failed} 次，共 ${fmt(tokens)} Token`
+    sum > 0 ? `最近十分钟请求：成功 ${ok} 次，限流 ${throttled} 次，失败 ${failed} 次，共 ${fmt(tokens)} Token${streamDesc ? "，分供应商：" + streamDesc : ""}`
             : "最近十分钟请求：暂无数据");
-  drawFlowChart(series);
+  drawFlowChart(streams);
 }
-function drawFlowChart(series) {
+function drawFlowChart(streams) {
   const canvas = document.getElementById("flowChart");
   if (!canvas) return;
   const dpr = window.devicePixelRatio || 1;
@@ -2551,49 +2650,66 @@ function drawFlowChart(series) {
   const ctx = canvas.getContext("2d");
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   ctx.clearRect(0, 0, W, H);
-  const N = Math.max(2, series.length);
-  const max = Math.max.apply(null, series.concat([1]));
-  const padT = 6, padB = 6, padL = 0, padR = 0;
-  const iw = W - padL - padR, ih = H - padT - padB;
-  const step = iw / (N - 1);
-  const points = series.map((v, i) => ({ x: padL + i * step, y: padT + ih - (Math.max(0, v) / max) * ih }));
-  if (!points.length) return;
-  ctx.beginPath();
-  ctx.moveTo(points[0].x, padT + ih);
-  ctx.lineTo(points[0].x, points[0].y);
-  for (let i = 1; i < points.length - 1; i++) {
-    const current = points[i], next = points[i + 1];
-    ctx.quadraticCurveTo(current.x, current.y, (current.x + next.x) / 2, (current.y + next.y) / 2);
+  const list = (streams || []).filter(s => s.values && s.values.length);
+  const N = list.length ? list[0].values.length : 0;
+  const padT = 8, padB = 8;
+  const base = H - padB, ih = H - padT - padB;
+  const highlight = state.flowHighlightProvider || null;
+  if (!N) {
+    // 空态：一条淡虚线基线，卡片不塌
+    ctx.strokeStyle = "rgba(120,140,180,.28)";
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath(); ctx.moveTo(0, base); ctx.lineTo(W, base); ctx.stroke();
+    ctx.setLineDash([]);
+    return;
   }
-  if (points.length > 1) ctx.lineTo(points[points.length - 1].x, points[points.length - 1].y);
-  ctx.lineTo(points[points.length - 1].x, padT + ih);
-  ctx.closePath();
-  const grad = ctx.createLinearGradient(0, padT, 0, padT + ih);
-  grad.addColorStop(0, CHART.flowTop);
-  grad.addColorStop(1, CHART.flowEnd);
-  ctx.fillStyle = grad;
-  ctx.fill();
-  ctx.beginPath();
-  ctx.moveTo(points[0].x, points[0].y);
-  for (let i = 1; i < points.length - 1; i++) {
-    const current = points[i], next = points[i + 1];
-    ctx.quadraticCurveTo(current.x, current.y, (current.x + next.x) / 2, (current.y + next.y) / 2);
-  }
-  if (points.length > 1) ctx.lineTo(points[points.length - 1].x, points[points.length - 1].y);
-  ctx.strokeStyle = CHART.flowLine;
-  ctx.lineWidth = 1.6;
-  ctx.lineJoin = "round";
-  ctx.shadowColor = CHART.flowGlow;
-  ctx.shadowBlur = 6;
-  ctx.stroke();
-  ctx.shadowBlur = 0;
-  if (series.length) {
-    const p = points[points.length - 1];
-    ctx.beginPath(); ctx.arc(p.x, p.y, 2.6, 0, Math.PI * 2);
-    ctx.fillStyle = CHART.dotFill;
-    ctx.shadowColor = CHART.flowGlow; ctx.shadowBlur = 8;
+  // 逐层累计堆叠高度（tops[si][i] = 第 si 层在第 i 个点的顶部累计值）
+  const cum = new Array(N).fill(0);
+  const tops = list.map(s => s.values.map((v, i) => (cum[i] += Math.max(0, v))));
+  const max = Math.max(1, ...cum);
+  const step = N > 1 ? W / (N - 1) : 0;
+  const X = i => i * step;
+  const Y = v => padT + ih - (v / max) * ih;
+  // 路径：沿顶部累计线走，底部收回基线（平滑曲线）
+  const traceTop = (pts) => {
+    ctx.beginPath();
+    if (N === 1) { ctx.moveTo(X(0) - 3, Y(pts[0])); ctx.lineTo(X(0) + 3, Y(pts[0])); return; }
+    ctx.moveTo(X(0), Y(pts[0]));
+    for (let i = 1; i < N - 1; i++) {
+      const xc = (X(i) + X(i + 1)) / 2, yc = (Y(pts[i]) + Y(pts[i + 1])) / 2;
+      ctx.quadraticCurveTo(X(i), Y(pts[i]), xc, yc);
+    }
+    ctx.lineTo(X(N - 1), Y(pts[N - 1]));
+  };
+  // 从底层向上逐层绘制：先铺渐变，再描顶边线
+  list.forEach((s, si) => {
+    const dim = !!(highlight && s.provider !== highlight);
+    const pts = tops[si];
+    ctx.save();
+    if (dim) ctx.globalAlpha = 0.15;
+    traceTop(pts);
+    if (N > 1) { ctx.lineTo(X(N - 1), base); ctx.lineTo(X(0), base); ctx.closePath(); }
+    const g = ctx.createLinearGradient(0, padT, 0, base);
+    g.addColorStop(0, hexToRgba(s.color, dim ? 0.30 : 0.55));
+    g.addColorStop(1, hexToRgba(s.color, 0.05));
+    ctx.fillStyle = g;
     ctx.fill();
-    ctx.shadowBlur = 0;
+    traceTop(pts);
+    ctx.strokeStyle = s.color;
+    ctx.lineWidth = si === list.length - 1 ? 1.8 : 1.2;
+    ctx.lineJoin = "round";
+    if (!dim) { ctx.shadowColor = hexToRgba(s.color, 0.5); ctx.shadowBlur = 6; }
+    ctx.stroke();
+    ctx.restore();
+  });
+  // 末端总量圆点
+  const lastTop = cum[N - 1];
+  if (lastTop > 0) {
+    const dotC = list[list.length - 1].color;
+    ctx.beginPath(); ctx.arc(X(N - 1), Y(lastTop), 2.6, 0, Math.PI * 2);
+    ctx.fillStyle = "#fff";
+    ctx.shadowColor = hexToRgba(dotC, 0.8); ctx.shadowBlur = 8;
+    ctx.fill(); ctx.shadowBlur = 0;
   }
 }
 
