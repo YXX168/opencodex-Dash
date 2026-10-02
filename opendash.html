@@ -516,12 +516,31 @@
 
   /* ── 图表区 ─────────────────────────────── */
   /* 主次分明：图表区占 1.6，日志流占 1；面板高度两套主题统一为 384px */
-  .grid-main { display: grid; grid-template-columns: 1.6fr minmax(0, 1fr); gap: var(--gap); }
+  .grid-main { display: grid; grid-template-columns: 1fr; gap: var(--gap); }
   .grid-main > .panel { height: 384px; }
   .grid-side { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--gap); align-items: stretch; }
   .grid-side > .panel { height: 384px; min-width: 0; }
   .grid-side > .panel, .grid-main > .panel { display: flex; flex-direction: column; }
   .chart-body { padding: 8px 18px 12px; }
+
+  /* ── 合并面板：mg-grid（实时监控 / 模型洞察）── */
+  .mg-grid { flex: 1 1 auto; display: grid; grid-template-columns: minmax(0, 1.55fr) 1px minmax(0, 1fr); min-height: 0; }
+  .mg-grid-insight { grid-template-columns: minmax(0, 1fr) 1px minmax(0, 1fr); }
+  .mg-sec { display: flex; flex-direction: column; min-width: 0; min-height: 0; padding: 0 22px 14px; }
+  .mg-sec:first-child { padding-left: var(--pad-panel); }
+  .mg-sec:last-child { padding-right: var(--pad-panel); }
+  .mg-divider {
+    background: linear-gradient(180deg, transparent, var(--edge-soft) 18%, var(--edge-soft) 82%, transparent);
+    margin: 10px 0 14px;
+  }
+  .mg-cap { display: flex; align-items: center; gap: 10px; padding: 2px 0 10px; }
+  .mg-cap-title { font-size: 11px; font-weight: 700; letter-spacing: 1.6px; color: var(--muted); white-space: nowrap; }
+  .mg-tools { margin-left: auto; display: inline-flex; align-items: center; gap: 10px; min-width: 0; }
+  .mg-tools .hint { font-size: 10.5px; color: var(--muted); white-space: nowrap; }
+  .panel-merge .chart-body { padding: 2px 0 6px; }
+  .panel-merge .legend { padding: 6px 0 0; }
+  .panel-merge .log-list { padding: 2px 2px 2px 6px; }
+  .panel-merge .bars { padding: 2px 0; }
   .grid-side .chart-body, .grid-main .chart-body { flex: 1 1 auto; display: flex; flex-direction: column; min-height: 0; }
   canvas { width: 100%; display: block; }
   #rateChart { flex: 1 1 0%; width: 100%; min-height: 0; }
@@ -685,6 +704,7 @@
 
   /* ── 供应商 × 实时吞吐：合并指挥舱 ──────── */
   #providerFlowPanel { grid-column: 1 / -1; }
+  #insightPanel { grid-column: 1 / -1; }
   .pf-scan {
     position: absolute; top: 0; left: -30%; width: 30%; height: 2px; border-radius: 2px;
     background: linear-gradient(90deg, transparent, var(--blue), var(--violet), transparent);
@@ -741,6 +761,14 @@
     /* 移动端：环形图与图例上下排列，图例占满宽度不再截断 */
     .pf-donut { flex-wrap: wrap; gap: 14px; padding: 6px 16px 12px; }
     .donut-list { flex: 1 1 280px; max-width: 340px; }
+    /* 合并面板：移动端上下堆叠，分隔线转横向，面板高度自适应 */
+    .mg-grid, .mg-grid-insight { grid-template-columns: minmax(0, 1fr); }
+    .mg-divider {
+      width: auto; height: 1px; margin: 4px 0 2px;
+      background: linear-gradient(90deg, transparent, var(--edge-soft) 18%, var(--edge-soft) 82%, transparent);
+    }
+    .panel-merge { height: auto !important; min-height: 340px; }
+    .panel-merge .mg-sec { min-height: 300px; padding: 0 18px 14px; }
   }
   @media (max-width: 700px) {
     .wrap { padding: 16px 12px; gap: 12px; }
@@ -1214,7 +1242,7 @@ animation: bootCore-d 1.8s ease-in-out infinite;
 
   /* ── 图表区 ───────────────────────────── */
   .grid-main {
-    display: grid; grid-template-columns: 1.6fr minmax(0, 1fr); gap: var(--gap);
+    display: grid; grid-template-columns: 1fr; gap: var(--gap);
   }
   .grid-main > .panel { height: 384px; }
   .grid-side > .panel { height: 384px; }
@@ -1224,6 +1252,25 @@ animation: bootCore-d 1.8s ease-in-out infinite;
   .grid-side .chart-body, .grid-main .chart-body { flex: 1 1 auto; display: flex; flex-direction: column; min-height: 0; }
   canvas { width: 100%; display: block; }
   #rateChart { flex: 1 1 0%; width: 100%; min-height: 0; }
+
+  /* ── 合并面板：mg-grid（实时监控 / 模型洞察）── */
+  .mg-grid { flex: 1 1 auto; display: grid; grid-template-columns: minmax(0, 1.55fr) 1px minmax(0, 1fr); min-height: 0; }
+  .mg-grid-insight { grid-template-columns: minmax(0, 1fr) 1px minmax(0, 1fr); }
+  .mg-sec { display: flex; flex-direction: column; min-width: 0; min-height: 0; padding: 0 22px 14px; }
+  .mg-sec:first-child { padding-left: var(--pad-panel); }
+  .mg-sec:last-child { padding-right: var(--pad-panel); }
+  .mg-divider {
+    background: linear-gradient(180deg, transparent, var(--line) 18%, var(--line) 82%, transparent);
+    margin: 10px 0 14px;
+  }
+  .mg-cap { display: flex; align-items: center; gap: 10px; padding: 2px 0 10px; }
+  .mg-cap-title { font-size: 11px; font-weight: 700; letter-spacing: 1.6px; color: var(--muted); white-space: nowrap; }
+  .mg-tools { margin-left: auto; display: inline-flex; align-items: center; gap: 10px; min-width: 0; }
+  .mg-tools .hint { font-size: 10.5px; color: var(--muted); white-space: nowrap; }
+  .panel-merge .chart-body { padding: 2px 0 6px; }
+  .panel-merge .legend { padding: 6px 0 0; }
+  .panel-merge .log-list { padding: 2px 2px 2px 6px; }
+  .panel-merge .bars { padding: 2px 0; }
   .trend-layout { flex: 1 1 0%; width: 100%; min-height: 0; display: flex; position: relative; }
   #trendYAxis { width: 28px; height: 100%; flex: none; display: block; }
   .trend-scroll { flex: 1; min-width: 0; height: 100%; overflow-x: hidden; overflow-y: hidden; scrollbar-width: none; -ms-overflow-style: none; cursor: default; }
@@ -1398,6 +1445,14 @@ box-shadow: none;
     /* 移动端：环形图与图例上下排列，图例占满宽度不再截断 */
     .pf-donut { flex-wrap: wrap; gap: 14px; padding: 6px 16px 12px; }
     .donut-list { flex: 1 1 280px; max-width: 340px; }
+    /* 合并面板：移动端上下堆叠，分隔线转横向，面板高度自适应 */
+    .mg-grid, .mg-grid-insight { grid-template-columns: minmax(0, 1fr); }
+    .mg-divider {
+      width: auto; height: 1px; margin: 4px 0 2px;
+      background: linear-gradient(90deg, transparent, var(--line) 18%, var(--line) 82%, transparent);
+    }
+    .panel-merge { height: auto !important; min-height: 340px; }
+    .panel-merge .mg-sec { min-height: 300px; padding: 0 18px 14px; }
   }
 
   /* ── 实时吞吐卡片 ── */
@@ -1436,7 +1491,7 @@ box-shadow: none;
   .panel:hover { border-color:#78b6db40; box-shadow:0 16px 50px #0003,0 0 24px #38e1ff06; }
   .panel::after { content:""; position:absolute; inset:0; pointer-events:none; border-radius:inherit; background:radial-gradient(360px circle at var(--mx,-500px) var(--my,-500px),#78dfff0b,transparent 70%); }
   @keyframes panelEnter-d { from { opacity:0; transform:translateY(18px) scale(.99); } to { opacity:1; transform:none; } }
-  .grid-main { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .grid-main { grid-template-columns:1fr; }
   .grid-main > .panel { height:350px; }
   .grid-side { grid-template-columns:repeat(2,minmax(0,1fr)); }
   .grid-side > .panel { height:350px; min-width:0; }
@@ -1458,6 +1513,7 @@ box-shadow: none;
 
   /* ── 供应商 × 实时吞吐：合并指挥舱（深色） ── */
   #providerFlowPanel { grid-column:1 / -1; }
+  #insightPanel { grid-column:1 / -1; }
   .pf-scan {
     position:absolute; top:0; left:-30%; width:30%; height:2px; border-radius:2px;
     background:linear-gradient(90deg, transparent, var(--cyan), var(--violet), transparent);
@@ -1616,59 +1672,72 @@ try {
     </section>
 
     <div class="grid-main">
-      <section class="panel">
-        <h2 class="rate-title"><span class="bar"></span>请求速率
-          <span class="panel-title-tools">
-            <span class="live-mark">LIVE</span>
-            <span class="segmented" id="rateRange" role="group" aria-label="请求速率时间范围">
-              <button type="button" data-range="5m" class="active">5 分钟</button>
-              <button type="button" data-range="60m">60 分钟</button>
-            </span>
-          </span>
+      <section class="panel panel-merge" id="livePanel">
+        <h2><span class="bar" style="background:linear-gradient(180deg,#2868D8,#0E86B8)"></span>实时监控
+          <span class="panel-title-tools"><span class="live-mark">LIVE</span></span>
         </h2>
-        <div class="chart-body"><canvas role="img" aria-label="请求速率曲线，基于最近一小时已获取日志样本" id="rateChart" height="210"></canvas></div>
-        <div class="legend"><span><i style="background:linear-gradient(90deg,#2868D8,#0E86B8)"></i><span id="rateLegend">请求数 / 分钟</span></span><span><i style="background:rgba(32,44,64,.28)"></i>当前均值</span></div>
-      </section>
-
-      <section class="panel">
-        <h2><span class="bar" style="background:linear-gradient(180deg,#5B3FE0,#0E86B8)"></span>实时请求流
-          <span class="panel-title-tools">
-            <div class="dropdown sm" id="logDrop">
-              <button type="button" class="dropdown-toggle" id="logFilter" aria-haspopup="listbox" aria-expanded="false">全部状态</button>
-              <div class="dropdown-menu" role="listbox" aria-label="请求状态">
-                <div class="dropdown-option selected" role="option" aria-selected="true" data-value="all">全部状态</div>
-                <div class="dropdown-option" role="option" aria-selected="false" data-value="error">仅异常</div>
-                <div class="dropdown-option" role="option" aria-selected="false" data-value="429">仅限流</div>
-              </div>
+        <div class="mg-grid mg-grid-live">
+          <div class="mg-sec mg-sec-rate">
+            <div class="mg-cap"><span class="mg-cap-title">请求速率</span>
+              <span class="mg-tools">
+                <span class="segmented" id="rateRange" role="group" aria-label="请求速率时间范围">
+                  <button type="button" data-range="5m" class="active">5 分钟</button>
+                  <button type="button" data-range="60m">60 分钟</button>
+                </span>
+              </span>
             </div>
-            <span id="logCount">0 条</span>
-          </span>
-        </h2>
-        <div class="log-list" id="logList"><div class="empty">等待数据…</div></div>
+            <div class="chart-body"><canvas role="img" aria-label="请求速率曲线，基于最近一小时已获取日志样本" id="rateChart" height="210"></canvas></div>
+            <div class="legend"><span><i style="background:linear-gradient(90deg,#2868D8,#0E86B8)"></i><span id="rateLegend">请求数 / 分钟</span></span><span><i style="background:rgba(32,44,64,.28)"></i>当前均值</span></div>
+          </div>
+          <div class="mg-divider" aria-hidden="true"></div>
+          <div class="mg-sec mg-sec-logs">
+            <div class="mg-cap"><span class="mg-cap-title">实时请求流</span>
+              <span class="mg-tools">
+                <div class="dropdown sm" id="logDrop">
+                  <button type="button" class="dropdown-toggle" id="logFilter" aria-haspopup="listbox" aria-expanded="false">全部状态</button>
+                  <div class="dropdown-menu" role="listbox" aria-label="请求状态">
+                    <div class="dropdown-option selected" role="option" aria-selected="true" data-value="all">全部状态</div>
+                    <div class="dropdown-option" role="option" aria-selected="false" data-value="error">仅异常</div>
+                    <div class="dropdown-option" role="option" aria-selected="false" data-value="429">仅限流</div>
+                  </div>
+                </div>
+                <span id="logCount">0 条</span>
+              </span>
+            </div>
+            <div class="log-list" id="logList"><div class="empty">等待数据…</div></div>
+          </div>
+        </div>
       </section>
     </div>
 
     <div class="grid-side" id="sidebar">
-      <section class="panel">
-        <h2><span class="bar" style="background:linear-gradient(180deg,#E08000,#D0342C)"></span>模型热度
-          <span class="panel-title-tools">
-            <span class="hint" id="heatHint">TOP 20 · 按请求量</span>
-            <span class="segmented sm" id="heatLimitSeg" role="group" aria-label="模型显示数量">
-              <button type="button" data-limit="20" class="active">Top 20</button>
-              <button type="button" data-limit="all">全部</button>
-            </span>
-          </span>
-        </h2>
-        <div class="bars" id="modelBars"></div>
-      </section>
-
-      <section class="panel" id="trendPanel">
-        <h2><span class="bar" style="background:linear-gradient(180deg,#0B9A6A,#0E86B8)"></span><span id="trendTitle">7 天趋势</span> <span class="hint" id="trendHint">每日请求</span></h2>
-        <div class="chart-body" id="trendChartBody">
-          <div class="trend-layout">
-            <canvas id="trendYAxis" height="210"></canvas>
-            <div class="trend-scroll" id="trendScroll">
-              <canvas role="img" aria-label="每日请求趋势" id="trendChart" height="210"></canvas>
+      <section class="panel panel-merge" id="insightPanel">
+        <h2><span class="bar" style="background:linear-gradient(180deg,#E08000,#D0342C)"></span>模型洞察</h2>
+        <div class="mg-grid mg-grid-insight">
+          <div class="mg-sec mg-sec-heat">
+            <div class="mg-cap"><span class="mg-cap-title">模型热度</span>
+              <span class="mg-tools">
+                <span class="hint" id="heatHint">TOP 20 · 按请求量</span>
+                <span class="segmented sm" id="heatLimitSeg" role="group" aria-label="模型显示数量">
+                  <button type="button" data-limit="20" class="active">Top 20</button>
+                  <button type="button" data-limit="all">全部</button>
+                </span>
+              </span>
+            </div>
+            <div class="bars" id="modelBars"></div>
+          </div>
+          <div class="mg-divider" aria-hidden="true"></div>
+          <div class="mg-sec mg-sec-trend">
+            <div class="mg-cap"><span class="mg-cap-title"><span id="trendTitle">7 天趋势</span></span>
+              <span class="mg-tools"><span class="hint" id="trendHint">每日请求</span></span>
+            </div>
+            <div class="chart-body" id="trendChartBody">
+              <div class="trend-layout">
+                <canvas id="trendYAxis" height="210"></canvas>
+                <div class="trend-scroll" id="trendScroll">
+                  <canvas role="img" aria-label="每日请求趋势" id="trendChart" height="210"></canvas>
+                </div>
+              </div>
             </div>
           </div>
         </div>
