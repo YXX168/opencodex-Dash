@@ -543,20 +543,21 @@
 
   /* ── 供应商分布：玻璃数据环 ───────────────── */
   .donut-wrap { flex: 1; display: flex; align-items: center; justify-content: center; gap: 26px; padding: 8px 18px 16px; min-height: 190px; }
-  .donut { position: relative; width: 146px; height: 146px; flex: none; }
-  .donut svg { transform: rotate(-90deg); overflow: visible; }
+  .donut { position: relative; width: 176px; height: 176px; flex: none; }
+  .donut svg { transform: rotate(-90deg); overflow: visible; width: 100%; height: 100%; display: block; }
   .donut .center { position: absolute; inset: 0; display: grid; place-items: center; align-content: center; justify-content: center; text-align: center; }
-  .donut .center b { font: 700 21px/1.15 var(--mono); color: var(--text); letter-spacing: -.5px; }
+  .donut .center b { font: 700 23px/1.15 var(--mono); color: var(--text); letter-spacing: -.5px; }
   .donut .center span { font-size: 10.5px; color: var(--muted); display: block; margin-top: 2px; }
   .donut-list { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 8px; min-width: 0; max-width: 240px; }
   .d-item {
-    display: grid; grid-template-columns: 12px 1fr auto; align-items: center; gap: 8px; font-size: 12px;
-    border-radius: 9px; padding: 4px 7px; cursor: pointer;
+    display: grid; grid-template-columns: 12px minmax(0,1fr) auto auto; align-items: center; gap: 8px; font-size: 12px;
+    border-radius: 9px; padding: 6px 7px; cursor: pointer;
     transition: transform .18s ease, background-color .18s ease;
   }
   .d-item .sw { width: 10px; height: 10px; border-radius: 3px; box-shadow: 0 0 0 1px rgba(32,44,64,.06) inset; }
   .d-item .nm { color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .d-item .pc { color: var(--muted); font-variant-numeric: tabular-nums; }
+  .d-item .ct { color: var(--muted); font-family: var(--mono); font-size: 11px; font-variant-numeric: tabular-nums; }
+  .d-item .pc { color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums; }
   .d-item:hover, .d-item.active { background: rgba(255,255,255,.85); transform: translateX(3px); box-shadow: var(--lift-sm); }
   .d-item.active .nm { color: var(--blue); }
   .donut svg .donut-seg { transition: stroke-dasharray .7s ease, stroke-width .18s ease, opacity .18s ease; cursor: pointer; }
@@ -633,7 +634,7 @@
   .flow-status .st { display: inline-flex; align-items: center; gap: 6px; }
   .flow-status .st i { width: 8px; height: 8px; border-radius: 50%; }
   .flow-status .st b { font-family: var(--mono); font-weight: 700; }
-  #flowChart { height: 60px; flex: none; }
+  #flowChart { flex: 1 1 auto; height: auto; min-height: 64px; }
 
   footer { text-align: center; color: var(--muted); font: 500 10px/1.6 var(--mono); letter-spacing: 1px; padding: 6px 0; }
   .footer-spark { color: var(--blue); padding: 0 10px; }
@@ -1162,19 +1163,20 @@ box-shadow: none;
 
   /* 环形 */
   .donut-wrap { flex: 1; display: flex; align-items: center; justify-content: center; gap: 20px; padding: 10px 18px 16px; min-height: 190px; }
-  .donut { position: relative; width: 146px; height: 146px; flex: none; }
-  .donut svg { transform: rotate(-90deg); }
+  .donut { position: relative; width: 176px; height: 176px; flex: none; }
+  .donut svg { transform: rotate(-90deg); width: 100%; height: 100%; display: block; }
   .donut .center {
     position: absolute; inset: 0; display: grid; place-items: center; text-align: center;
   }
-  .donut .center b { font-size: 22px; font-weight: 800; }
+  .donut .center b { font-size: 24px; font-weight: 800; }
   .donut .center span { font-size: 11px; color: var(--muted); display: block; margin-top: -3px; }
   .donut-list { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 9px; min-width: 0; max-width: 240px; }
-  .d-item { display: grid; grid-template-columns: 12px 1fr auto; align-items: center; gap: 8px; font-size: 12px; }
+  .d-item { display: grid; grid-template-columns: 12px minmax(0,1fr) auto auto; align-items: center; gap: 8px; font-size: 12px; }
   .d-item .sw { width: 10px; height: 10px; border-radius: 3px; }
   .d-item .nm { color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .d-item .pc { color: var(--muted); font-variant-numeric: tabular-nums; }
-  .d-item { transition: transform .18s ease, background .18s ease; border-radius: 8px; padding: 3px 6px; cursor: pointer; }
+  .d-item .ct { color: var(--muted); font-family: var(--mono); font-size: 11px; font-variant-numeric: tabular-nums; }
+  .d-item .pc { color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums; }
+  .d-item { transition: transform .18s ease, background .18s ease; border-radius: 8px; padding: 5px 6px; cursor: pointer; }
   .d-item:hover, .d-item.active { background: rgba(80,120,255,.10); transform: translateX(3px); }
   .d-item.active .nm { color: #fff; }
   .donut svg .donut-seg { stroke-width: 12; transition: stroke-dasharray .7s ease, stroke-width .18s ease, opacity .18s ease; cursor: pointer; }
@@ -1320,7 +1322,7 @@ box-shadow: none;
   .flow-wrap { gap:12px; }
   .flow-k { padding:12px; }
   .flow-k b { font-size:26px; }
-  #flowChart { height:60px; flex:none; }
+  #flowChart { flex:1 1 auto; height:auto; min-height:64px; }
   .footer-spark { color:var(--cyan); padding:0 10px; }
   footer { font:10px var(--mono); letter-spacing:1px; padding:6px 0; }
   .not-live .live-mark { color:var(--muted); }
@@ -1525,7 +1527,7 @@ try {
         <h2><span class="bar" style="background:linear-gradient(180deg,#0B9A6A,#2868D8)"></span>供应商分布 <span class="hint" id="donutHint">7 天请求占比</span></h2>
         <div class="donut-wrap">
           <div class="donut">
-            <svg width="146" height="146" id="donutSvg"></svg>
+            <svg width="146" height="146" viewBox="0 0 146 146" id="donutSvg"></svg>
             <div class="center"></div>
                       </div>
                       <div class="donut-list" id="donutList"></div>
@@ -2409,6 +2411,7 @@ function renderDonut(providers, svgEl, listEl) {
       item.querySelector(".sw").style.background = c1;
       item.querySelector(".nm").textContent = shortProvider(p.provider);
       item.querySelector(".nm").title = p.provider;
+      item.querySelector(".ct").textContent = fmt(p.requests || 0);
       item.querySelector(".pc").textContent = pc.toFixed(1) + "%";
       item.dataset.donutIndex = String(i);
     });
@@ -2423,6 +2426,7 @@ function renderDonut(providers, svgEl, listEl) {
       const sw = appendTextElement(item, "span", "sw", "");
       sw.style.background = c1;
       appendTextElement(item, "span", "nm", shortProvider(p.provider), p.provider);
+      appendTextElement(item, "span", "ct", fmt(p.requests || 0));
       appendTextElement(item, "span", "pc", pc.toFixed(1) + "%");
       list.appendChild(item);
     });
