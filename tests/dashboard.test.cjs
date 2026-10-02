@@ -5,13 +5,20 @@ const path = require('node:path');
 const vm = require('node:vm');
 
 function loadSource(file) {
-  return fs.readFileSync(path.join(__dirname, '..', file), 'utf8').match(/<script>([\s\S]*?)<\/script>/)[1].replace(/\nboot\(\);\s*$/, '');
+  const html = fs.readFileSync(path.join(__dirname, '..', file), 'utf8');
+  // 取主逻辑脚本：以 "use strict" 开头的那块，而非 <head> 里的主题预初始化小脚本。
+  // 不再依赖 <script> 在文档中的顺序，避免将来增删内联脚本时误伤。
+  const blocks = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(m => m[1]);
+  const src = blocks.find(b => b.includes('"use strict";')) || blocks.at(-1);
+  assert(src, '未找到主脚本块');
+  return src.replace(/\nboot\(\);\s*$/, '');
 }
 const source = loadSource('opendash.html');
 function env(src = source) {
   const els = new Map();
-  const el = id => {if (!els.has(id)) els.set(id,{textContent:'—',innerHTML:'',title:'',classList:{add(){},contains(){return false},toggle(){}},setAttribute(){},querySelectorAll(){return []}});return els.get(id)};
-  const c = vm.createContext({console:{warn(){}},Date,Map,Set,JSON,Number,Math,Array,String,performance:{now:()=>1},AbortController, setTimeout,clearTimeout,requestAnimationFrame:()=>1,cancelAnimationFrame(){},getComputedStyle:()=>({fontFamily:"sans-serif"}),window:{setTimeout,clearTimeout,getComputedStyle:()=>({fontFamily:"sans-serif"})},requestAnimationFrame:fn=>setTimeout(fn,0),document:{hidden:false,getElementById:el,addEventListener:()=>{},removeEventListener:()=>{},body:{classList:{toggle(){}}},querySelectorAll:()=>[]},location:{origin:'http://localhost:10100'}});
+  const el = id => {if (!els.has(id)) els.set(id,{textContent:'—',innerHTML:'',title:'',children:[],firstChild:null,dataset:{},classList:{add(){},contains(){return false},toggle(){},remove(){}},setAttribute(){},getAttribute(){return null},querySelector(){return null},querySelectorAll(){return []},appendChild(c){this.children.push(c);return c},removeChild(c){const i=this.children.indexOf(c);if(i>=0)this.children.splice(i,1);return c}});return els.get(id)};
+  const bodyClasses = new Set();
+  const c = vm.createContext({console:{warn(){}},Date,Map,Set,JSON,Number,Math,Array,String,performance:{now:()=>1},AbortController, setTimeout,clearTimeout,requestAnimationFrame:()=>1,cancelAnimationFrame(){},getComputedStyle:()=>({fontFamily:"sans-serif"}),window:{setTimeout,clearTimeout,getComputedStyle:()=>({fontFamily:"sans-serif"})},requestAnimationFrame:fn=>setTimeout(fn,0),document:{hidden:false,getElementById:el,addEventListener:()=>{},removeEventListener:()=>{},documentElement:{dataset:{}},body:{classList:{add(c){bodyClasses.add(c)},remove(...cs){cs.forEach(x=>bodyClasses.delete(x))},toggle(c,v){v?bodyClasses.add(c):bodyClasses.delete(c)},contains(c){return bodyClasses.has(c)}},_classes:bodyClasses},createElement:(tag)=>({tagName:String(tag).toUpperCase(),children:[],textContent:'',className:'',title:'',dataset:{},setAttribute(k,v){this[k]=v},appendChild(x){this.children.push(x);return x}}),querySelectorAll:()=>[]},location:{origin:'http://localhost:10100'}});
   vm.runInContext(source,c);
   const run = code => vm.runInContext(code,c);
   return {c,run,el};
@@ -175,4 +182,173 @@ test('全量趋势数据多于 50 天时，激活横向滚动容器并按最多 
   assert.equal(hasScrollable, true);
   // 500px 视口 / 50 根 = 10px 一根；80 根 = 800px
   assert.equal(canvas.style.width, "800px");
+});
+
+test('mergeLogs 用 changed 标记实质变化：新增/更新/过期为 true，重复为 false', () => {
+  const {run} = env();
+  const now = Date.now();
+  const mk = (id, ts, status, extra = {}) => ({requestId: id, timestamp: ts, status, ...extra});
+  const js = (v) => JSON.stringify(v);
+  const first = [mk('a', now - 1000, 200)];
+  // 同一批次重复到达（同一引用）不算变化
+  assert.equal(run(`mergeLogs(${js(first)}, ${js(first)}, ${now}).changed`), false);
+  // 字段完全相同的重复对象（不同引用）也不算变化
+  assert.equal(run(`mergeLogs(${js(first)}, [${js(mk('a', now - 1000, 200))}], ${now}).changed`), false);
+  // 新增请求算变化
+  assert.equal(run(`mergeLogs(${js(first)}, [${js(mk('b', now - 500, 200))}], ${now}).changed`), true);
+  // 状态更新算变化，且新状态生效
+  const upd = run(`mergeLogs(${js(first)}, [${js(mk('a', now - 1000, 500))}], ${now})`);
+  assert.equal(upd.changed, true);
+  assert.equal(upd.at(-1).status, 500);
+  // 用量字段更新也算变化
+  const tok = run(`mergeLogs(${js([mk('a', now - 1000, 200, {totalTokens: 10})])}, [${js(mk('a', now - 1000, 200, {totalTokens: 42}))}], ${now})`);
+  assert.equal(tok.changed, true);
+  // 过期剔除算变化
+  const histMs = run(`HISTORY_MS`);
+  const old = [mk('o', now - histMs - 1000, 200)];
+  const exp = run(`mergeLogs(${js(old)}, [], ${now})`);
+  assert.equal(exp.changed, true);
+  assert.equal(exp.length, 0);
+  // 空对空不算变化
+  assert.equal(run(`mergeLogs([], [], ${now}).changed`), false);
+});
+
+test('renderLogs 数据与筛选无变化时跳过 DOM 重建', () => {
+  const {run, el} = env();
+  run(`state.logsVersion = 3; state.filterVersion = 0; state.logFilter = 'all'; state.scope = 'all';
+       state.initialLogsLoaded = true; state.logs = []; state.logListSig = '';`);
+  run(`renderLogs([])`);
+  assert.equal(el('logCount').textContent, '0 条');
+  const sig = run(`state.logListSig`);
+  assert.ok(sig);
+  // 无变化再次调用：应直接返回，logCount 保持被篡改的值
+  el('logCount').textContent = 'TAMPERED';
+  run(`renderLogs([])`);
+  assert.equal(el('logCount').textContent, 'TAMPERED');
+  assert.equal(run(`state.logListSig`), sig);
+  // 数据版本递增后应重新渲染
+  run(`state.logsVersion = 4; renderLogs([])`);
+  assert.equal(el('logCount').textContent, '0 条');
+  // 筛选条件变化也应重新渲染
+  el('logCount').textContent = 'TAMPERED';
+  run(`state.logFilter = 'error'; renderLogs([])`);
+  assert.equal(el('logCount').textContent, '0 条');
+});
+
+test('roundRectPath 无原生实现时用贝塞尔回退', () => {
+  const {run, c} = env();
+  const calls = [];
+  c.fakeCtx = {
+    moveTo: (...a) => calls.push(['moveTo', ...a]),
+    lineTo: (...a) => calls.push(['lineTo', ...a]),
+    quadraticCurveTo: (...a) => calls.push(['quadraticCurveTo', ...a]),
+    closePath: () => calls.push(['closePath']),
+  };
+  run(`roundRectPath(fakeCtx, 10, 20, 100, 50, 3)`);
+  assert.ok(calls.some(x => x[0] === 'quadraticCurveTo'), '应使用二次贝塞尔绘制圆角');
+  assert.ok(calls.some(x => x[0] === 'closePath'), '应闭合路径');
+  // 有原生实现时直接透传（跨 vm 上下文比较时用 JSON 序列化避免原型差异）
+  calls.length = 0;
+  c.fakeCtx.roundRect = (...a) => calls.push(['roundRect', ...a]);
+  run(`roundRectPath(fakeCtx, 10, 20, 100, 50, 3)`);
+  assert.equal(JSON.stringify(calls), '[["roundRect",10,20,100,50,[3,3,0,0]]]');
+});
+
+test('下拉菜单支持键盘：方向键移动、回车选中、Esc 关闭', () => {
+  const {run, c} = env();
+  const fired = [];
+  const mkEl = () => ({
+    classList: { _s: new Set(), add(x) { this._s.add(x); }, remove(x) { this._s.delete(x); },
+      toggle(x, v) { v ? this._s.add(x) : this._s.delete(x); }, contains(x) { return this._s.has(x); } },
+    attrs: {},
+    setAttribute(k, v) { this.attrs[k] = v; },
+    listeners: {},
+    addEventListener(e, fn) { (this.listeners[e] ??= []).push(fn); },
+    emit(e, ev) { (this.listeners[e] || []).forEach(fn => fn(ev)); },
+    textContent: '',
+  });
+  const toggle = mkEl();
+  toggle.focus = () => fired.push('focus:toggle');
+  const opts = ['today', '7d', '30d'].map((v, i) => {
+    const o = mkEl();
+    o.dataset = { value: v }; o.textContent = v; o.tabIndex = -1;
+    if (i === 1) o.classList.add('selected');
+    o.focus = () => fired.push('focus:' + v);
+    return o;
+  });
+  const root = mkEl();
+  root.querySelector = (sel) => sel === '.dropdown-toggle' ? toggle : null;
+  root.querySelectorAll = (sel) => sel === '.dropdown-option' ? opts : [];
+  c.fakeRoot = root;
+  run(`document.getElementById = (id) => id === 'testDrop' ? fakeRoot : null;
+      document.querySelectorAll = (sel) => (sel === '.dropdown.open' && fakeRoot.classList.contains('open')) ? [fakeRoot] : [];
+      initDropdown('testDrop', (v) => { fakeRoot.picked = v; });`);
+  // 点击打开：当前选中项获得焦点
+  toggle.emit('click', { stopPropagation() {} });
+  assert.equal(toggle.attrs['aria-expanded'], 'true');
+  assert.ok(root.classList.contains('open'));
+  assert.deepEqual(Array.from(fired), ['focus:7d']);
+  // 方向键下移到 30d
+  opts[1].emit('keydown', { key: 'ArrowDown', preventDefault() {} });
+  assert.deepEqual(Array.from(fired), ['focus:7d', 'focus:30d']);
+  // 方向键上移回到 7d
+  opts[2].emit('keydown', { key: 'ArrowUp', preventDefault() {} });
+  assert.deepEqual(Array.from(fired), ['focus:7d', 'focus:30d', 'focus:7d']);
+  // End 跳到末尾，回车选中
+  opts[1].emit('keydown', { key: 'End', preventDefault() {} });
+  assert.deepEqual(Array.from(fired), ['focus:7d', 'focus:30d', 'focus:7d', 'focus:30d']);
+  opts[2].emit('keydown', { key: 'Enter', preventDefault() {} });
+  assert.equal(root.picked, '30d');
+  assert.equal(toggle.attrs['aria-expanded'], 'false');
+  assert.ok(!root.classList.contains('open'));
+  assert.equal(toggle.textContent, '30d');
+  assert.ok(opts[2].classList.contains('selected'));
+  assert.deepEqual(Array.from(fired).at(-1), 'focus:toggle');
+  // 重新打开后 Esc 关闭并回到按钮
+  fired.length = 0;
+  toggle.emit('click', { stopPropagation() {} });
+  assert.ok(root.classList.contains('open'));
+  opts[2].emit('keydown', { key: 'Escape', preventDefault() {} });
+  assert.ok(!root.classList.contains('open'));
+  assert.deepEqual(Array.from(fired).at(-1), 'focus:toggle');
+});
+
+test('applyTheme 切换主题时保留 body 上其它类', () => {
+  const {run, c} = env();
+  // applyTheme 会触发图表重绘，测试环境用空函数代替（只验证主题类切换逻辑）
+  run(`drawFlowChart = () => {}; updateRateTarget = () => {}; startRateAnimation = () => {}; renderFlowCard = () => {};`);
+  run(`document.body.classList.add('backgrounded');
+      applyTheme('dark');
+      document.body.classList.add('backgrounded');
+      applyTheme('light');`);
+  const cls = c.document.body._classes;
+  assert.ok(cls.has('theme-light'), '应有 theme-light');
+  assert.ok(!cls.has('theme-dark'), '不应残留 theme-dark');
+  assert.ok(cls.has('backgrounded'), 'backgrounded 不应被主题切换清除');
+  assert.equal(run(`state.theme`), 'light');
+  assert.equal(c.document.documentElement.dataset.theme, 'light');
+});
+
+test('双主题样式表的 @keyframes 不重名（避免 disabled 表污染全局解析）', () => {
+  const fs = require('fs');
+  const path = require('path');
+  const html = fs.readFileSync(path.join(__dirname, '..', 'opendash.html'), 'utf8');
+  const block = (id) => {
+    const s = html.indexOf(`<style id="${id}">`);
+    if (s === -1) throw new Error(`找不到 <style id="${id}">`);
+    const e = html.indexOf('</style>', s);
+    return html.slice(s, e);
+  };
+  const names = (css) => new Set([...css.matchAll(/@keyframes\s+([\w-]+)/g)].map(m => m[1]));
+  const light = names(block('theme-light'));
+  const dark = names(block('theme-dark'));
+  const clash = [...light].filter(n => dark.has(n));
+  assert.deepEqual(clash, [], `重名 keyframes: ${clash.join(', ')}`);
+  // 每个 @keyframes 在所属表内至少有一处引用（防止改名改漏）
+  for (const [css, set, label] of [[block('theme-light'), light, 'light'], [block('theme-dark'), dark, 'dark']]) {
+    for (const n of set) {
+      const uses = (css.match(new RegExp(`(?<![\\w-])${n}(?![\\w-])`, 'g')) || []).length;
+      assert.ok(uses >= 2, `${label} 表 @keyframes ${n} 疑似无引用（${uses} 处）`);
+    }
+  }
 });

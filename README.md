@@ -63,7 +63,7 @@ node tests/serve-fixtures.cjs
 
 | 文件 | 用途 |
 | --- | --- |
-| `opendash.html` | 一体化核心面板：内置白天液态玻璃 + 黑夜深空极光双主题，页面内一键即时秒切与偏好记忆 |
+| `opendash.html` | 一体化核心面板：内置白天液态玻璃 + 黑夜深空极光双主题，页面内一键即时秒切与偏好记忆。双主题为两份独立样式表（`#theme-light` / `#theme-dark`），按 `disabled` 开关切换，无重解析、零特异性风险。注意：Chrome 会把 disabled 样式表里的 `@keyframes` 也注册到全局命名空间（后定义的同名会覆盖），所以深色主题的 keyframes 必须带 `-d` 后缀（如 `float-d`），新增动画时请遵守此命名规范，`tests/dashboard.test.cjs` 里有对应的重名回归测试 |
 | `install-opendash.bat` | Windows 一键安装批处理入口（双击即可自动部署） |
 | `install-opendash.ps1` | PowerShell 自动化安装脚本，支持自动化路径解析与状态校验 |
 | `tests/dashboard.test.cjs` | 数据统计、过滤、时间范围、控制抽屉及核心逻辑回归测试套件 |

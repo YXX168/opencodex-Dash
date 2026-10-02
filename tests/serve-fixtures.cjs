@@ -3,9 +3,12 @@ const http = require('node:http');
 const fs = require('node:fs');
 const path = require('node:path');
 const html = fs.readFileSync(path.join(__dirname,'../opendash.html'),'utf8');
+// 黑夜版 fixture：在主题预初始化脚本之前写入 localStorage，
+// 首屏即按深空极光渲染（新版读 <head> 内脚本，旧版在 boot() 里读，均兼容）。
+const DARK_BOOT = '<script>try{localStorage.setItem("opendash-theme","dark")}catch(e){}</script>';
 const themes = {
   light: html,
-  dark: html,
+  dark: html.replace('<head>', '<head>' + DARK_BOOT),
 };
 const server = http.createServer((req,res)=>{
   const url = new URL(req.url,'http://127.0.0.1:10109');

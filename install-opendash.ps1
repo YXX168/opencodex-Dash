@@ -31,6 +31,10 @@ param(
 if (-not $Theme) { $Theme = "light" }
 $ErrorActionPreference = "Stop"
 
+# opencodex 的 npm 包名：集中定义，包名变更时只改这一处
+$OpenCodexPackage = "@bitkyc08/opencodex"
+$OpenCodexPackagePath = $OpenCodexPackage -replace "/", "\"
+
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $sourceHtml = Join-Path $scriptDir "opendash.html"
 if (-not (Test-Path $sourceHtml)) {
@@ -85,7 +89,8 @@ if (-not $found) {
       $connection = Get-NetTCPConnection -LocalPort $Port -State Listen -ErrorAction SilentlyContinue | Select-Object -First 1
       if ($connection) {
         $process = Get-CimInstance Win32_Process -Filter "ProcessId=$($connection.OwningProcess)" -ErrorAction SilentlyContinue
-        if ($process -and $process.CommandLine -match '([A-Za-z]:[\\/][^"]*?@bitkyc08[\\/]opencodex)') {
+        $pkgPattern = [regex]::Escape($OpenCodexPackagePath)
+        if ($process -and $process.CommandLine -match "([A-Za-z]:[\\/][^`"]*?$pkgPattern)") {
           $found = Resolve-PackageDist $Matches[1]
         }
       }
@@ -95,9 +100,9 @@ if (-not $found) {
 
 if (-not $found) {
   $candidates = @(
-    (Join-Path $env:APPDATA "npm\node_modules\@bitkyc08\opencodex"),
-    (Join-Path $env:ProgramFiles "nodejs\node_modules\@bitkyc08\opencodex"),
-    (Join-Path ${env:ProgramFiles(x86)} "nodejs\node_modules\@bitkyc08\opencodex"),
+    (Join-Path $env:APPDATA "npm\node_modules\$OpenCodexPackagePath"),
+    (Join-Path $env:ProgramFiles "nodejs\node_modules\$OpenCodexPackagePath"),
+    (Join-Path ${env:ProgramFiles(x86)} "nodejs\node_modules\$OpenCodexPackagePath"),
     (Join-Path $env:USERPROFILE ".opencodex")
   )
   foreach ($candidate in $candidates) {
@@ -110,7 +115,7 @@ if (-not $found) {
   try {
     $npmPrefix = (& npm prefix -g 2>$null | Select-Object -First 1)
     if ($npmPrefix) {
-      $found = Resolve-PackageDist (Join-Path $npmPrefix "node_modules\@bitkyc08\opencodex")
+      $found = Resolve-PackageDist (Join-Path $npmPrefix "node_modules\$OpenCodexPackagePath")
     }
   } catch { }
 }
@@ -131,7 +136,8 @@ $targetRoot = Join-Path $found "opendash.html"
 $targetSub = Join-Path $found "opendash\index.html"
 $backupDir = Join-Path $scriptDir ("deployment-backups\" + (Get-Date -Format "yyyyMMdd-HHmmss-fff") + "-" + $Theme)
 $sourceHash = Get-Sha256 $sourceHtml
-foreach ($existingTarget in @($targetRoot, $targetSub)) {
+$installTargets = @($targetRoot, $targetSub)
+foreach ($existingTarget in $installTargets) {
   if ((Test-Path -LiteralPath $existingTarget) -and (Get-Sha256 $existingTarget) -ne $sourceHash) {
     New-Item -ItemType Directory -Force -Path $backupDir | Out-Null
     $backupName = if ($existingTarget -eq $targetRoot) { "opendash.html" } else { "index.html" }
@@ -139,12 +145,22 @@ foreach ($existingTarget in @($targetRoot, $targetSub)) {
   }
 }
 New-Item -ItemType Directory -Force -Path (Split-Path $targetSub) | Out-Null
-Copy-Item -LiteralPath $sourceHtml -Destination $targetRoot -Force
-Copy-Item -LiteralPath $sourceHtml -Destination $targetSub -Force
-# 兼容可能存在的旧版书签或外部引用，将一体化面板同步别名复制一份
-Copy-Item -LiteralPath $sourceHtml -Destination (Join-Path $found "opendash-light.html") -Force
-Copy-Item -LiteralPath $sourceHtml -Destination (Join-Path $found "opendash-dark.html") -Force
-foreach ($installedTarget in @($targetRoot, $targetSub)) {
+foreach ($target in $installTargets) {
+  Copy-Item -LiteralPath $sourceHtml -Destination $target -Force
+}
+# 旧版本曾安装的 opendash-light.html / opendash-dark.html 只是同一文件的冗余别名
+# （单文件已内置双主题一键切换），内容与新版一致时清理掉，避免残留过期副本混淆
+foreach ($alias in @("opendash-light.html", "opendash-dark.html")) {
+  $aliasPath = Join-Path $found $alias
+  if ((Test-Path -LiteralPath $aliasPath) -and (Get-Sha256 $aliasPath) -eq $sourceHash) {
+    Remove-Item -LiteralPath $aliasPath -Force
+    Write-Host "[清理] 已删除冗余别名副本：$alias" -ForegroundColor DarkGray
+  }
+}
+foreach ($installedTarget in $installTargets) {
+  if (-not (Test-Path -LiteralPath $installedTarget)) {
+    throw "安装后文件缺失：$installedTarget"
+  }
   if ((Get-Sha256 $installedTarget) -ne $sourceHash) {
     throw "安装后文件校验失败：$installedTarget"
   }

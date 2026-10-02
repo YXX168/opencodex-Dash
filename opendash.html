@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>OpenCodex · 请求用量观测台</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Cdefs%3E%3ClinearGradient%20id='w'%20x1='6'%20y1='32'%20x2='58'%20y2='32'%20gradientUnits='userSpaceOnUse'%3E%3Cstop%20offset='0'%20stop-color='%232868d8'/%3E%3Cstop%20offset='1'%20stop-color='%235b3fe0'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width='64'%20height='64'%20rx='14'%20fill='%23ffffff'/%3E%3Crect%20x='.75'%20y='.75'%20width='62.5'%20height='62.5'%20rx='13.5'%20fill='none'%20stroke='%23dbe4f2'/%3E%3Cline%20x1='8'%20y1='36'%20x2='56'%20y2='36'%20stroke='rgba(32,44,64,.14)'%20stroke-width='1.5'/%3E%3Cpolyline%20points='8,36%2019,36%2024,18%2029,47%2034,28%2039,36%2044,26%2048,42%2052,36%2056,36'%20fill='none'%20stroke='url(%23w)'%20stroke-width='3.6'%20stroke-linecap='round'%20stroke-linejoin='round'/%3E%3Ccircle%20cx='56'%20cy='36'%20r='3'%20fill='%232868d8'/%3E%3C/svg%3E">
-<script id="raw-theme-light" type="text/css">
+<style id="theme-light">
 
   /* ══════════════════════════════════════════════════════
      Liquid Glass 设计令牌
@@ -755,8 +755,9 @@
   #refreshNow:hover:not(:disabled) .refresh-icon { transform: rotate(180deg); }
   .refreshing .refresh-icon { animation: bootSpin 1s linear infinite !important; }
 
-</script>
-<script id="raw-theme-dark" type="text/css">
+
+</style>
+<style id="theme-dark">
 
   :root {
     --bg: #05070f;
@@ -807,12 +808,12 @@
   }
   .aurora span {
     position: absolute; border-radius: 50%; filter: blur(65px); opacity: 0.48;
-    animation: float 16s ease-in-out infinite alternate;
+    animation: float-d 16s ease-in-out infinite alternate;
   }
   .aurora span:nth-child(1) { width: 420px; height: 420px; left: -90px; top: 12%; background: #1d4ed8; }
   .aurora span:nth-child(2) { width: 360px; height: 360px; right: -70px; top: 4%; background: #7c3aed; animation-delay: -5s; }
   .aurora span:nth-child(3) { width: 320px; height: 320px; left: 42%; bottom: -120px; background: #0e7490; animation-delay: -9s; }
-  @keyframes float {
+  @keyframes float-d {
     from { transform: translate3d(0, 0, 0) scale(1); }
     to   { transform: translate3d(34px, 22px, 0) scale(1.12); }
   }
@@ -824,17 +825,17 @@
       radial-gradient(1.6px 1.6px at 45% 68%, rgba(180,220,255,.7), transparent),
       radial-gradient(1px 1px at 86% 42%, rgba(255,255,255,.5), transparent),
       radial-gradient(1.2px 1.2px at 8% 78%, rgba(160,200,255,.6), transparent);
-    animation: twinkle 5s ease-in-out infinite alternate;
+    animation: twinkle-d 5s ease-in-out infinite alternate;
   }
-  @keyframes twinkle { from { opacity: .45; } to { opacity: 1; } }
+  @keyframes twinkle-d { from { opacity: .45; } to { opacity: 1; } }
 
   /* ── 布局 ─────────────────────────────── */
   .wrap {
     max-width: 1560px; margin: 0 auto; padding: 20px 24px 28px;
     display: flex; flex-direction: column; gap: 16px;
-    animation: wrapIn .6s cubic-bezier(.22,1,.36,1) both;
+    animation: wrapIn-d .6s cubic-bezier(.22,1,.36,1) both;
   }
-  @keyframes wrapIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+  @keyframes wrapIn-d { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
 
   /* 整页载入动画 */
 .boot-overlay {
@@ -851,7 +852,7 @@ position: absolute; inset: 0; border-radius: 50%;
 background: conic-gradient(from 0deg, transparent 0 16%, #38e1ff 32%, #7c5cff 47%, transparent 63%);
 -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 7px), #000 calc(100% - 6px));
 mask: radial-gradient(farthest-side, transparent calc(100% - 7px), #000 calc(100% - 6px));
-animation: bootSpin 1.1s linear infinite;
+animation: bootSpin-d 1.1s linear infinite;
 filter: drop-shadow(0 0 12px rgba(56,225,255,.45));
 }
 .boot-ring.rev { inset: 9px; animation-direction: reverse; animation-duration: 1.8s; filter: drop-shadow(0 0 10px rgba(124,92,255,.5)); }
@@ -859,11 +860,11 @@ filter: drop-shadow(0 0 12px rgba(56,225,255,.45));
 position: absolute; inset: 0; margin: auto; width: 13px; height: 13px; border-radius: 50%;
 background: linear-gradient(135deg, #38e1ff, #7c5cff);
 box-shadow: 0 0 18px rgba(56,225,255,.8);
-animation: bootCore 1.8s ease-in-out infinite;
+animation: bootCore-d 1.8s ease-in-out infinite;
 }
-@keyframes bootSpin { to { transform: rotate(360deg); } }
-@keyframes bootCore { 0%,100% { transform: scale(.8); opacity: .75; } 50% { transform: scale(1.15); opacity: 1; } }
-.boot-text { color: var(--muted); font-size: 13px; letter-spacing: 2.5px; animation: pulse 1.6s ease-in-out infinite; }
+@keyframes bootSpin-d { to { transform: rotate(360deg); } }
+@keyframes bootCore-d { 0%,100% { transform: scale(.8); opacity: .75; } 50% { transform: scale(1.15); opacity: 1; } }
+.boot-text { color: var(--muted); font-size: 13px; letter-spacing: 2.5px; animation: pulse-d 1.6s ease-in-out infinite; }
   header.topbar {
     display: flex; align-items: center; justify-content: space-between; gap: 16px;
     flex-wrap: wrap; padding: 13px 18px; border-radius: var(--radius);
@@ -888,8 +889,8 @@ animation: bootCore 1.8s ease-in-out infinite;
     display: grid; place-items: center;
   }
   .logo svg { width: 34px; height: 34px; display: block; }
-  .logo svg .od-dot { transform-box: fill-box; transform-origin: center; animation: odPulse 2.2s ease-in-out infinite; }
-  @keyframes odPulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .45; transform: scale(1.4); } }
+  .logo svg .od-dot { transform-box: fill-box; transform-origin: center; animation: odPulse-d 2.2s ease-in-out infinite; }
+  @keyframes odPulse-d { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .45; transform: scale(1.4); } }
   .logo::after {
     content: ""; position: absolute; inset: -4px; border-radius: 18px; z-index: -1;
     background: linear-gradient(135deg, rgba(56,225,255,.5), transparent 55%, rgba(157,107,255,.5));
@@ -1007,10 +1008,10 @@ animation: bootCore 1.8s ease-in-out infinite;
   .dropdown.sm .dropdown-option { padding: 7px 10px; font-size: 11px; }
   .dropdown-option:hover { background: rgba(80,120,255,.16); color: #fff; }
   .dropdown-option.selected { background: #1a3a5c; color: #8ff2f4; }
-  .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 12px var(--amber); animation: pulse 1.6s infinite; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 12px var(--amber); animation: pulse-d 1.6s infinite; }
   .dot.on { background: var(--green); box-shadow: 0 0 12px var(--green); }
   .dot.err { background: var(--red); box-shadow: 0 0 12px var(--red); }
-  @keyframes pulse { 50% { opacity: .4; } }
+  @keyframes pulse-d { 50% { opacity: .4; } }
 
   /* ── 面板 ─────────────────────────────── */
   .panel {
@@ -1032,7 +1033,7 @@ animation: bootCore 1.8s ease-in-out infinite;
   .panel h2 .hint { margin-left: auto; font-weight: 500; font-size: 12px; color: var(--muted); }
   .panel-title-tools { margin-left: auto; display: flex; align-items: center; gap: 10px; }
   .live-mark { display: inline-flex; align-items: center; gap: 6px; color: var(--cyan); font: 600 10px var(--mono); letter-spacing: .7px; }
-  .live-mark::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 9px var(--cyan); animation: pulse 1.5s ease-in-out infinite; }
+  .live-mark::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 9px var(--cyan); animation: pulse-d 1.5s ease-in-out infinite; }
   .segmented { display: inline-grid; grid-auto-flow: column; padding: 3px; border-radius: 8px; border: 1px solid rgba(120,160,255,.16); background: rgba(4,8,20,.5); }
   .segmented button { min-width: 52px; height: 25px; border: 0; border-radius: 6px; padding: 0 9px; color: var(--muted); background: transparent; font: 600 11px var(--font); cursor: pointer; transition: color .2s ease, background .2s ease, box-shadow .2s ease; }
   .segmented button:hover { color: var(--text); }
@@ -1148,7 +1149,7 @@ animation: bootCore 1.8s ease-in-out infinite;
   .bars .bar-row.skel .rank, .bars .bar-row.skel .name, .bars .bar-row.skel .val, .bars .bar-row.skel .track {
 background: linear-gradient(90deg, rgba(255,255,255,.045) 25%, rgba(255,255,255,.12) 50%, rgba(255,255,255,.045) 75%);
 background-size: 200% 100%;
-animation: skelShimmer 1.3s ease-in-out infinite;
+animation: skelShimmer-d 1.3s ease-in-out infinite;
 border-radius: 6px;
 box-shadow: none;
   }
@@ -1157,7 +1158,7 @@ box-shadow: none;
   .bars .bar-row.skel .val { height: 12px; width: 100%; display: block; }
   .bars .bar-row.skel .track { height: 5px; }
   .bars .bar-row.skel .fill { display: none; }
-  @keyframes skelShimmer { to { background-position: -200% 0; } }
+  @keyframes skelShimmer-d { to { background-position: -200% 0; } }
 
   /* 环形 */
   .donut-wrap { flex: 1; display: flex; align-items: center; justify-content: center; gap: 20px; padding: 10px 18px 16px; min-height: 190px; }
@@ -1184,18 +1185,18 @@ box-shadow: none;
   /* ── 方舟反应堆能量核心 ─────────────────── */
   .donut svg { overflow: visible; }
   .donut-core { transform-origin: 73px 73px; }
-  .donut-coil { transform-origin: 73px 73px; animation: coilSpin 16s linear infinite; }
+  .donut-coil { transform-origin: 73px 73px; animation: coilSpin-d 16s linear infinite; }
   .donut-coil.rev { animation-direction: reverse; animation-duration: 26s; }
-  .donut-spark { transform-origin: 73px 73px; animation: coilSpin 3.8s linear infinite; }
+  .donut-spark { transform-origin: 73px 73px; animation: coilSpin-d 3.8s linear infinite; }
   .donut-spark.rev { animation-direction: reverse; animation-duration: 5.4s; }
-  .donut-halo { transform-origin: 73px 73px; animation: haloGlow 5s ease-in-out infinite; }
-  .donut-aura { animation: auraPulse 4s ease-in-out infinite; }
+  .donut-halo { transform-origin: 73px 73px; animation: haloGlow-d 5s ease-in-out infinite; }
+  .donut-aura { animation: auraPulse-d 4s ease-in-out infinite; }
   .donut-arm { stroke: rgba(120,170,255,.22); stroke-width: 1.5; transition: stroke .3s ease; }
   .donut-bolt { fill: #7ae9ff; filter: drop-shadow(0 0 3px #38e1ff); }
   .donut-core { filter: drop-shadow(0 0 6px rgba(56,225,255,.45)); transition: filter .3s ease; }
-  @keyframes coilSpin { to { transform: rotate(360deg); } }
-  @keyframes haloGlow { 0%,100% { opacity: .35; } 50% { opacity: .85; } }
-  @keyframes auraPulse { 0%,100% { opacity: .5; } 50% { opacity: 1; } }
+  @keyframes coilSpin-d { to { transform: rotate(360deg); } }
+  @keyframes haloGlow-d { 0%,100% { opacity: .35; } 50% { opacity: .85; } }
+  @keyframes auraPulse-d { 0%,100% { opacity: .5; } 50% { opacity: 1; } }
   .donut .center b { text-shadow: 0 1px 10px rgba(4,12,44,.95), 0 0 14px rgba(90,180,255,.35); }
   .donut .center span { color: #b9cdf2; }
 
@@ -1217,8 +1218,8 @@ box-shadow: none;
     padding: 6px 4px; border-radius: 8px; font-size: 12px; font-family: var(--mono);
     border-bottom: 1px solid rgba(255,255,255,.035);
   }
-  .log-item.is-new { animation: logEnter 520ms cubic-bezier(.22,1,.36,1) both; }
-  @keyframes logEnter { from { opacity: 0; transform: translateY(-9px); } to { opacity: 1; transform: none; } }
+  .log-item.is-new { animation: logEnter-d 520ms cubic-bezier(.22,1,.36,1) both; }
+  @keyframes logEnter-d { from { opacity: 0; transform: translateY(-9px); } to { opacity: 1; transform: none; } }
   .log-item:hover { background: rgba(255,255,255,.035); }
   .log-item .t { color: var(--muted); font-variant-numeric: tabular-nums; }
   .log-item .p {
@@ -1293,14 +1294,14 @@ box-shadow: none;
   .status-pill { font-size:11px; padding:8px 12px; }
   button, input, select { font:12px var(--font); }
   .refresh-icon { display:block; }
-  .refreshing .refresh-icon { animation:bootSpin 1s linear infinite; }
+  .refreshing .refresh-icon { animation:bootSpin-d 1s linear infinite; }
   button:focus-visible, input:focus-visible, select:focus-visible { outline:2px solid var(--cyan); outline-offset:3px; }
   .kpis { gap:14px; }
   .panel { transition:border-color .25s,box-shadow .25s; }
-  .panel, .kpi { animation:panelEnter .7s cubic-bezier(.2,.8,.2,1) both; animation-delay:var(--enter-delay,0ms); }
+  .panel, .kpi { animation:panelEnter-d .7s cubic-bezier(.2,.8,.2,1) both; animation-delay:var(--enter-delay,0ms); }
   .panel:hover { border-color:#78b6db40; box-shadow:0 16px 50px #0003,0 0 24px #38e1ff06; }
   .panel::after { content:""; position:absolute; inset:0; pointer-events:none; border-radius:inherit; background:radial-gradient(360px circle at var(--mx,-500px) var(--my,-500px),#78dfff0b,transparent 70%); }
-  @keyframes panelEnter { from { opacity:0; transform:translateY(18px) scale(.99); } to { opacity:1; transform:none; } }
+  @keyframes panelEnter-d { from { opacity:0; transform:translateY(18px) scale(.99); } to { opacity:1; transform:none; } }
   .grid-main { grid-template-columns:repeat(2,minmax(0,1fr)); }
   .grid-main > .panel { height:350px; }
   .grid-side { grid-template-columns:repeat(2,minmax(0,1fr)); }
@@ -1310,8 +1311,8 @@ box-shadow: none;
   #logCount { font:10px var(--mono); color:var(--muted); white-space:nowrap; }
   .log-item { grid-template-columns:58px 96px minmax(75px,1fr) 56px 78px; gap:7px; font-size:11px; padding:9px 4px; }
   .log-item .s { font-size:10px; }
-  .log-item.is-new { animation:logArrive .65s cubic-bezier(.2,.8,.2,1) both; }
-  @keyframes logArrive { from { opacity:0; transform:translateX(12px); background:#38e1ff18; } to { opacity:1; transform:none; background:transparent; } }
+  .log-item.is-new { animation:logArrive-d .65s cubic-bezier(.2,.8,.2,1) both; }
+  @keyframes logArrive-d { from { opacity:0; transform:translateX(12px); background:#38e1ff18; } to { opacity:1; transform:none; background:transparent; } }
   .bar-row { padding:9px 8px; row-gap:8px; }
   .donut-wrap { flex:1; align-items:center; justify-content:center; gap:30px; }
   .donut-list { min-width:140px; }
@@ -1366,797 +1367,55 @@ box-shadow: none;
   .header-actions button:disabled { opacity: .55; cursor: wait; transform: none !important; }
   .refresh-icon { display: block; transition: transform .4s cubic-bezier(.2, .8, .2, 1); }
   #refreshNow:hover:not(:disabled) .refresh-icon { transform: rotate(180deg); }
-  .refreshing .refresh-icon { animation: bootSpin 1s linear infinite !important; }
+  .refreshing .refresh-icon { animation: bootSpin-d 1s linear infinite !important; }
 
-</script>
-<style id="theme-active">
-
-  /* ══════════════════════════════════════════════════════
-     Liquid Glass 设计令牌
-     受 macOS 26 Liquid Glass 启发的 Web CSS 表达：
-     可模拟透明 / 模糊 / 高光 / 环境色，不等价于 Apple 原生材质。
-     ══════════════════════════════════════════════════════ */
-  :root {
-    color-scheme: light;
-
-    /* ── 环境：低频、低饱和，色彩留在边缘，中央保持白净 ── */
-    --bg: #F7F9FC;
-    --warm: 255, 210, 157;   /* #FFD29D 暖杏，左侧边缘 */
-    --cool: 160, 207, 255;   /* #A0CFFF 冷蓝，右侧边缘 */
-
-    /* ── 文本 ── */
-    --text: #202C40;
-    --muted: #5B6D85;
-    --faint: #8494AB;
-
-    /* ── 语义色：浅底上加深，保证对比度 ── */
-    --blue: #2868D8;
-    --cyan: #0E86B8;
-    --violet: #5B3FE0;
-    --green: #0B9A6A;
-    --amber: #B25A00;
-    --red: #D0342C;
-
-    /* ── 材质分级：白覆盖越高，背景越不明显 ── */
-    --glass-nav: rgba(255, 255, 255, .46);      /* 导航：最透 */
-    --glass-tool: rgba(255, 255, 255, .58);     /* 工具条 */
-    --glass-card: rgba(255, 255, 255, .68);     /* 卡片 */
-    --glass-menu: rgba(255, 255, 255, .92);     /* 浮层 / 弹层 */
-    --glass-solid: #FFFFFF;                     /* 降级与阅读面 */
-
-    --blur-nav: 26px;
-    --blur-card: 20px;
-    --blur-menu: 30px;
-
-    /* ── 五层材质的结构件 ── */
-    --hairline: rgba(255, 255, 255, .92);       /* 高光描边 */
-    --edge: rgba(32, 44, 64, .10);              /* 常规分隔线 */
-    --edge-soft: rgba(32, 44, 64, .06);         /* 极淡分隔线 */
-    --ring: rgba(32, 44, 64, .05);              /* 外圈，防止白面糊在白底上 */
-    --lift: 0 18px 48px rgba(55, 83, 118, .14); /* 层级分离阴影 */
-    --lift-sm: 0 8px 22px rgba(55, 83, 118, .10);
-    --spec: inset 0 1px 0 rgba(255, 255, 255, .92); /* 顶部高光 */
-    --fill-track: rgba(32, 44, 64, .07);
-    --fill-inset: rgba(255, 255, 255, .55);
-
-    --radius: 20px;
-    --radius-sm: 12px;
-    --gap: 16px;
-    --font: "Inter", "HarmonyOS Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
-    --mono: "JetBrains Mono", "SFMono-Regular", Consolas, "Courier New", monospace;
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { height: 100%; scrollbar-gutter: stable; }
-  body {
-    font-family: var(--font);
-    background: var(--bg);
-    color: var(--text);
-    overflow-x: hidden;
-    -webkit-font-smoothing: antialiased;
-    font-size: 13px;
-  }
-  ::selection { background: rgba(40, 104, 216, .16); }
-
-  /* ── 第 1 层：环境 ───────────────────────── */
-  .bg {
-    position: fixed; inset: 0; z-index: -3;
-    background:
-      radial-gradient(72rem 48rem at -6% 5%, rgba(255, 196, 130, .62), transparent 56%),
-      radial-gradient(72rem 46rem at 106% 8%, rgba(140, 196, 255, .66), transparent 60%),
-      linear-gradient(180deg, #F0F4FA 0%, #F7F9FD 48%, #EBF1FA 100%);
-  }
-  /* 极淡的网格：保留工具感，不参与对比度竞争 */
-  .grid {
-    position: fixed; inset: 0; z-index: -2; pointer-events: none;
-    background-image:
-      linear-gradient(rgba(32, 44, 64, .035) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(32, 44, 64, .035) 1px, transparent 1px);
-    background-size: 56px 56px;
-    mask-image: radial-gradient(ellipse 90% 75% at 50% 20%, black 30%, transparent 78%);
-    -webkit-mask-image: radial-gradient(ellipse 90% 75% at 50% 20%, black 30%, transparent 78%);
-  }
-  /* 环境光团：给玻璃提供"可透的东西"，同时不越过中央阅读区 */
-  .aurora { position: fixed; inset: 0; z-index: -2; pointer-events: none; overflow: hidden; }
-  .aurora span {
-    position: absolute; border-radius: 50%; filter: blur(65px); opacity: .54;
-    animation: float 22s ease-in-out infinite alternate;
-  }
-  .aurora span:nth-child(1) { width: 460px; height: 460px; left: -110px; top: 10%; background: #F7B267; }
-  .aurora span:nth-child(2) { width: 400px; height: 400px; right: -90px; top: 2%; background: #7FB8FF; animation-delay: -7s; }
-  .aurora span:nth-child(3) { width: 360px; height: 360px; left: 44%; bottom: -140px; background: #93DCC8; animation-delay: -13s; }
-  @keyframes float {
-    from { transform: translate3d(0, 0, 0) scale(1); }
-    to   { transform: translate3d(30px, 20px, 0) scale(1.10); }
-  }
-  /* 顶部柔光，替代深色主题的星点 */
-  .stars {
-    position: fixed; inset: 0; z-index: -2; pointer-events: none;
-    background: radial-gradient(1200px 320px at 50% -8%, rgba(255, 255, 255, .95), transparent 70%);
-  }
-
-  /* ── 布局 ─────────────────────────────── */
-  .wrap {
-    max-width: 1680px; margin: 0 auto; padding: 24px 28px 28px;
-    display: flex; flex-direction: column; gap: var(--gap);
-    animation: wrapIn .6s cubic-bezier(.22,1,.36,1) both;
-  }
-  @keyframes wrapIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
-
-  /* ── 载入遮罩（浮层级材质） ─────────────── */
-  .boot-overlay {
-    position: fixed; inset: 0; z-index: 9999;
-    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px;
-    background: rgba(247, 249, 252, .72);
-    backdrop-filter: blur(30px) saturate(150%); -webkit-backdrop-filter: blur(30px) saturate(150%);
-    transition: opacity .5s ease, visibility .5s ease;
-  }
-  .boot-overlay.hide { opacity: 0; visibility: hidden; pointer-events: none; }
-  .boot-spinner { position: relative; width: 74px; height: 74px; }
-  .boot-ring {
-    position: absolute; inset: 0; border-radius: 50%;
-    background: conic-gradient(from 0deg, transparent 0 16%, #2868D8 32%, #5B3FE0 47%, transparent 63%);
-    -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 7px), #000 calc(100% - 6px));
-    mask: radial-gradient(farthest-side, transparent calc(100% - 7px), #000 calc(100% - 6px));
-    animation: bootSpin 1.1s linear infinite;
-  }
-  .boot-ring.rev { inset: 9px; animation-direction: reverse; animation-duration: 1.8s; opacity: .7; }
-  .boot-core {
-    position: absolute; inset: 0; margin: auto; width: 13px; height: 13px; border-radius: 50%;
-    background: linear-gradient(135deg, #2868D8, #5B3FE0);
-    box-shadow: 0 4px 14px rgba(40, 104, 216, .35);
-    animation: bootCore 1.8s ease-in-out infinite;
-  }
-  @keyframes bootSpin { to { transform: rotate(360deg); } }
-  @keyframes bootCore { 0%,100% { transform: scale(.8); opacity: .75; } 50% { transform: scale(1.15); opacity: 1; } }
-  .boot-text { color: var(--muted); font-size: 13px; letter-spacing: 2.4px; animation: pulse 1.6s ease-in-out infinite; }
-
-  /* ── 顶栏（导航级：最透，blur 最大） ──────── */
-  header.topbar {
-    display: flex; align-items: center; justify-content: space-between; gap: 16px;
-    flex-wrap: wrap; padding: 13px 18px; border-radius: var(--radius);
-    border: 1px solid var(--hairline);
-    background:
-      linear-gradient(145deg, rgba(255,255,255,.72), rgba(255,255,255,.30)),
-      var(--glass-nav);
-    backdrop-filter: blur(var(--blur-nav)) saturate(160%);
-    -webkit-backdrop-filter: blur(var(--blur-nav)) saturate(160%);
-    box-shadow: var(--lift), var(--spec), 0 0 0 .5px var(--ring);
-    position: relative; z-index: 40;
-  }
-  header.topbar > * { position: relative; }
-
-  .brand { display: flex; align-items: center; gap: 14px; }
-  .logo {
-    width: 46px; height: 46px; border-radius: 15px; position: relative;
-    background: linear-gradient(145deg, rgba(255,255,255,.95), rgba(255,255,255,.55));
-    border: 1px solid var(--hairline);
-    box-shadow: var(--lift-sm), var(--spec), 0 0 0 .5px var(--ring);
-    display: grid; place-items: center;
-  }
-  .logo svg { width: 34px; height: 34px; display: block; }
-  .logo svg .od-dot { transform-box: fill-box; transform-origin: center; animation: odPulse 2.2s ease-in-out infinite; }
-  @keyframes odPulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .4; transform: scale(1.35); } }
-  .logo::after {
-    content: ""; position: absolute; inset: -5px; border-radius: 20px; z-index: -1;
-    background: linear-gradient(135deg, rgba(40,104,216,.45), transparent 55%, rgba(91,63,224,.40));
-    filter: blur(12px); opacity: .55;
-  }
-  .brand h1 { font-size: 25px; letter-spacing: .6px; font-weight: 700; color: var(--text); }
-  .brand .sub { color: var(--muted); font: 500 10px var(--mono); letter-spacing: 2.4px; margin-top: 6px; }
-
-  .topright { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
-  .clock { text-align: right; font-variant-numeric: tabular-nums; }
-  .clock .time { font: 600 21px/1.1 var(--mono); letter-spacing: .5px; color: var(--text); }
-  .clock .date { font-size: 10px; color: var(--muted); margin-top: 2px; letter-spacing: .5px; }
-
-  /* 状态胶囊：工具条级材质 */
-  .status-pill {
-    display: inline-flex; align-items: center; gap: 8px; padding: 7px 13px; border-radius: 999px;
-    background: var(--glass-tool); border: 1px solid var(--hairline);
-    box-shadow: var(--lift-sm), var(--spec);
-    font-size: 11.5px; color: var(--muted); white-space: nowrap;
-    backdrop-filter: blur(16px) saturate(150%); -webkit-backdrop-filter: blur(16px) saturate(150%);
-  }
-  .header-actions { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-  .header-actions button {
-    height: 28px; border: 1px solid var(--edge); border-radius: 999px;
-    background: rgba(255,255,255,.66); color: var(--muted);
-    font: 600 11.5px var(--font); padding: 0 11px; cursor: pointer;
-    transition: background-color .2s ease, color .2s ease, border-color .2s ease, box-shadow .2s ease;
-  }
-  .header-actions button:hover { background: #fff; color: var(--text); border-color: rgba(40,104,216,.28); box-shadow: var(--lift-sm); }
-  .header-actions button:active { transform: translateY(1px); }
-  .header-actions button.primary {
-    color: var(--blue); background: rgba(40, 104, 216, .09); border-color: rgba(40, 104, 216, .22);
-    box-shadow: 0 2px 8px rgba(40, 104, 216, .12), inset 0 1px 0 rgba(255,255,255,.8);
-    display: inline-grid; place-items: center;
-  }
-  .header-actions button.primary:hover {
-    background: rgba(40, 104, 216, .16); color: var(--blue); border-color: rgba(40, 104, 216, .38);
-    box-shadow: 0 4px 14px rgba(40, 104, 216, .18), var(--spec);
-  }
-  .header-actions button.primary:active { transform: translateY(1px); }
-  .header-actions a.theme-toggle {
-    color: var(--text-sub);
-    background: rgba(255, 255, 255, .66);
-    border: 1px solid var(--edge);
-    border-radius: 9px;
-    font: 600 11.5px var(--font);
-    padding: 0 11px;
-    height: 28px;
-    line-height: 26px;
-    box-sizing: border-box;
-    cursor: pointer;
-    transition: background-color .2s ease, color .2s ease, border-color .2s ease, box-shadow .2s ease, transform .15s ease;
-    box-shadow: var(--lift-sm);
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-  }
-  .header-actions a.theme-toggle:hover {
-    background: #fff;
-    color: #7c3aed;
-    border-color: rgba(124, 58, 237, .28);
-    box-shadow: 0 4px 14px rgba(124, 58, 237, .14), var(--spec);
-    transform: translateY(-1px);
-  }
-  .header-actions a.theme-toggle:active { transform: translateY(1px); }
-  .header-actions button:disabled { opacity: .55; cursor: wait; }
-  .dock-sep { width: 1px; height: 16px; background: var(--edge); margin: 0 3px; flex: none; }
-
-  /* ── 顶部操作栏展开/收起控制抽屉 ── */
-  .controls-toggle {
-    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-    height: 28px; padding: 0 12px; min-width: 88px; box-sizing: border-box; border-radius: 999px;
-    background: rgba(255,255,255,.66); color: var(--muted);
-    border: 1px solid var(--edge);
-    font: 600 11.5px var(--font); cursor: pointer; white-space: nowrap;
-    transition: background-color .2s ease, color .2s ease, border-color .2s ease, box-shadow .2s ease;
-  }
-  .controls-toggle:hover {
-    background: #fff; color: var(--text); border-color: rgba(40,104,216,.28); box-shadow: var(--lift-sm);
-  }
-  .controls-toggle.active {
-    background: rgba(40, 104, 216, .10); color: var(--blue); border-color: rgba(40, 104, 216, .35);
-    box-shadow: 0 2px 8px rgba(40, 104, 216, .12), inset 0 1px 0 rgba(255,255,255,.8);
-  }
-  .controls-toggle .toggle-icon { font-size: 13px; line-height: 1; opacity: .85; }
-  .controls-toggle .toggle-chevron {
-    width: 9px; height: 5px; flex: none; opacity: .75;
-    transition: transform .28s cubic-bezier(.34, 1.56, .64, 1);
-  }
-  .controls-toggle.active .toggle-chevron {
-    transform: rotate(180deg);
-  }
-  .controls-drawer {
-    display: inline-flex; align-items: center; gap: 6px;
-    max-width: 0; opacity: 0; margin: 0;
-    pointer-events: none; overflow: hidden;
-    transform-origin: right center;
-    transform: scale(0.96) translateX(10px);
-    transition: max-width .38s cubic-bezier(.16, 1, .3, 1),
-                opacity .28s cubic-bezier(.16, 1, .3, 1),
-                transform .38s cubic-bezier(.16, 1, .3, 1),
-                margin .38s cubic-bezier(.16, 1, .3, 1);
-  }
-  .controls-drawer.open {
-    max-width: 650px; opacity: 1; margin: 0 6px 0 0;
-    pointer-events: auto; transform: scale(1) translateX(0);
-  }
-  .controls-drawer.expanded-visible {
-    overflow: visible;
-  }
-  .controls-drawer.open > * {
-    animation: drawerItemEnter .32s cubic-bezier(.16, 1, .3, 1) both;
-  }
-  /* 从右往左弹出：靠右侧（靠近按钮）的元素先弹出，靠左侧的依次向左展开 */
-  .controls-drawer.open > *:nth-last-child(1) { animation-delay: 20ms; }
-  .controls-drawer.open > *:nth-last-child(2) { animation-delay: 45ms; }
-  .controls-drawer.open > *:nth-last-child(3) { animation-delay: 70ms; }
-  .controls-drawer.open > *:nth-last-child(4) { animation-delay: 95ms; }
-  .controls-drawer.open > *:nth-last-child(5) { animation-delay: 120ms; }
-  .controls-drawer.open > *:nth-last-child(6) { animation-delay: 145ms; }
-
-  @keyframes drawerItemEnter {
-    from { opacity: 0; transform: translateX(12px) scale(0.95); }
-    to   { opacity: 1; transform: none; }
-  }
-
-  .topbar-sep { width: 1px; height: 26px; background: var(--edge); flex: none; }
-
-  /* ── 自绘下拉（浮层级：接近实色，保证可读） ── */
-  .dropdown { position: relative; }
-  .dropdown .dropdown-toggle {
-    display: inline-flex; align-items: center; gap: 8px;
-    height: 28px; padding: 0 12px; border-radius: var(--radius-sm);
-    border: 1px solid var(--edge); background: rgba(255,255,255,.72); color: var(--text);
-    font: 600 11.5px var(--font); cursor: pointer; white-space: nowrap;
-    transition: background-color .2s ease, color .2s ease, border-color .2s ease, box-shadow .2s ease;
-  }
-  .dropdown .dropdown-toggle::after {
-    content: ""; flex: none; width: 10px; height: 6px; opacity: .8;
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%235B6D85' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat;
-    transition: transform .2s ease;
-  }
-  .dropdown .dropdown-toggle:hover { background-color: #fff; border-color: rgba(40,104,216,.28); box-shadow: var(--lift-sm); }
-  .dropdown.open .dropdown-toggle { border-color: rgba(40,104,216,.55); color: var(--blue); background-color: #fff; }
-  .dropdown.open .dropdown-toggle::after { transform: rotate(180deg); }
-  .dropdown.sm .dropdown-toggle { height: 25px; padding: 0 9px; gap: 6px; font-size: 11px; border-radius: 10px; }
-  .dropdown-menu {
-    position: absolute; top: calc(100% + 6px); right: 0; min-width: 100%; z-index: 60;
-    padding: 5px; border-radius: 14px; border: 1px solid var(--hairline);
-    background: var(--glass-menu);
-    backdrop-filter: blur(var(--blur-menu)) saturate(160%); -webkit-backdrop-filter: blur(var(--blur-menu)) saturate(160%);
-    box-shadow: var(--lift), var(--spec), 0 0 0 .5px var(--ring);
-    opacity: 0; visibility: hidden; transform: translateY(-4px);
-    transition: opacity .18s ease, transform .18s ease, visibility .18s;
-  }
-  .dropdown.open .dropdown-menu { opacity: 1; visibility: visible; transform: none; }
-  .dropdown-option {
-    padding: 8px 12px; border-radius: 9px; white-space: nowrap;
-    font: 600 11.5px var(--font); color: var(--text); cursor: pointer;
-    transition: background-color .15s ease, color .15s ease;
-  }
-  .dropdown.sm .dropdown-option { padding: 7px 10px; font-size: 11px; }
-  .dropdown-option:hover { background: rgba(40, 104, 216, .10); }
-  .dropdown-option.selected { background: rgba(40, 104, 216, .14); color: var(--blue); }
-
-  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 0 3px rgba(178, 90, 0, .14); animation: pulse 1.6s infinite; }
-  .dot.on { background: var(--green); box-shadow: 0 0 0 3px rgba(11, 154, 106, .14); }
-  .dot.err { background: var(--red); box-shadow: 0 0 0 3px rgba(208, 52, 44, .14); }
-  @keyframes pulse { 50% { opacity: .45; } }
-
-  /* ── 第 2~5 层：面板（卡片级） ───────────── */
-  .panel {
-    /* 极淡的冷蓝面光，跟随光标；只提供体积感，不抢文字 */
-    background:
-      radial-gradient(320px circle at var(--mx,-500px) var(--my,-500px), rgba(40,104,216,.07), transparent 70%),
-      var(--glass-card);
-    border: 1px solid var(--hairline); border-radius: var(--radius);
-    backdrop-filter: blur(var(--blur-card)) saturate(150%);
-    -webkit-backdrop-filter: blur(var(--blur-card)) saturate(150%);
-    box-shadow: var(--lift), var(--spec), 0 0 0 .5px var(--ring);
-    position: relative; overflow: hidden;
-    transition: border-color .25s ease, box-shadow .25s ease;
-  }
-  /* 表面高光：斜向的白色渐变，模拟玻璃厚度 */
-  .panel::before {
-    content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
-    background: linear-gradient(145deg, rgba(255,255,255,.55), rgba(255,255,255,0) 42%, rgba(255,255,255,0) 62%, rgba(255,255,255,.28));
-  }
-  /* 光标折射：只在玻璃边缘亮起一道蓝紫光，模拟 Liquid Glass 随视角变化的反射。
-     用 mask 把色光裁成 1.5px 的边环，避免浅底上出现一块发白的色斑。 */
-  .panel::after {
-    content: ""; position: absolute; inset: 0; pointer-events: none; border-radius: inherit;
-    padding: 1.5px;
-    background: radial-gradient(260px circle at var(--mx,-500px) var(--my,-500px),
-      rgba(40,104,216,.9), rgba(91,63,224,.5) 42%, rgba(14,134,184,0) 72%);
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    mask-composite: exclude;
-  }
-  .panel > * { position: relative; }
-  .panel h2 {
-    font-size: 13px; font-weight: 650; letter-spacing: .5px; color: var(--text);
-    display: flex; align-items: center; gap: 9px; padding: 17px 20px 6px;
-  }
-  .panel h2 .bar { width: 4px; height: 14px; border-radius: 3px; background: linear-gradient(180deg, var(--blue), var(--cyan)); }
-  .panel h2 .hint { margin-left: auto; font-weight: 500; font-size: 10.5px; color: var(--muted); letter-spacing: 0; }
-  .panel-title-tools { margin-left: auto; display: flex; align-items: center; gap: 10px; }
-  .live-mark { display: inline-flex; align-items: center; gap: 6px; color: var(--green); font: 600 10px var(--mono); letter-spacing: .7px; }
-  .live-mark::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 3px rgba(11,154,106,.16); animation: pulse 1.5s ease-in-out infinite; }
-  .not-live .live-mark { color: var(--amber); }
-  .not-live .live-mark::before { background: var(--amber); box-shadow: 0 0 0 3px rgba(178,90,0,.14); animation: none; }
-
-  /* 分段控件：macOS 风格的白色滑块，不用彩色填充抢主操作 */
-  .segmented {
-    display: inline-grid; grid-auto-flow: column; padding: 3px; border-radius: 10px;
-    border: 1px solid var(--edge-soft); background: rgba(32, 44, 64, .045);
-  }
-  .segmented button {
-    min-width: 52px; height: 24px; border: 0; border-radius: 7px; padding: 0 9px;
-    color: var(--muted); background: transparent;
-    font: 600 11px var(--font); cursor: pointer;
-    transition: color .2s ease, background-color .2s ease, box-shadow .2s ease;
-  }
-  .segmented button:hover { color: var(--text); }
-  .segmented button.active {
-    color: var(--blue); background: #fff;
-    box-shadow: 0 1px 3px rgba(32, 44, 64, .12), inset 0 1px 0 rgba(255,255,255,.9);
-  }
-  .segmented.sm { padding: 2px; border-radius: 8px; gap: 2px; }
-  .segmented.sm button { min-width: 44px; height: 22px; padding: 0 7px; font-size: 10.5px; border-radius: 5px; }
-
-  /* ── 指标卡 ─────────────────────────────── */
-  .kpis { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px; }
-  .kpi {
-    position: relative; overflow: hidden; min-width: 0;
-    padding: 16px 18px 13px; border-radius: 16px;
-    border: 1px solid var(--hairline);
-    /* 面光取本卡主色，六张卡各有各的反射 */
-    background:
-      radial-gradient(260px circle at var(--mx,-500px) var(--my,-500px), color-mix(in srgb, var(--accent, var(--cyan)) 13%, transparent), transparent 70%),
-      linear-gradient(150deg, rgba(255,255,255,.86), rgba(255,255,255,.52));
-    backdrop-filter: blur(18px) saturate(150%); -webkit-backdrop-filter: blur(18px) saturate(150%);
-    box-shadow: var(--lift), var(--spec), 0 0 0 .5px var(--ring);
-    transition: border-color .25s ease, box-shadow .25s ease, transform .25s ease;
-  }
-  /* 与面板同一套边环折射，颜色跟随本卡主色 */
-  .kpi::after {
-    content: ""; position: absolute; inset: 0; pointer-events: none; border-radius: inherit;
-    padding: 1.5px;
-    background: radial-gradient(200px circle at var(--mx,-500px) var(--my,-500px),
-      color-mix(in srgb, var(--accent, var(--cyan)) 88%, transparent) 0%,
-      color-mix(in srgb, var(--accent, var(--cyan)) 0%, transparent) 70%);
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    mask-composite: exclude;
-  }
-  /* 主色只做极淡的环境反光，不做大面积色块 */
-  .kpi::before {
-    content: ""; position: absolute; left: -24%; top: -70%; width: 62%; height: 130%;
-    background: radial-gradient(closest-side, color-mix(in srgb, var(--accent, var(--cyan)) 16%, transparent), transparent 74%);
-    pointer-events: none;
-  }
-  .kpi:hover {
-    transform: translateY(-2px);
-    border-color: color-mix(in srgb, var(--accent, var(--cyan)) 40%, transparent);
-    box-shadow: 0 20px 46px rgba(55, 83, 118, .16), var(--spec);
-  }
-  .kpi .label { font-size: 12px; color: var(--muted); letter-spacing: .5px; display: flex; align-items: center; gap: 8px; }
-  .kpi .icon {
-    width: 24px; height: 24px; border-radius: 8px; display: grid; place-items: center; flex: none;
-    font-size: 12px; color: #fff;
-    background: var(--accent, var(--cyan));
-    box-shadow: 0 3px 10px color-mix(in srgb, var(--accent, var(--cyan)) 30%, transparent), inset 0 1px 0 rgba(255,255,255,.35);
-  }
-  .kpi .value {
-    font: 700 clamp(24px, 2vw, 31px)/1.2 var(--mono); letter-spacing: -1px; margin-top: 13px;
-    font-variant-numeric: tabular-nums;
-    background: linear-gradient(100deg, #1B2942 0%, #2C3E5C 42%, var(--accent, var(--cyan)) 105%);
-    -webkit-background-clip: text; background-clip: text;
-    -webkit-text-fill-color: transparent; color: transparent;
-  }
-  .kpi .value .unit, .kpi .value small {
-    display: inline-block;
-    font-size: 0.82em;
-    font-weight: 600;
-    margin-left: 4px;
-    letter-spacing: normal;
-    color: var(--accent, var(--cyan));
-    -webkit-text-fill-color: var(--accent, var(--cyan));
-    vertical-align: baseline;
-  }
-  .kpi .value .unit:first-child { margin-left: 0; margin-right: 4px; font-size: 0.78em; }
-  .kpi .delta { font-size: 10.5px; line-height: 1.55; margin-top: 9px; padding-top: 8px; border-top: 1px dashed var(--edge); color: var(--muted); font-variant-numeric: tabular-nums; }
-  .kpi .delta b { font-weight: 700; color: var(--text); }
-  .kpi .delta .up { color: var(--green); }
-  .kpi .delta .down { color: var(--red); }
-  .kpi .delta .flat { color: var(--muted); }
-
-  /* ── 图表区 ─────────────────────────────── */
-  .grid-main { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--gap); }
-  .grid-main > .panel { height: 368px; }
-  .grid-side { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--gap); align-items: stretch; }
-  .grid-side > .panel { height: 368px; min-width: 0; }
-  .grid-side > .panel, .grid-main > .panel { display: flex; flex-direction: column; }
-  .chart-body { padding: 8px 18px 12px; }
-  .grid-side .chart-body, .grid-main .chart-body { flex: 1 1 auto; display: flex; flex-direction: column; min-height: 0; }
-  canvas { width: 100%; display: block; }
-  #rateChart { flex: 1 1 0%; width: 100%; min-height: 0; }
-  .trend-layout { flex: 1 1 0%; width: 100%; min-height: 0; display: flex; position: relative; }
-  #trendYAxis { width: 28px; height: 100%; flex: none; display: block; }
-  .trend-scroll { flex: 1; min-width: 0; height: 100%; overflow-x: hidden; overflow-y: hidden; scrollbar-width: none; -ms-overflow-style: none; cursor: default; }
-  .trend-scroll.scrollable { overflow-x: auto; cursor: grab; }
-  .trend-scroll.dragging { cursor: grabbing; user-select: none; }
-  .trend-scroll::-webkit-scrollbar { display: none; width: 0; height: 0; }
-  #trendChart { flex: none; height: 100%; display: block; }
-  .legend { display: flex; gap: 14px; flex-wrap: wrap; padding: 0 20px 12px; font-size: 12px; color: var(--muted); }
-  .legend i { display: inline-block; width: 9px; height: 9px; border-radius: 3px; margin-right: 4px; }
-
-  /* ── 模型热度 ───────────────────────────── */
-  .bars {
-    display: flex; flex-direction: column; gap: 2px; padding: 6px 16px 12px;
-    flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain;
-    scrollbar-width: thin; scrollbar-color: rgba(32, 44, 64, .28) transparent;
-  }
-  .bar-row {
-    display: grid; grid-template-columns: 26px minmax(100px, 1fr) 82px;
-    grid-template-rows: 22px 6px; align-items: center; column-gap: 9px; row-gap: 5px;
-    padding: 8px; border-radius: 10px; transition: background-color .2s ease;
-  }
-  .bar-row:hover { background: rgba(32, 44, 64, .045); }
-  .rank {
-    grid-row: 1 / 3; width: 25px; height: 25px; display: grid; place-items: center; border-radius: 8px;
-    color: var(--muted); background: var(--fill-inset); border: 1px solid var(--edge-soft);
-    font: 700 10px var(--mono); box-shadow: var(--spec);
-  }
-  .bar-row:nth-child(1) .rank { color: #8A4B00; background: linear-gradient(145deg, rgba(255,197,120,.95), rgba(255,170,90,.75)); border-color: rgba(214,152,60,.45); }
-  .bar-row:nth-child(2) .rank { color: #3B4B66; background: linear-gradient(145deg, rgba(214,226,245,.95), rgba(186,203,231,.75)); border-color: rgba(150,172,205,.45); }
-  .bar-row:nth-child(3) .rank { color: #8A5326; background: linear-gradient(145deg, rgba(240,198,150,.95), rgba(219,168,120,.75)); border-color: rgba(197,146,96,.45); }
-  .model-id { min-width: 0; display: flex; align-items: baseline; gap: 7px; }
-  .bar-row .name { min-width: 0; font-size: 12px; font-weight: 650; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .provider-tag { flex: none; color: var(--faint); font: 600 9px var(--mono); text-transform: uppercase; letter-spacing: .35px; }
-  .bar-row .track { grid-column: 2 / 4; height: 6px; border-radius: 5px; background: var(--fill-track); overflow: hidden; position: relative; contain: paint; }
-  .bar-row .fill {
-    height: 100%; border-radius: 6px; width: 0;
-    background: linear-gradient(90deg, var(--c1, var(--blue)), var(--c2, var(--cyan)));
-    transition: width 1s cubic-bezier(.22,1,.36,1);
-    position: relative;
-  }
-  .bar-row .val { font: 700 12px var(--mono); color: var(--text); text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
-  .bar-row .val small { display: block; margin-top: 1px; font: 500 9px var(--mono); color: var(--muted); }
-
-  /* 骨架屏：清单就绪前占位，避免高度/滚动条跳动 */
-  .bars .bar-row.skel .rank, .bars .bar-row.skel .name, .bars .bar-row.skel .val, .bars .bar-row.skel .track {
-    background: linear-gradient(90deg, rgba(32,44,64,.05) 25%, rgba(32,44,64,.11) 50%, rgba(32,44,64,.05) 75%);
-    background-size: 200% 100%;
-    animation: skelShimmer 1.3s ease-in-out infinite;
-    border-radius: 8px; box-shadow: none; color: transparent;
-  }
-  .bars .bar-row.skel .rank { width: 25px; height: 25px; }
-  .bars .bar-row.skel .name { height: 12px; width: 55%; }
-  .bars .bar-row.skel .val { height: 12px; width: 100%; display: block; }
-  .bars .bar-row.skel .track { height: 6px; }
-  .bars .bar-row.skel .fill { display: none; }
-  @keyframes skelShimmer { to { background-position: -200% 0; } }
-
-  /* ── 供应商分布：玻璃数据环 ───────────────── */
-  .donut-wrap { flex: 1; display: flex; align-items: center; justify-content: center; gap: 26px; padding: 8px 18px 16px; min-height: 190px; }
-  .donut { position: relative; width: 146px; height: 146px; flex: none; }
-  .donut svg { transform: rotate(-90deg); overflow: visible; }
-  .donut .center { position: absolute; inset: 0; display: grid; place-items: center; align-content: center; justify-content: center; text-align: center; }
-  .donut .center b { font: 700 21px/1.15 var(--mono); color: var(--text); letter-spacing: -.5px; }
-  .donut .center span { font-size: 10.5px; color: var(--muted); display: block; margin-top: 2px; }
-  .donut-list { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 8px; min-width: 0; max-width: 240px; }
-  .d-item {
-    display: grid; grid-template-columns: 12px 1fr auto; align-items: center; gap: 8px; font-size: 12px;
-    border-radius: 9px; padding: 4px 7px; cursor: pointer;
-    transition: transform .18s ease, background-color .18s ease;
-  }
-  .d-item .sw { width: 10px; height: 10px; border-radius: 3px; box-shadow: 0 0 0 1px rgba(32,44,64,.06) inset; }
-  .d-item .nm { color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .d-item .pc { color: var(--muted); font-variant-numeric: tabular-nums; }
-  .d-item:hover, .d-item.active { background: rgba(255,255,255,.85); transform: translateX(3px); box-shadow: var(--lift-sm); }
-  .d-item.active .nm { color: var(--blue); }
-  .donut svg .donut-seg { transition: stroke-dasharray .7s ease, stroke-width .18s ease, opacity .18s ease; cursor: pointer; }
-  .donut svg .donut-seg:hover, .donut svg .donut-seg.active { stroke-width: 15; }
-  /* 底槽 + 中心玻璃盘：不再有装饰性光球、线圈与火花 */
-  .donut-track { stroke: rgba(32, 44, 64, .06); }
-  .donut-glass {
-    fill: url(#od-glass);
-    stroke: rgba(255, 255, 255, .95); stroke-width: 1;
-    filter: drop-shadow(0 0 12px rgba(55, 83, 118, .16));
-  }
-  /* 悬停某个供应商时其余弧段退到背景，焦点落在当前段 */
-  .donut svg[data-glow] .donut-seg { opacity: .26; }
-  .donut svg[data-glow] .donut-seg.active { opacity: 1; }
-
-  /* ── 实时请求流 ─────────────────────────── */
-  .log-stream { overflow: hidden; display: flex; flex-direction: column; padding: 0 0 8px; flex: 1 1 auto; min-height: 0; }
-  .log-list {
-    flex: 1; overflow-y: auto; padding: 4px 12px 8px 20px;
-    scrollbar-width: thin; scrollbar-color: rgba(32, 44, 64, .28) transparent;
-  }
-  .log-item {
-    display: grid; grid-template-columns: 58px 96px minmax(75px, 1fr) 56px 78px; gap: 7px; align-items: baseline;
-    padding: 9px 6px; border-radius: 9px; font-size: 11px; font-family: var(--mono);
-    border-bottom: 1px solid var(--edge-soft);
-  }
-  .log-item.is-new { animation: logArrive .6s cubic-bezier(.2,.8,.2,1) both; }
-  @keyframes logArrive {
-    from { opacity: 0; transform: translateY(-8px); background: rgba(40,104,216,.10); }
-    to   { opacity: 1; transform: none; background: transparent; }
-  }
-  .log-item:hover { background: rgba(255,255,255,.7); box-shadow: var(--lift-sm); }
-  .log-item .t { color: var(--faint); font-variant-numeric: tabular-nums; }
-  .log-item .p {
-    color: #0E7490;
-    background: rgba(14, 116, 144, 0.08);
-    border: 1px solid rgba(14, 116, 144, 0.18);
-    border-radius: 4px;
-    padding: 1px 6px;
-    font-size: 10px;
-    line-height: 1.35;
-    width: 100%;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    box-sizing: border-box;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .log-item .m { color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .log-item .tok { color: var(--muted); text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
-  .log-item .s { text-align: right; font-weight: 700; font-size: 10.5px; font-variant-numeric: tabular-nums; }
-  .log-item .s.ok { color: var(--green); }
-  .log-item .s.bad { color: var(--red); }
-  .log-item .s.wait { color: var(--amber); }
-  .empty { color: var(--muted); font-size: 13px; padding: 26px 18px; text-align: center; }
-
-  /* ── 实时吞吐 ───────────────────────────── */
-  .flow-wrap { flex: 1; display: flex; flex-direction: column; gap: 12px; padding: 10px 18px 16px; min-height: 190px; }
-  .flow-head { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .flow-k {
-    background: var(--fill-inset); border: 1px solid var(--edge-soft); border-radius: 14px; padding: 11px 13px;
-    box-shadow: var(--spec);
-  }
-  .flow-k b { display: block; font-family: var(--mono); font-size: 24px; font-weight: 700; color: var(--blue); }
-  .flow-k.alt b { color: var(--violet); }
-  .flow-k span { font-size: 11px; color: var(--muted); }
-  .flow-meta { display: flex; gap: 10px; flex-wrap: wrap; font-size: 11px; color: var(--muted); }
-  .flow-meta b { color: var(--text); font-family: var(--mono); font-weight: 600; }
-  .flow-meta span { display: inline-flex; align-items: baseline; gap: 4px; min-width: 62px; }
-  .flow-status { display: flex; gap: 14px; font-size: 12px; color: var(--text); }
-  .flow-status .st { display: inline-flex; align-items: center; gap: 6px; }
-  .flow-status .st i { width: 8px; height: 8px; border-radius: 50%; }
-  .flow-status .st b { font-family: var(--mono); font-weight: 700; }
-  #flowChart { height: 60px; flex: none; }
-
-  footer { text-align: center; color: var(--muted); font: 500 10px/1.6 var(--mono); letter-spacing: 1px; padding: 6px 0; }
-  .footer-spark { color: var(--blue); padding: 0 10px; }
-  #logCount { font: 10px var(--mono); color: var(--muted); white-space: nowrap; }
-  .glow-num { text-shadow: 0 1px 0 rgba(255,255,255,.9); }
-
-  button, input, select { font: 12px var(--font); }
-  button:focus-visible, input:focus-visible, select:focus-visible,
-  .dropdown-toggle:focus-visible, .dropdown-option:focus-visible {
-    outline: 2px solid var(--blue); outline-offset: 2px; border-radius: 10px;
-  }
-  .refresh-icon { display: block; transition: transform .45s cubic-bezier(.2,.8,.2,1); }
-  #refreshNow:hover:not(:disabled) .refresh-icon { transform: rotate(45deg); }
-  .refreshing .refresh-icon { animation: bootSpin 1s linear infinite !important; }
-
-  /* 入场：只做一次位移淡入，不做长期装饰动画 */
-  .panel, .kpi { animation: panelEnter .7s cubic-bezier(.2,.8,.2,1) both; animation-delay: var(--enter-delay, 0ms); }
-  @keyframes panelEnter { from { opacity: 0; transform: translateY(16px) scale(.995); } to { opacity: 1; transform: none; } }
-
-  /* ── 响应式：结构重排，不是等比缩小 ────────── */
-  @media (max-width: 1180px) {
-    .kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-    .grid-main { grid-template-columns: 1fr; }
-    .grid-main > .panel, .grid-side > .panel { height: 340px; }
-  }
-  @media (max-width: 820px) {
-    .grid-side { grid-template-columns: 1fr; }
-    .wrap { padding: 20px 16px; }
-  }
-  @media (max-width: 700px) {
-    .wrap { padding: 16px 12px; gap: 12px; }
-    .topright { width: 100%; justify-content: space-between; gap: 8px; }
-    .clock { display: none; }
-    header.topbar { padding: 12px 14px; }
-    .brand h1 { font-size: 21px; }
-    .topbar-sep { display: none; }
-    .header-actions { flex: 1; justify-content: flex-start; }
-    .header-actions button:not(.dropdown-toggle) { padding: 0 9px; }
-    .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-    .kpi { padding: 14px 13px; }
-    .kpi .value { font-size: 25px; }
-    .panel h2 { padding: 14px 14px 6px; }
-    .panel h2.rate-title { align-items: flex-start; flex-wrap: wrap; }
-    .panel-title-tools { width: 100%; margin-left: 13px; justify-content: space-between; }
-    .log-item { grid-template-columns: 52px minmax(95px, 1fr) 50px 73px; font-size: 10px; gap: 5px; }
-    .log-item .p { display: none; }
-    .log-list { padding: 4px 10px 8px 12px; }
-    .donut-wrap { gap: 16px; padding: 8px 14px 14px; }
-    .grid-main > .panel, .grid-side > .panel { height: 320px; }
-  }
-
-  /* ── 渐进增强：没有模糊，页面也必须成立 ────── */
-  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-    header.topbar, .panel, .kpi, .status-pill, .dropdown .dropdown-toggle, .dropdown-menu, .boot-overlay {
-      background: #FFFFFF;
-    }
-    .flow-k, .rank { background: rgba(255,255,255,.9); }
-  }
-  @media (prefers-reduced-transparency: reduce) {
-    header.topbar, .panel, .kpi, .status-pill, .dropdown .dropdown-toggle, .dropdown-menu {
-      background: #FFFFFF;
-      backdrop-filter: none; -webkit-backdrop-filter: none;
-    }
-    .panel::before, .panel::after, .kpi::after { display: none; }
-    .aurora, .stars { display: none; }
-  }
-  @media (prefers-contrast: more) {
-    :root { --text: #10192B; --muted: #3D4C63; --faint: #4E5E75; --hairline: #8C9AB0; --edge: rgba(16,25,43,.28); }
-    .panel, .kpi { box-shadow: 0 0 0 1px rgba(16,25,43,.18); }
-    .panel::before, .panel::after { display: none; }
-    .aurora, .stars, .grid { display: none; }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
-      animation-duration: .01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: .01ms !important;
-      scroll-behavior: auto !important;
-    }
-    .aurora span { animation: none; }
-    .panel::after, .kpi::after { display: none; }
-  }
-  /* 动效开关（页面内按钮）与页面隐藏时暂停连续绘图 */
-  .still *, .still *::before, .still *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
-  .still .panel::after, .still .kpi::after { display: none; }
-  .still .kpi::before { display: none; }
-  /* 不支持 mask-composite 时退回淡色面光，不出现整块色斑 */
-  @supports not ((mask-composite: exclude) or (-webkit-mask-composite: xor)) {
-    .panel::after, .kpi::after {
-      padding: 0; -webkit-mask: none; mask: none;
-      background: radial-gradient(240px circle at var(--mx,-500px) var(--my,-500px), rgba(40,104,216,.14), transparent 70%);
-    }
-  }
-  .backgrounded *, .backgrounded *::before, .backgrounded *::after { animation-play-state: paused !important; }
-  
-  .header-actions { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-  .header-actions button,
-  .dropdown .dropdown-toggle {
-    height: 28px; line-height: 26px; border-radius: 999px;
-    border: 1px solid var(--edge); background: rgba(255, 255, 255, .66);
-    color: var(--text-sub); font: 600 11.5px var(--font); padding: 0 12px;
-    cursor: pointer; box-shadow: var(--lift-sm);
-    transition: background-color .2s ease, color .2s ease, border-color .2s ease, box-shadow .2s ease, transform .15s ease;
-    display: inline-flex; align-items: center; justify-content: center; gap: 4px; box-sizing: border-box;
-  }
-  .header-actions button:hover,
-  .dropdown .dropdown-toggle:hover {
-    background: #ffffff; color: var(--text); border-color: rgba(40, 104, 216, .32);
-    box-shadow: 0 4px 14px rgba(40, 104, 216, .12), var(--spec);
-    transform: translateY(-1px);
-  }
-  .header-actions button:active,
-  .dropdown .dropdown-toggle:active {
-    transform: translateY(1px); box-shadow: none;
-  }
-  .header-actions button#refreshNow { width: 32px; padding: 0; }
-  .header-actions button:disabled { opacity: .55; cursor: wait; transform: none !important; }
-  .refresh-icon { display: block; transition: transform .4s cubic-bezier(.2, .8, .2, 1); }
-  #refreshNow:hover:not(:disabled) .refresh-icon { transform: rotate(180deg); }
-  .refreshing .refresh-icon { animation: bootSpin 1s linear infinite !important; }
 
 </style>
+<script>/* 主题预初始化：首次绘制前启用对应主题样式，避免无样式闪烁 */
+try {
+  var __odTheme = localStorage.getItem("opendash-theme") === "dark" ? "dark" : "light";
+  document.documentElement.dataset.theme = __odTheme;
+  document.getElementById("theme-light").disabled = (__odTheme !== "light");
+  document.getElementById("theme-dark").disabled = (__odTheme !== "dark");
+} catch (e) { document.documentElement.dataset.theme = "light"; }</script>
+
 </head>
 <body class="theme-light">
 
-  <div class="boot-overlay" id="bootOverlay" aria-hidden="true" data-page-node-id="Eq3w0MIq60Gtvqt9teDy7d">
-    <div class="boot-spinner" data-page-node-id="8ikgybjwjXTSA8F6YXk5qs">
-      <div class="boot-ring" data-page-node-id="oIBC6sFUPwZGUHsQmnWr2H"></div>
-      <div class="boot-ring rev" data-page-node-id="XlAtsJ0h1utuy3c25NBBsj"></div>
-      <div class="boot-core" data-page-node-id="dPCOAXupb3S1ECGUAkgbM6"></div>
+  <div class="boot-overlay" id="bootOverlay" aria-hidden="true">
+    <div class="boot-spinner">
+      <div class="boot-ring"></div>
+      <div class="boot-ring rev"></div>
+      <div class="boot-core"></div>
     </div>
-    <div class="boot-text" data-page-node-id="r5LB4SpbuW5IlQfvD6vO9Z">OPENDASH 正在载入观测数据…</div>
+    <div class="boot-text">OPENDASH 正在载入观测数据…</div>
   </div>
-  <div class="bg" data-page-node-id="nLwpf7jVkvCRoid4yGGWF7"></div>
-  <div class="grid" data-page-node-id="xXvtZVgIAEORsXkgZ67RAl"></div>
-  <div class="aurora" data-page-node-id="8IltMtipWAiGimc8rBFlS2"><span data-page-node-id="teK2V8ewHi6htGBm3hsJRQ"></span><span data-page-node-id="rXJdzJAhF1DiW1CjG5vESg"></span><span data-page-node-id="4UFVM4fO3NnZ6pWzt6tTM3"></span></div>
-  <div class="stars" data-page-node-id="HZpyG1D1Fbt2aGRIEYt93Y"></div>
+  <div class="bg"></div>
+  <div class="grid"></div>
+  <div class="aurora"><span></span><span></span><span></span></div>
+  <div class="stars"></div>
 
-  <div class="wrap" data-page-node-id="gussniCQbRnUHDQMxq9qHB">
-    <header class="topbar" data-page-node-id="igfAwVKEoVAtAsHgUZndeO">
-      <div class="brand" data-page-node-id="d6SJwqQAjUVqglPvpS7F1u">
-        <div class="logo" data-page-node-id="XFuR9WMhsmarCn4dVQKfni"><svg viewBox="0 0 64 64" aria-hidden="true" data-page-node-id="v841Z33o3znQL1Bi6q9qLb">
-          <defs data-page-node-id="ChCFM3mjrFPgtPRu7paox2">
-            <linearGradient id="od-wave" x1="6" y1="32" x2="58" y2="32" gradientUnits="userSpaceOnUse" data-page-node-id="XcDOgSWfwGOdXRaLniWTE3">
-              <stop offset="0" stop-color="#2868D8" data-page-node-id="Cb3CznrnAVN7393FQ0RT2R"/>
-              <stop offset="1" stop-color="#5B3FE0" data-page-node-id="VSRB2GKcjGEZU7cAvc7QTt"/>
+  <div class="wrap">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo"><svg viewBox="0 0 64 64" aria-hidden="true">
+          <defs>
+            <linearGradient id="od-wave" x1="6" y1="32" x2="58" y2="32" gradientUnits="userSpaceOnUse">
+              <stop offset="0" stop-color="#2868D8"/>
+              <stop offset="1" stop-color="#5B3FE0"/>
             </linearGradient>
           </defs>
-          <line x1="8" y1="36" x2="56" y2="36" stroke="rgba(32,44,64,.14)" stroke-width="1.5" data-page-node-id="fsE1KQZDk1ooFEaIfUUVzc"/>
-          <polyline points="8,36 19,36 24,18 29,47 34,28 39,36 44,26 48,42 52,36 56,36" fill="none" stroke="url(#od-wave)" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="qkQurg44E0zClppqw7sZ1s"/>
-          <circle class="od-dot" cx="56" cy="36" r="3" fill="#2868D8" data-page-node-id="6YJ8c2lmZ0dGwDnZgnT4nU"/>
+          <line x1="8" y1="36" x2="56" y2="36" stroke="rgba(32,44,64,.14)" stroke-width="1.5"/>
+          <polyline points="8,36 19,36 24,18 29,47 34,28 39,36 44,26 48,42 52,36 56,36" fill="none" stroke="url(#od-wave)" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle class="od-dot" cx="56" cy="36" r="3" fill="#2868D8"/>
         </svg></div>
-        <div data-page-node-id="VGiYXpOA1AvWYhxABiGJAW">
-          <h1 data-page-node-id="A8ZzhI2m7R6Crf9kkioX0x">OPENDASH<span style="color:var(--blue)" data-page-node-id="w1nqWapzAZ7LkXz1BhJTAX"> · 观测台</span></h1>
-          <div class="sub" data-page-node-id="FMhk1tWwnU3VWOhvi1MVNV">LLM PROXY · REQUEST OBSERVATORY</div>
+        <div>
+          <h1>OPENDASH<span style="color:var(--blue)"> · 观测台</span></h1>
+          <div class="sub">LLM PROXY · REQUEST OBSERVATORY</div>
         </div>
       </div>
-      <div class="topright" data-page-node-id="yaKqk5pdkM6HCFkdUoVwTz">
-        <div class="header-actions" role="toolbar" aria-label="观测控制" data-page-node-id="nOPcI89nayfSFPfBU7hheF">
+      <div class="topright">
+        <div class="header-actions" role="toolbar" aria-label="观测控制">
           <div class="controls-drawer" id="controlsDrawer" aria-hidden="true">
             <div class="dropdown" id="rangeDrop">
               <button type="button" class="dropdown-toggle" id="rangeSelect" aria-haspopup="listbox" aria-expanded="false">近 7 天</button>
@@ -2167,16 +1426,16 @@ box-shadow: none;
                 <div class="dropdown-option" role="option" aria-selected="false" data-value="all">所有时间</div>
               </div>
             </div>
-            <div class="dropdown" id="scopeDrop" data-page-node-id="bqBkfbNkhlHcBpCFVR5UB8">
-              <button type="button" class="dropdown-toggle" id="scopeSelect" aria-haspopup="listbox" aria-expanded="false" data-page-node-id="CQ6JIP0FQbKMiJOHTE0WvU">全部模型</button>
-              <div class="dropdown-menu" role="listbox" aria-label="统计范围" data-page-node-id="xYVPDvaFGELIjIZkzcItQx">
-                <div class="dropdown-option selected" role="option" aria-selected="true" data-value="all" data-page-node-id="KWCufhrfcceJS03hEr5LSR">全部模型</div>
-                <div class="dropdown-option" role="option" aria-selected="false" data-value="active" data-page-node-id="3qYgMevvpHiyGsBEzzMpWs">启用模型</div>
+            <div class="dropdown" id="scopeDrop">
+              <button type="button" class="dropdown-toggle" id="scopeSelect" aria-haspopup="listbox" aria-expanded="false">全部模型</button>
+              <div class="dropdown-menu" role="listbox" aria-label="统计范围">
+                <div class="dropdown-option selected" role="option" aria-selected="true" data-value="all">全部模型</div>
+                <div class="dropdown-option" role="option" aria-selected="false" data-value="active">启用模型</div>
               </div>
             </div>
-            <span class="dock-sep" data-page-node-id="ZMxzMHOEOxtZUstUdvsI4h"></span>
-            <button type="button" id="motionToggle" aria-pressed="true" data-page-node-id="4xX5ZalcO3qkCwOBogA2VI">✧ 动效开</button>
-            <button type="button" id="pauseToggle" aria-pressed="false" data-page-node-id="w26hcrjkof4o9mfwDMSg4h">Ⅱ 暂停</button>
+            <span class="dock-sep"></span>
+            <button type="button" id="motionToggle" aria-pressed="true">✧ 动效开</button>
+            <button type="button" id="pauseToggle" aria-pressed="false">Ⅱ 暂停</button>
             <button type="button" id="themeToggle" class="theme-toggle" title="切换到深空极光黑夜版" aria-label="切换到深空极光黑夜版">☾ 深空极光</button>
           </div>
           <button type="button" class="controls-toggle" id="controlsToggle" aria-expanded="false" aria-controls="controlsDrawer" title="展开控制选项">
@@ -2184,125 +1443,125 @@ box-shadow: none;
             <span class="toggle-label" id="controlsToggleLabel">控制选项</span>
             <svg class="toggle-chevron" viewBox="0 0 10 6" width="9" height="5" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
-          <button type="button" id="refreshNow" class="primary" title="立即刷新" aria-label="立即刷新" data-page-node-id="0ardcHK2mCrQ27c0GniF9J"><svg class="refresh-icon" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" data-page-node-id="NieEriT3YJyReaS2KzM7Fr"><path d="M17.65 6.35A7.95 7.95 0 0 0 12 4a8 8 0 1 0 7.73 10h-2.08A6 6 0 1 1 12 6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" fill="currentColor" data-page-node-id="dM7IrZHfIeCKSh7aJE0jAa"/></svg></button>
+          <button type="button" id="refreshNow" class="primary" title="立即刷新" aria-label="立即刷新"><svg class="refresh-icon" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M17.65 6.35A7.95 7.95 0 0 0 12 4a8 8 0 1 0 7.73 10h-2.08A6 6 0 1 1 12 6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" fill="currentColor"/></svg></button>
         </div>
-        <span class="topbar-sep" data-page-node-id="10BkywsInsRUgFG8QaeC5X"></span>
-        <div class="status-pill" data-page-node-id="FwtTOCnJ15bGn00KxhzioX"><span class="dot" id="statusDot" data-page-node-id="xcfwW0QkV56rjNv17oCTr4"></span><span id="statusText" data-page-node-id="enyCI2IiLD9y0OBQpU9DSU">连接中…</span></div>
-        <div class="clock" data-page-node-id="jW3xkR1K8NvQmMLP8kNBKI">
-          <div class="time" id="clockTime" data-page-node-id="22MHJLzdJhgJjqGyoDbZtK">--:--:--</div>
-          <div class="date" id="clockDate" data-page-node-id="5LuT2HnWOuR0TUyc56ua4V"></div>
+        <span class="topbar-sep"></span>
+        <div class="status-pill"><span class="dot" id="statusDot"></span><span id="statusText">连接中…</span></div>
+        <div class="clock">
+          <div class="time" id="clockTime">--:--:--</div>
+          <div class="date" id="clockDate"></div>
         </div>
       </div>
     </header>
-    <section class="kpis" id="kpis" data-page-node-id="64t0PK6BhvExGxhZ4mtKwB">
-      <div class="kpi" style="--accent:var(--cyan)" data-page-node-id="7qwRSZGFf7r5NiwzcEkssz"><div class="label" data-page-node-id="YcRlCHBI2Up336PYHHNoUA"><span class="icon" data-page-node-id="SBBkzYxwoZqz4B4kfUYGjE">⚡︎</span>总请求</div><div class="value full" id="k-requests" data-page-node-id="zOvJaNXAxZYiMlFWASd67r">—</div><div class="delta" id="k-requests-d" data-page-node-id="sypqDA014taxuiRnghrDCU">近 7 天</div></div>
-      <div class="kpi" style="--accent:var(--green)" data-page-node-id="sT5lNY7vhV2K8mezRJBGRm"><div class="label" data-page-node-id="NvuhpvfFkZLtg8YbXY6ukO"><span class="icon" data-page-node-id="4YpaaJEjKHCOLjDRCUrpDV">✓</span>成功率</div><div class="value" id="k-success" data-page-node-id="cgeNeifFLHkrsUtX45Pepy">—</div><div class="delta" id="k-success-d" data-page-node-id="FC2xQ3YbyRZlK25pC1D7YP">实时窗口</div></div>
-      <div class="kpi" style="--accent:var(--amber)" data-page-node-id="xFxUOzxn4rf6b5JDjpVB8c"><div class="label" data-page-node-id="6c4JSxE8JKeTsbDZZbmDsL"><span class="icon" data-page-node-id="yFy1fV3PPQ4ML1HnpgDKCH">⏱︎</span>平均耗时</div><div class="value" id="k-latency" data-page-node-id="EqCYFoC9YJNrl6AbWnAvOb">—</div><div class="delta" id="k-latency-d" data-page-node-id="7O7hJEvQjkRGGPpVRvq8Zf">实时窗口</div></div>
-      <div class="kpi" style="--accent:var(--violet)" data-page-node-id="DOFYCoTGMcggPATGEORClw"><div class="label" data-page-node-id="9VgtFRH7GKjKmwVrvQ0RjJ"><span class="icon" data-page-node-id="HT25Vf4jec7EmCvQXRVjDD">◎</span>Token 总量</div><div class="value" id="k-tokens" data-page-node-id="BaQZwuDZKDuCEqBmpWIl8W">—</div><div class="delta" id="k-tokens-d" data-page-node-id="ZajP99VFX92xjqNq89E0y3">7 天累计</div></div>
-      <div class="kpi" style="--accent:var(--blue)" data-page-node-id="HDkPSoqgWjP0lOoJ1DKk4F"><div class="label" data-page-node-id="OVJtDsYm3BvOlgTi5Psq6e"><span class="icon" data-page-node-id="mByVHLGn2eWDidIwclc3qU">◈</span>模型数量</div><div class="value" id="k-models" data-page-node-id="sxC4NRfpEseCDGKez8jSjD">—</div><div class="delta" id="k-models-d" data-page-node-id="eiGlg2LdeJgCK54zaSsejj">近 7 天</div></div>
-      <div class="kpi" style="--accent:var(--red)" data-page-node-id="CuFGsimcjwff0nCBJv8m2Y"><div class="label" data-page-node-id="aZ97Joq2qE79N2SLBIHZcN"><span class="icon" data-page-node-id="PCDB485vLOvIYqryLxw5Pz">$</span>估算费用</div><div class="value" id="k-cost" data-page-node-id="pAuHHxLvq35Qq0UDv0bZiO">—</div><div class="delta" id="k-cost-d" data-page-node-id="yHkaMvBU0PDpF96sAmmHzK">7 天累计</div></div>
+    <section class="kpis" id="kpis">
+      <div class="kpi" style="--accent:var(--cyan)"><div class="label"><span class="icon">⚡︎</span>总请求</div><div class="value full" id="k-requests">—</div><div class="delta" id="k-requests-d">近 7 天</div></div>
+      <div class="kpi" style="--accent:var(--green)"><div class="label"><span class="icon">✓</span>成功率</div><div class="value" id="k-success">—</div><div class="delta" id="k-success-d">实时窗口</div></div>
+      <div class="kpi" style="--accent:var(--amber)"><div class="label"><span class="icon">⏱︎</span>平均耗时</div><div class="value" id="k-latency">—</div><div class="delta" id="k-latency-d">实时窗口</div></div>
+      <div class="kpi" style="--accent:var(--violet)"><div class="label"><span class="icon">◎</span>Token 总量</div><div class="value" id="k-tokens">—</div><div class="delta" id="k-tokens-d">7 天累计</div></div>
+      <div class="kpi" style="--accent:var(--blue)"><div class="label"><span class="icon">◈</span>模型数量</div><div class="value" id="k-models">—</div><div class="delta" id="k-models-d">近 7 天</div></div>
+      <div class="kpi" style="--accent:var(--red)"><div class="label"><span class="icon">$</span>估算费用</div><div class="value" id="k-cost">—</div><div class="delta" id="k-cost-d">7 天累计</div></div>
     </section>
 
-    <div class="grid-main" data-page-node-id="6pS2noH3Mq86qv9tz1JWoB">
-      <section class="panel" data-page-node-id="jGhPd7ko1yFS469K62Hcz5">
-        <h2 class="rate-title" data-page-node-id="vPYWZD5U0Emm8J8SrwS7RG"><span class="bar" data-page-node-id="J3zGgRW32ECBJm3EVl2fkO"></span>请求速率
-          <span class="panel-title-tools" data-page-node-id="SRFuaSENCkj6ISXS0TQMr4">
-            <span class="live-mark" data-page-node-id="CwW8rR5Wkk4GiHb057MxBF">LIVE</span>
-            <span class="segmented" id="rateRange" role="group" aria-label="请求速率时间范围" data-page-node-id="BjOCFC9KZjFkt8Wt9EInta">
-              <button type="button" data-range="5m" class="active" data-page-node-id="hSP9NY1EiCDsWPPiFDTEop">5 分钟</button>
-              <button type="button" data-range="60m" data-page-node-id="v5DHBlhTCJynXttqJFV59O">60 分钟</button>
+    <div class="grid-main">
+      <section class="panel">
+        <h2 class="rate-title"><span class="bar"></span>请求速率
+          <span class="panel-title-tools">
+            <span class="live-mark">LIVE</span>
+            <span class="segmented" id="rateRange" role="group" aria-label="请求速率时间范围">
+              <button type="button" data-range="5m" class="active">5 分钟</button>
+              <button type="button" data-range="60m">60 分钟</button>
             </span>
           </span>
         </h2>
-        <div class="chart-body" data-page-node-id="lcJhilMBLUUULcYXCNbM8q"><canvas role="img" aria-label="请求速率曲线，基于最近一小时已获取日志样本" id="rateChart" height="210" data-page-node-id="FF908xSoyX66zZb3DwNj2O"></canvas></div>
-        <div class="legend" data-page-node-id="X796HRIxsAwwgp9Eb7GVdP"><span data-page-node-id="JoFjd7LD9ZkGOe5AvgH8Qa"><i style="background:linear-gradient(90deg,#2868D8,#0E86B8)" data-page-node-id="C22y2kxtagQP2TLVIM2gSu"></i><span id="rateLegend" data-page-node-id="hjXRS1rp2Ab0KLx3k9MF3k">请求数 / 分钟</span></span><span data-page-node-id="lUWDScgNGl2DpJBCOpfwXv"><i style="background:rgba(32,44,64,.28)" data-page-node-id="f0gJ8466Ix4KCbWGOOzcJ9"></i>当前均值</span></div>
+        <div class="chart-body"><canvas role="img" aria-label="请求速率曲线，基于最近一小时已获取日志样本" id="rateChart" height="210"></canvas></div>
+        <div class="legend"><span><i style="background:linear-gradient(90deg,#2868D8,#0E86B8)"></i><span id="rateLegend">请求数 / 分钟</span></span><span><i style="background:rgba(32,44,64,.28)"></i>当前均值</span></div>
       </section>
 
-      <section class="panel" data-page-node-id="5PSLwR9sZFOUvHzwSqoxLC">
-        <h2 data-page-node-id="d0E1xVQJEYWZcEz6dAfEIN"><span class="bar" style="background:linear-gradient(180deg,#5B3FE0,#0E86B8)" data-page-node-id="AfJE3MTIfRD0RMASj2amQt"></span>实时请求流
-          <span class="panel-title-tools" data-page-node-id="oqcmNMcqgrg0VJ3bMfM1j1">
-            <div class="dropdown sm" id="logDrop" data-page-node-id="Pw8GxUy94QXDfEMKFFsWzF">
-              <button type="button" class="dropdown-toggle" id="logFilter" aria-haspopup="listbox" aria-expanded="false" data-page-node-id="ordJOibzTU61D0lUUeCbwc">全部状态</button>
-              <div class="dropdown-menu" role="listbox" aria-label="请求状态" data-page-node-id="Hin6xUxGWGoVzCTbaQwn8F">
-                <div class="dropdown-option selected" role="option" aria-selected="true" data-value="all" data-page-node-id="aTvxtWV12h0uacDh1RYO6c">全部状态</div>
-                <div class="dropdown-option" role="option" aria-selected="false" data-value="error" data-page-node-id="AxF8YpKDgxr2Gd3zYfczAB">仅异常</div>
-                <div class="dropdown-option" role="option" aria-selected="false" data-value="429" data-page-node-id="Ey9GcyNwDpBHhuFcxF14Ei">仅限流</div>
+      <section class="panel">
+        <h2><span class="bar" style="background:linear-gradient(180deg,#5B3FE0,#0E86B8)"></span>实时请求流
+          <span class="panel-title-tools">
+            <div class="dropdown sm" id="logDrop">
+              <button type="button" class="dropdown-toggle" id="logFilter" aria-haspopup="listbox" aria-expanded="false">全部状态</button>
+              <div class="dropdown-menu" role="listbox" aria-label="请求状态">
+                <div class="dropdown-option selected" role="option" aria-selected="true" data-value="all">全部状态</div>
+                <div class="dropdown-option" role="option" aria-selected="false" data-value="error">仅异常</div>
+                <div class="dropdown-option" role="option" aria-selected="false" data-value="429">仅限流</div>
               </div>
             </div>
-            <span id="logCount" data-page-node-id="i1kLv7PVsxmLZt0yVDrCXe">0 条</span>
+            <span id="logCount">0 条</span>
           </span>
         </h2>
-        <div class="log-list" id="logList" data-page-node-id="Q1kWPzsrWuO79qmJKAIcTh"><div class="empty" data-page-node-id="P3P7DSzkchvsIMCdZn0TPe">等待数据…</div></div>
+        <div class="log-list" id="logList"><div class="empty">等待数据…</div></div>
       </section>
     </div>
 
-    <div class="grid-side" id="sidebar" data-page-node-id="e4f3LOXc3vDTLGnJ67hRnL">
-      <section class="panel" data-page-node-id="5hcIYzTr6fJ1nDlRlqPYCs">
-        <h2 data-page-node-id="4LfSZqJlZRlT4GVGE0WCCf"><span class="bar" style="background:linear-gradient(180deg,#E08000,#D0342C)" data-page-node-id="18cGXEo1fgEiCKsbGJFwOS"></span>模型热度
+    <div class="grid-side" id="sidebar">
+      <section class="panel">
+        <h2><span class="bar" style="background:linear-gradient(180deg,#E08000,#D0342C)"></span>模型热度
           <span class="panel-title-tools">
-            <span class="hint" id="heatHint" data-page-node-id="cANGt95VNh6bmnND9ZFNiF">TOP 20 · 按请求量</span>
+            <span class="hint" id="heatHint">TOP 20 · 按请求量</span>
             <span class="segmented sm" id="heatLimitSeg" role="group" aria-label="模型显示数量">
               <button type="button" data-limit="20" class="active">Top 20</button>
               <button type="button" data-limit="all">全部</button>
             </span>
           </span>
         </h2>
-        <div class="bars" id="modelBars" data-page-node-id="ctGonJRBzucf6r5qmBYps4"></div>
+        <div class="bars" id="modelBars"></div>
       </section>
 
-      <section class="panel" id="trendPanel" data-page-node-id="CNSgSOSkHQB1CrvqXUhEUN">
-        <h2 data-page-node-id="vBPrSska1evEEACSKVbROu"><span class="bar" style="background:linear-gradient(180deg,#0B9A6A,#0E86B8)" data-page-node-id="vGy2p97HehXsMZmElXoE41"></span><span id="trendTitle">7 天趋势</span> <span class="hint" id="trendHint" data-page-node-id="ZSgOK7jm4IugoWO8AACG7G">每日请求</span></h2>
-        <div class="chart-body" id="trendChartBody" data-page-node-id="iQfIs4LY2Drzjubf3QgntP">
+      <section class="panel" id="trendPanel">
+        <h2><span class="bar" style="background:linear-gradient(180deg,#0B9A6A,#0E86B8)"></span><span id="trendTitle">7 天趋势</span> <span class="hint" id="trendHint">每日请求</span></h2>
+        <div class="chart-body" id="trendChartBody">
           <div class="trend-layout">
             <canvas id="trendYAxis" height="210"></canvas>
             <div class="trend-scroll" id="trendScroll">
-              <canvas role="img" aria-label="每日请求趋势" id="trendChart" height="210" data-page-node-id="nI0zISShwcq41pUUcWSxWG"></canvas>
+              <canvas role="img" aria-label="每日请求趋势" id="trendChart" height="210"></canvas>
             </div>
           </div>
         </div>
       </section>
 
-      <section class="panel" data-page-node-id="FOi2d47Fef6guvFKZBEyZO">
-        <h2 data-page-node-id="hcXExDAAcdvtFPCkb97Ftq"><span class="bar" style="background:linear-gradient(180deg,#0B9A6A,#2868D8)" data-page-node-id="tPwmoaWwD0u3BL3fI7p8Bq"></span>供应商分布 <span class="hint" id="donutHint" data-page-node-id="NXkjqlh3dPkkzx4zpdB03W">7 天请求占比</span></h2>
-        <div class="donut-wrap" data-page-node-id="E4ycORHoobyxaNUnq1YhfM">
-          <div class="donut" data-page-node-id="u3TZICYF3iBynRm6o5aKNV">
-            <svg width="146" height="146" id="donutSvg" data-page-node-id="ALYZPcMk1EU8827N9hgr3z"></svg>
-            <div class="center" data-page-node-id="f5fKmFWM4P8FPWPyR3HJkx"></div>
+      <section class="panel">
+        <h2><span class="bar" style="background:linear-gradient(180deg,#0B9A6A,#2868D8)"></span>供应商分布 <span class="hint" id="donutHint">7 天请求占比</span></h2>
+        <div class="donut-wrap">
+          <div class="donut">
+            <svg width="146" height="146" id="donutSvg"></svg>
+            <div class="center"></div>
                       </div>
-                      <div class="donut-list" id="donutList" data-page-node-id="KdMKYSggrIMYJWk8w7FHzH"></div>
+                      <div class="donut-list" id="donutList"></div>
                     </div>
                   </section>
 
-                  <section class="panel" data-page-node-id="GmQc2U4NWt0jvCDCETexjC">
-                    <h2 data-page-node-id="M9hMtnHfxJ1QLPjmgTRsQF"><span class="bar" style="background:linear-gradient(180deg,#0E86B8,#5B3FE0)" data-page-node-id="ZVF1qrWPQ3X3HcFR6FxhYX"></span>实时吞吐 <span class="hint" data-page-node-id="IK4UIf5MYYl0okUjR5XV39">最近 10 分钟</span></h2>
-                    <div class="flow-wrap" data-page-node-id="sB6WlyxTwXrLtMNb8QJrEn">
-                      <div class="flow-head" data-page-node-id="q6yij2LC581QOyJPiXTB8y">
-                        <div class="flow-k alt" data-page-node-id="Y0zw6qE4eBQEwLtTeoPXYu">
-                          <b id="flowRps" data-page-node-id="lz7VfAoNpEWSEOOim3FvhE">—</b>
-                          <span data-page-node-id="0Ac7FDnqS0J2W5KOhqXcX4">实时请求</span>
+                  <section class="panel">
+                    <h2><span class="bar" style="background:linear-gradient(180deg,#0E86B8,#5B3FE0)"></span>实时吞吐 <span class="hint">最近 10 分钟</span></h2>
+                    <div class="flow-wrap">
+                      <div class="flow-head">
+                        <div class="flow-k alt">
+                          <b id="flowRps">—</b>
+                          <span>实时请求</span>
                         </div>
-                        <div class="flow-k" data-page-node-id="YRlA1nFVybfbMELZVQpddT">
-                          <b id="flowTokens" data-page-node-id="KzzUOKjrMyviZrWzhAEDK9">—</b>
-                          <span data-page-node-id="yyQWWBuFurLB5ooHCAh6Dd">实时 Token</span>
+                        <div class="flow-k">
+                          <b id="flowTokens">—</b>
+                          <span>实时 Token</span>
                         </div>
                       </div>
-                      <canvas role="img" aria-label="最近十分钟最后四十条请求的 Token 用量" id="flowChart" height="70" data-page-node-id="LGvg42i2yXlu4CsslHo38v"></canvas>
-                      <div class="flow-meta" data-page-node-id="lG7Tg8ymbKFaTi9ANo38MD">
-                        <span data-page-node-id="CEF6nUIBYWHHwr8H1xYTg7">输入 <b id="flowIn" data-page-node-id="ns1aNDjr59RQnAAC8XVCar">—</b></span>
-                        <span data-page-node-id="qKM8jaGTUX5ZrqZa48rm0o">输出 <b id="flowOut" data-page-node-id="xF8mxMt98D9ZPTsFeye9Sm">—</b></span>
-                        <span data-page-node-id="dSuxI3CtQFebPBpXegpvBB">P50 <b id="flowP50" data-page-node-id="GGSYFMPey1dUmt8Txfrb2V">—</b></span>
-                        <span data-page-node-id="p9Hw6Uqtd2NTSAVmM3qStB">P95 <b id="flowP95" data-page-node-id="VwU59EwiLF0GFQXoOc50Ox">—</b></span>
+                      <canvas role="img" aria-label="最近十分钟最后四十条请求的 Token 用量" id="flowChart" height="70"></canvas>
+                      <div class="flow-meta">
+                        <span>输入 <b id="flowIn">—</b></span>
+                        <span>输出 <b id="flowOut">—</b></span>
+                        <span>P50 <b id="flowP50">—</b></span>
+                        <span>P95 <b id="flowP95">—</b></span>
                       </div>
-                      <div class="flow-status" data-page-node-id="ngQE5hX4jCoBx1dqhCmYtk">
-                        <span class="st" data-page-node-id="2cxywFfbNqo3PDy8tHzPYp"><i style="background:#0B9A6A" data-page-node-id="1Ta4JUvoibDC2vznMAnyMK"></i>成功 <b id="flowOk" data-page-node-id="k6QWU9FwaH3k67WLzDsewp">0</b></span>
-                        <span class="st" data-page-node-id="o2l7Wz9FRcQTHszJ8LP3xM"><i style="background:#E08000" data-page-node-id="N9AXcBKWOK4aN72ULy3caz"></i>限流 <b id="flowThr" data-page-node-id="yek8SWteFs7OnPFuJMcrKC">0</b></span>
-                        <span class="st" data-page-node-id="bdOJ9cac9UJApuGxvuefg6"><i style="background:#D0342C" data-page-node-id="bc0iaXBKZGQU4gHiQXhEyd"></i>失败 <b id="flowFail" data-page-node-id="d5xjDUCCbuPFOFsBHNDQ9K">0</b></span>
+                      <div class="flow-status">
+                        <span class="st"><i style="background:#0B9A6A"></i>成功 <b id="flowOk">0</b></span>
+                        <span class="st"><i style="background:#E08000"></i>限流 <b id="flowThr">0</b></span>
+                        <span class="st"><i style="background:#D0342C"></i>失败 <b id="flowFail">0</b></span>
                       </div>
                     </div>
                   </section>
                 </div>
 
-    <footer data-page-node-id="D03C87y4sc5j6UbCWuq8Ls">OPENDASH <span class="footer-spark" data-page-node-id="O8uLDGHZ5Zs5uq2GwS4HBH">✧</span> REQUEST OBSERVATORY · 日志 3 秒 / 用量 15 秒同步</footer>
+    <footer>OPENDASH <span class="footer-spark">✧</span> REQUEST OBSERVATORY · 日志 3 秒 / 用量 15 秒同步</footer>
   </div>
 
 
@@ -2438,13 +1697,16 @@ function applyTheme(theme) {
   const isDark = theme === "dark";
   state.theme = isDark ? "dark" : "light";
   document.documentElement.dataset.theme = state.theme;
-  document.body.className = isDark ? "theme-dark" : "theme-light";
+  // 只切换主题类，保留 body 上其它类（如 visibilitychange 添加的 backgrounded）
+  document.body.classList.remove("theme-light", "theme-dark");
+  document.body.classList.add(isDark ? "theme-dark" : "theme-light");
 
-  const rawCss = document.getElementById(isDark ? "raw-theme-dark" : "raw-theme-light");
-  const activeStyle = document.getElementById("theme-active");
-  if (rawCss && activeStyle) {
-    activeStyle.textContent = rawCss.textContent;
-  }
+  // 双样式表方案：切换 disabled 开关即时换肤，无需重新解析样式表，
+  // 且两套样式保持作者原样，零特异性风险
+  const lightStyle = document.getElementById("theme-light");
+  const darkStyle = document.getElementById("theme-dark");
+  if (lightStyle) lightStyle.disabled = isDark;
+  if (darkStyle) darkStyle.disabled = !isDark;
 
   PALETTE = isDark ? PALETTE_DARK : PALETTE_LIGHT;
   CHART = isDark ? CHART_DARK : CHART_LIGHT;
@@ -2477,6 +1739,10 @@ function applyTheme(theme) {
   online: false,
   lastPoll: 0,
   lastHeatKeys: null,
+  logsVersion: 0,      // state.logs 发生实质变化时递增，驱动增量重渲染
+  filterVersion: 0,    // 模型可见性（目录/作用域）变化时递增
+  catalogSig: "",      // 模型目录签名，用于检测可见性是否真变了
+  logListSig: "",      // renderLogs 上次渲染时的签名，无变化时跳过 DOM 重建
   modelBarsGeneration: 0,
   modelBarsAnimationPlayed: false,
   initialLogsLoaded: false,
@@ -2623,6 +1889,16 @@ async function refreshCatalog() {
     }
     if (cfgResult.status === "rejected" && modelsResult.status === "rejected") {
       throw cfgResult.reason || modelsResult.reason || new Error("模型清单加载失败");
+    }
+    // 模型可见性变化时才重建实时窗口与列表；无变化时跳过（目录每 60 秒轮询一次）
+    const catalogSig = [
+      ...state.catalog.activeProviders
+    ].sort().join(",") + "|" + [...state.catalog.disabledKeys].sort().join(",") +
+      "|" + [...state.catalog.disabledPlain].sort().join(",");
+    if (catalogSig !== state.catalogSig) {
+      state.catalogSig = catalogSig;
+      state.filterVersion++;
+      rebuildLiveData(state.logs);
     }
     state.catalog.ready = state.catalog.providersReady || state.catalog.modelsReady;
     if (state.usage) renderUsage();
@@ -2789,8 +2065,13 @@ async function pollLogs() {
     const logs = data.logs;
     const previousIds = new Set(state.logs.map(l => l.requestId));
     const fresh = logs.filter(l => l?.requestId && !previousIds.has(l.requestId));
-    state.logs = mergeLogs(state.logs, logs);
-    rebuildLiveData(state.logs);
+    const merged = mergeLogs(state.logs, logs);
+    state.logs = merged;
+    // 无实质变化时跳过 O(N) 全量重算（排序/过滤/重建实时窗口）
+    if (merged.changed) {
+      state.logsVersion++;
+      rebuildLiveData(state.logs);
+    }
     hideBootOverlay();
     state.initialLogsLoaded = true;
     renderLogs(fresh);
@@ -2799,23 +2080,44 @@ async function pollLogs() {
   });
 }
 
+/**
+ * 合并新旧日志：按 requestId 去重（新数据覆盖旧状态）、过滤过期时间窗、按时间排序并截断。
+ * 返回的数组上附带 `changed` 标记：只有真正新增 / 更新 / 过期剔除 / 截断时才为 true，
+ * 调用方可据此跳过 rebuildLiveData 等 O(N) 全量重算。
+ */
 function mergeLogs(previous, incoming, now = Date.now()) {
   const byId = new Map();
-  for (const row of [...previous, ...incoming]) {
+  const cutoff = now - HISTORY_MS, future = now + 60000;
+  let changed = false;
+  const sameRow = (a, b) =>
+    a.status === b.status &&
+    a.timestamp === b.timestamp &&
+    (a.durationMs ?? null) === (b.durationMs ?? null) &&
+    (a.totalTokens ?? null) === (b.totalTokens ?? null) &&
+    (a.requestedModel ?? null) === (b.requestedModel ?? null) &&
+    (a.model ?? null) === (b.model ?? null) &&
+    (a.provider ?? null) === (b.provider ?? null) &&
+    JSON.stringify(a.usage ?? null) === JSON.stringify(b.usage ?? null);
+  for (const row of previous) {
     const ts = Number(row?.timestamp);
-    if (!row?.requestId || !Number.isFinite(ts) || ts < now - HISTORY_MS || ts > now + 60000) continue;
+    if (!row?.requestId || !Number.isFinite(ts) || ts < cutoff || ts > future) { changed = true; continue; }
     byId.set(row.requestId, row);
   }
-  return [...byId.values()].sort((a,b) => a.timestamp-b.timestamp).slice(-MAX_LOGS);
-}
-
-function ingestLog(l) {
-  const ts = Number(l.timestamp) || Date.now();
-  addRateBucket(state.byMinute, Math.floor(ts / 60000), l.status);
-  addRateBucket(state.byTenSeconds, Math.floor(ts / 10000), l.status);
-  state.liveWindowLogs.push(l);
-  pruneLiveWindowLogs();
-  recomputeLiveStats();
+  for (const row of incoming) {
+    const ts = Number(row?.timestamp);
+    if (!row?.requestId || !Number.isFinite(ts) || ts < cutoff || ts > future) continue;
+    const prev = byId.get(row.requestId);
+    if (!prev) changed = true;
+    else if (prev !== row && !sameRow(prev, row)) changed = true;
+    byId.set(row.requestId, row);
+  }
+  const merged = [...byId.values()].sort((a,b) => a.timestamp - b.timestamp);
+  const out = merged.length > MAX_LOGS ? merged.slice(-MAX_LOGS) : merged;
+  if (merged.length !== out.length) changed = true;
+  if (!changed && (previous.length !== out.length ||
+      previous.some((r, i) => r.requestId !== out[i].requestId))) changed = true;
+  out.changed = changed;
+  return out;
 }
 function rebuildLiveData(logs) {
   state.byMinute.clear();
@@ -3059,6 +2361,13 @@ function renderDonut(providers, svgEl, listEl) {
 
   const idle = total <= 1 && !top.length;
   svg.classList.toggle("idle", idle);
+  // 读屏可访问的动态摘要
+  svg.setAttribute("role", "img");
+  const realTotal = known.reduce((a, p) => a + (p.requests || 0), 0);
+  const topDesc = sorted.slice(0, 3)
+    .map(p => `${shortProvider(p.provider)} ${((p.requests || 0) / total * 100).toFixed(0)}%`).join("、");
+  svg.setAttribute("aria-label",
+    realTotal > 0 ? `供应商请求分布：共 ${fmtFull(realTotal)} 次，占比最高为${topDesc}` : "供应商请求分布：暂无数据");
 
   const segs = [...svg.querySelectorAll(".donut-seg")];
   // 数据排序可能变化：用“provider 名到段”的映射，尽量原地更新 dash，避免整段重建
@@ -3221,6 +2530,10 @@ function renderFlowCard() {
   const p50 = pctile(ms, 0.5), p95 = pctile(ms, 0.95);
   set("flowP50", p50 == null ? "—" : fmtDur(p50));
   set("flowP95", p95 == null ? "—" : fmtDur(p95));
+  const flowCanvas = $("flowChart");
+  if (flowCanvas) flowCanvas.setAttribute("aria-label",
+    sum > 0 ? `最近十分钟请求：成功 ${ok} 次，限流 ${throttled} 次，失败 ${failed} 次，共 ${fmt(tokens)} Token`
+            : "最近十分钟请求：暂无数据");
   drawFlowChart(series);
 }
 function drawFlowChart(series) {
@@ -3572,6 +2885,10 @@ function renderTrend(days) {
     else if (state.usageRange === "today") titleEl.textContent = "今日趋势";
     else titleEl.textContent = "7 天趋势";
   }
+  // 读屏可访问的动态摘要
+  const trendTotal = (days || []).reduce((a, d) => a + (Number(d.requests) || 0), 0);
+  canvas.setAttribute("aria-label",
+    `${titleEl ? titleEl.textContent : "请求趋势"}：${(days || []).length} 天，累计 ${fmtFull(trendTotal)} 次请求`);
 
   if (!days || !days.length) {
     canvas.width = visibleW * dpr; canvas.height = H * dpr;
@@ -3660,6 +2977,19 @@ function renderTrend(days) {
   }
 }
 
+/* 顶部圆角的柱体路径：优先原生 roundRect，旧浏览器用二次贝塞尔回退 */
+function roundRectPath(ctx, x, y, w, h, r) {
+  if (typeof ctx.roundRect === "function") { ctx.roundRect(x, y, w, h, [r, r, 0, 0]); return; }
+  r = Math.max(0, Math.min(r, w / 2));
+  ctx.moveTo(x, y + h);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h);
+  ctx.closePath();
+}
+
 function drawTrend(ctx, vals, days, o) {
   const { W, H, padT, ih, max, bw, barW, labelEvery, progress } = o;
 
@@ -3686,7 +3016,7 @@ function drawTrend(ctx, vals, days, o) {
       ctx.shadowColor = CHART.barGlow; ctx.shadowBlur = 8;
     }
     const r = Math.min(3, w / 2);
-    ctx.roundRect(x, y, w, h, [r, r, 0, 0]); ctx.fill(); ctx.shadowBlur = 0;
+    roundRectPath(ctx, x, y, w, h, r); ctx.fill(); ctx.shadowBlur = 0;
     if (i % labelEvery === 0 || i === vals.length - 1) {
       ctx.fillStyle = CHART.axis;
       ctx.textAlign = "center";
@@ -3706,6 +3036,11 @@ function drawTrend(ctx, vals, days, o) {
 /* ── 渲染：实时流 ─────────────────────────── */
 function renderLogs(fresh = []) {
   const list = $("logList");
+  // 数据、可见性、筛选条件都无变化时跳过 O(N) 过滤与 DOM 重建
+  const sig = [state.logsVersion, state.filterVersion, state.logFilter, state.scope,
+               state.initialLogsLoaded ? 1 : 0].join("|");
+  if (!fresh.length && sig === state.logListSig) return;
+  state.logListSig = sig;
   const shown = state.logs.filter(l => visibleModel(l.provider, l.resolvedModel || l.model))
     .filter(l => state.logFilter === "all" || (state.logFilter === "error" ? !isOk(l.status) : Number(l.status) === 429)).slice(-120);
   $("logCount").textContent = `${shown.length} 条`;
@@ -3788,25 +3123,61 @@ function initDropdown(id, onPick) {
   const root = $(id);
   const toggle = root.querySelector(".dropdown-toggle");
   const options = [...root.querySelectorAll(".dropdown-option")];
-  toggle.addEventListener("click", e => {
-    e.stopPropagation();
-    const willOpen = !root.classList.contains("open");
+  const isOpen = () => root.classList.contains("open");
+  const setOpen = (open) => {
     document.querySelectorAll(".dropdown.open").forEach(d => {
       d.classList.remove("open");
       d.querySelector(".dropdown-toggle").setAttribute("aria-expanded", "false");
     });
-    if (willOpen) { root.classList.add("open"); toggle.setAttribute("aria-expanded", "true"); }
-  });
-  options.forEach(opt => opt.addEventListener("click", () => {
+    if (open) { root.classList.add("open"); toggle.setAttribute("aria-expanded", "true"); }
+  };
+  const currentIndex = () => Math.max(0, options.findIndex(o => o.classList.contains("selected")));
+  // roving tabindex：菜单打开时焦点在选项间移动，关闭后回到按钮
+  const focusOption = (i) => {
+    if (!options.length) return;
+    const idx = ((i % options.length) + options.length) % options.length;
+    options.forEach(o => { o.tabIndex = -1; });
+    options[idx].tabIndex = 0;
+    options[idx].focus();
+  };
+  const pick = (opt) => {
     options.forEach(o => {
       o.classList.toggle("selected", o === opt);
       o.setAttribute("aria-selected", String(o === opt));
     });
     toggle.textContent = opt.textContent;
-    root.classList.remove("open");
-    toggle.setAttribute("aria-expanded", "false");
+    setOpen(false);
+    toggle.focus();
     onPick(opt.dataset.value);
-  }));
+  };
+  toggle.addEventListener("click", e => {
+    e.stopPropagation();
+    const willOpen = !isOpen();
+    setOpen(willOpen);
+    if (willOpen) focusOption(currentIndex());
+  });
+  toggle.addEventListener("keydown", e => {
+    if (e.key === "ArrowDown" || e.key === "Enter" || e.key === " ") {
+      // 阻止按钮默认的空格/回车激活，避免与下面的 click 切换逻辑打架
+      e.preventDefault();
+      if (!isOpen()) { setOpen(true); focusOption(currentIndex()); }
+    } else if (e.key === "Escape" && isOpen()) {
+      setOpen(false);
+    }
+  });
+  options.forEach((opt, i) => {
+    opt.tabIndex = -1;
+    opt.addEventListener("click", () => pick(opt));
+    opt.addEventListener("keydown", e => {
+      if (e.key === "ArrowDown") { e.preventDefault(); focusOption(i + 1); }
+      else if (e.key === "ArrowUp") { e.preventDefault(); focusOption(i - 1); }
+      else if (e.key === "Home") { e.preventDefault(); focusOption(0); }
+      else if (e.key === "End") { e.preventDefault(); focusOption(options.length - 1); }
+      else if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(opt); }
+      else if (e.key === "Escape") { setOpen(false); toggle.focus(); }
+      else if (e.key === "Tab") { setOpen(false); }
+    });
+  });
 }
 
 function rangeLabel() {
@@ -4091,8 +3462,23 @@ function boot() {
   }).finally(hideBootOverlay);
   setInterval(() => {
     if (document.hidden || state.paused) return;
-    state.logs = mergeLogs(state.logs, []);
-    rebuildLiveData(state.logs); updateRateTarget(true); renderLiveKpis();
+    // 兜底：只负责让过期日志滑出窗口。平时（无日志过期）只做 O(窗口) 的轻量裁剪，
+    // 不重复 pollLogs 已做过的全量合并/重建。
+    const now = Date.now();
+    const oldest = state.logs.length ? Number(state.logs[0]?.timestamp) : 0;
+    if (oldest && oldest < now - HISTORY_MS) {
+      const merged = mergeLogs(state.logs, [], now);
+      state.logs = merged;
+      if (merged.changed) {
+        state.logsVersion++;
+        rebuildLiveData(state.logs);
+      } else {
+        pruneLiveWindowLogs(now);
+      }
+    } else {
+      pruneLiveWindowLogs(now);
+    }
+    updateRateTarget(true); renderLiveKpis();
   }, 3000);
   // 打开页面即可浏览；接口慢或离线时不生成虚构业务数据。
   setTimeout(hideBootOverlay, 1200);
