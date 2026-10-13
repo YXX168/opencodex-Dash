@@ -1,0 +1,3837 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OpenCodex · 请求用量观测台</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Cdefs%3E%3ClinearGradient%20id='w'%20x1='6'%20y1='32'%20x2='58'%20y2='32'%20gradientUnits='userSpaceOnUse'%3E%3Cstop%20offset='0'%20stop-color='%232868d8'/%3E%3Cstop%20offset='1'%20stop-color='%235b3fe0'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width='64'%20height='64'%20rx='14'%20fill='%23ffffff'/%3E%3Crect%20x='.75'%20y='.75'%20width='62.5'%20height='62.5'%20rx='13.5'%20fill='none'%20stroke='%23dbe4f2'/%3E%3Cline%20x1='8'%20y1='36'%20x2='56'%20y2='36'%20stroke='rgba(32,44,64,.14)'%20stroke-width='1.5'/%3E%3Cpolyline%20points='8,36%2019,36%2024,18%2029,47%2034,28%2039,36%2044,26%2048,42%2052,36%2056,36'%20fill='none'%20stroke='url(%23w)'%20stroke-width='3.6'%20stroke-linecap='round'%20stroke-linejoin='round'/%3E%3Ccircle%20cx='56'%20cy='36'%20r='3'%20fill='%232868d8'/%3E%3C/svg%3E">
+<style id="theme-light">
+
+  /* ══════════════════════════════════════════════════════
+     Liquid Glass 设计令牌
+     受 macOS 26 Liquid Glass 启发的 Web CSS 表达：
+     可模拟透明 / 模糊 / 高光 / 环境色，不等价于 Apple 原生材质。
+     ══════════════════════════════════════════════════════ */
+  /* ══════════════════════════════════════════════════════
+     设计语言 v2「云端观测站」
+     字阶 / 间距 / 圆角 / 阴影统一 token；组件只引用 token，
+     不再散落硬编码数值。
+     ══════════════════════════════════════════════════════ */
+  :root {
+    color-scheme: light;
+
+    /* ── 环境：低频、低饱和，色彩留在边缘，中央保持白净 ── */
+    --bg: #F1F5FA;
+    --warm: 255, 210, 157;   /* #FFD29D 暖杏，左侧边缘 */
+    --cool: 160, 207, 255;   /* #A0CFFF 冷蓝，右侧边缘 */
+
+    /* ── 文本 ── */
+    --text: #1A2740;
+    --muted: #5B6D85;
+    --faint: #8494AB;
+
+    /* ── 语义色：浅底上加深，保证对比度 ── */
+    --blue: #2868D8;
+    --cyan: #0E86B8;
+    --violet: #5B3FE0;
+    --green: #0B9A6A;
+    --amber: #B25A00;
+    --red: #D0342C;
+
+    /* ── 材质分级：白覆盖越高，背景越不明显 ── */
+    --glass-nav: rgba(255, 255, 255, .52);      /* 导航：最透 */
+    --glass-tool: rgba(255, 255, 255, .62);     /* 工具条 */
+    --glass-card: rgba(255, 255, 255, .80);     /* 卡片 */
+    --glass-menu: rgba(255, 255, 255, .94);     /* 浮层 / 弹层 */
+    --glass-solid: #FFFFFF;                     /* 降级与阅读面 */
+
+    --blur-nav: 26px;
+    --blur-card: 20px;
+    --blur-menu: 30px;
+
+    /* ── 五层材质的结构件 ── */
+    --hairline: rgba(255, 255, 255, .92);       /* 高光描边 */
+    --edge: rgba(28, 42, 66, .10);              /* 常规分隔线 */
+    --edge-soft: rgba(28, 42, 66, .06);         /* 极淡分隔线 */
+    --ring: rgba(28, 42, 66, .05);              /* 外圈，防止白面糊在白底上 */
+    --lift: 0 20px 48px rgba(52, 78, 116, .13); /* 层级分离阴影 */
+    --lift-sm: 0 8px 22px rgba(52, 78, 116, .10);
+    --spec: inset 0 1px 0 rgba(255, 255, 255, .92); /* 顶部高光 */
+    --fill-track: rgba(28, 42, 66, .07);
+    --fill-inset: rgba(255, 255, 255, .55);
+
+    /* ── 圆角体系 ── */
+    --radius: 18px;      /* 卡片 / 面板 */
+    --radius-md: 14px;   /* 卡内模块 */
+    --radius-sm: 12px;   /* 控件 */
+    --radius-xs: 8px;    /* 小标签 */
+
+    /* ── 字阶 ── */
+    --fs-hero: clamp(24px, 2vw, 31px);  /* KPI 大数字 */
+    --fs-title: 13px;                   /* 面板标题 */
+    --fs-body: 12px;
+    --fs-meta: 11px;
+    --fs-micro: 10.5px;
+
+    /* ── 间距 ── */
+    --gap: 18px;         /* 面板间距 */
+    --gap-sm: 14px;      /* 卡片组间距 */
+    --pad-panel: 20px;   /* 面板内边距 */
+
+    /* ── 供应商品牌色（CSS 侧兜底；JS 以 brandPair() 为准） ── */
+    --pv-gemini: #2E7CF6;
+    --pv-claude: #D97757;
+    --pv-codex: #8B5CF6;
+    --pv-openai: #10A37F;
+    --pv-xai: #7C8DB0;
+    --pv-kimi: #E8930C;
+
+    --font: "Inter", "HarmonyOS Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    --mono: "JetBrains Mono", "SFMono-Regular", Consolas, "Courier New", monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; scrollbar-gutter: stable; }
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    font-size: 13px;
+  }
+  ::selection { background: rgba(40, 104, 216, .16); }
+
+  /* ── 第 1 层：环境 ───────────────────────── */
+  .bg {
+    position: fixed; inset: 0; z-index: -3;
+    background:
+      radial-gradient(72rem 48rem at -6% 5%, rgba(255, 196, 130, .62), transparent 56%),
+      radial-gradient(72rem 46rem at 106% 8%, rgba(140, 196, 255, .66), transparent 60%),
+      linear-gradient(180deg, #F0F4FA 0%, #F7F9FD 48%, #EBF1FA 100%);
+  }
+  /* 极淡的网格：保留工具感，不参与对比度竞争 */
+  .grid {
+    position: fixed; inset: 0; z-index: -2; pointer-events: none;
+    background-image:
+      linear-gradient(rgba(32, 44, 64, .035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(32, 44, 64, .035) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse 90% 75% at 50% 20%, black 30%, transparent 78%);
+    -webkit-mask-image: radial-gradient(ellipse 90% 75% at 50% 20%, black 30%, transparent 78%);
+  }
+  /* 环境光团：给玻璃提供"可透的东西"，同时不越过中央阅读区 */
+  .aurora { position: fixed; inset: 0; z-index: -2; pointer-events: none; overflow: hidden; }
+  .aurora span {
+    position: absolute; border-radius: 50%; filter: blur(65px); opacity: .54;
+    animation: float 22s ease-in-out infinite alternate;
+  }
+  .aurora span:nth-child(1) { width: 460px; height: 460px; left: -110px; top: 10%; background: #F7B267; }
+  .aurora span:nth-child(2) { width: 400px; height: 400px; right: -90px; top: 2%; background: #7FB8FF; animation-delay: -7s; }
+  .aurora span:nth-child(3) { width: 360px; height: 360px; left: 44%; bottom: -140px; background: #93DCC8; animation-delay: -13s; }
+  @keyframes float {
+    from { transform: translate3d(0, 0, 0) scale(1); }
+    to   { transform: translate3d(30px, 20px, 0) scale(1.10); }
+  }
+  /* 顶部柔光，替代深色主题的星点 */
+  .stars {
+    position: fixed; inset: 0; z-index: -2; pointer-events: none;
+    background: radial-gradient(1200px 320px at 50% -8%, rgba(255, 255, 255, .95), transparent 70%);
+  }
+
+  /* ── 布局 ─────────────────────────────── */
+  .wrap {
+    max-width: 1680px; margin: 0 auto; padding: 24px 28px 28px;
+    display: flex; flex-direction: column; gap: var(--gap);
+    animation: wrapIn .6s cubic-bezier(.22,1,.36,1) both;
+  }
+  @keyframes wrapIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+
+  /* ── 载入遮罩（浮层级材质） ─────────────── */
+  .boot-overlay {
+    position: fixed; inset: 0; z-index: 9999;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px;
+    background: rgba(247, 249, 252, .72);
+    backdrop-filter: blur(30px) saturate(150%); -webkit-backdrop-filter: blur(30px) saturate(150%);
+    transition: opacity .5s ease, visibility .5s ease;
+  }
+  .boot-overlay.hide { opacity: 0; visibility: hidden; pointer-events: none; }
+  .boot-spinner { position: relative; width: 74px; height: 74px; }
+  .boot-ring {
+    position: absolute; inset: 0; border-radius: 50%;
+    background: conic-gradient(from 0deg, transparent 0 16%, #2868D8 32%, #5B3FE0 47%, transparent 63%);
+    -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 7px), #000 calc(100% - 6px));
+    mask: radial-gradient(farthest-side, transparent calc(100% - 7px), #000 calc(100% - 6px));
+    animation: bootSpin 1.1s linear infinite;
+  }
+  .boot-ring.rev { inset: 9px; animation-direction: reverse; animation-duration: 1.8s; opacity: .7; }
+  .boot-core {
+    position: absolute; inset: 0; margin: auto; width: 13px; height: 13px; border-radius: 50%;
+    background: linear-gradient(135deg, #2868D8, #5B3FE0);
+    box-shadow: 0 4px 14px rgba(40, 104, 216, .35);
+    animation: bootCore 1.8s ease-in-out infinite;
+  }
+  @keyframes bootSpin { to { transform: rotate(360deg); } }
+  @keyframes bootCore { 0%,100% { transform: scale(.8); opacity: .75; } 50% { transform: scale(1.15); opacity: 1; } }
+  .boot-text { color: var(--muted); font-size: 13px; letter-spacing: 2.4px; animation: pulse 1.6s ease-in-out infinite; }
+
+  /* ── 顶栏（导航级：最透，blur 最大） ──────── */
+  header.topbar {
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    flex-wrap: wrap; padding: 11px 18px; border-radius: var(--radius);
+    border: 1px solid var(--hairline);
+    background:
+      linear-gradient(145deg, rgba(255,255,255,.72), rgba(255,255,255,.30)),
+      var(--glass-nav);
+    backdrop-filter: blur(var(--blur-nav)) saturate(160%);
+    -webkit-backdrop-filter: blur(var(--blur-nav)) saturate(160%);
+    box-shadow: var(--lift), var(--spec), 0 0 0 .5px var(--ring);
+    position: relative; z-index: 40;
+  }
+  /* 顶栏顶部 2px 品牌渐变线：指挥舱的"启动灯带" */
+  header.topbar::before {
+    content: ""; position: absolute; top: -1px; left: 26px; right: 26px; height: 2px; border-radius: 2px;
+    background: linear-gradient(90deg, transparent, var(--blue) 22%, var(--violet) 55%, var(--cyan) 80%, transparent);
+    opacity: .55; pointer-events: none;
+  }
+  header.topbar > * { position: relative; }
+
+  .brand { display: flex; align-items: center; gap: 13px; }
+  .logo {
+    width: 42px; height: 42px; border-radius: 14px; position: relative;
+    background: linear-gradient(145deg, rgba(255,255,255,.95), rgba(255,255,255,.55));
+    border: 1px solid var(--hairline);
+    box-shadow: var(--lift-sm), var(--spec), 0 0 0 .5px var(--ring);
+    display: grid; place-items: center;
+  }
+  .logo svg { width: 30px; height: 30px; display: block; }
+  .logo svg .od-dot { transform-box: fill-box; transform-origin: center; animation: odPulse 2.2s ease-in-out infinite; }
+  @keyframes odPulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .4; transform: scale(1.35); } }
+  .logo::after {
+    content: ""; position: absolute; inset: -5px; border-radius: 20px; z-index: -1;
+    background: linear-gradient(135deg, rgba(40,104,216,.45), transparent 55%, rgba(91,63,224,.40));
+    filter: blur(12px); opacity: .55;
+  }
+  .brand h1 { font-size: 21px; letter-spacing: .6px; font-weight: 750; color: var(--text); }
+  .brand .sub { color: var(--muted); font: 600 9.5px var(--mono); letter-spacing: 2.6px; margin-top: 5px; }
+
+  .topright { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .clock { text-align: right; font-variant-numeric: tabular-nums; }
+  .clock .time { font: 600 19px/1.1 var(--mono); letter-spacing: .5px; color: var(--text); }
+  .clock .date { font-size: 10px; color: var(--muted); margin-top: 3px; letter-spacing: 1px; }
+
+  /* 状态胶囊：工具条级材质 */
+  .status-pill {
+    display: inline-flex; align-items: center; gap: 8px; padding: 7px 13px; border-radius: 999px;
+    background: var(--glass-tool); border: 1px solid var(--hairline);
+    box-shadow: var(--lift-sm), var(--spec);
+    font-size: 11.5px; color: var(--muted); white-space: nowrap;
+    backdrop-filter: blur(16px) saturate(150%); -webkit-backdrop-filter: blur(16px) saturate(150%);
+  }
+  .header-actions { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .header-actions button {
+    height: 28px; border: 1px solid var(--edge); border-radius: 999px;
+    background: rgba(255,255,255,.66); color: var(--muted);
+    font: 600 11.5px var(--font); padding: 0 11px; cursor: pointer;
+    transition: background-color .2s ease, color .2s ease, border-color .2s ease, box-shadow .2s ease;
+  }
+  .header-actions button:hover { background: #fff; color: var(--text); border-color: rgba(40,104,216,.28); box-shadow: var(--lift-sm); }
+  .header-actions button:active { transform: translateY(1px); }
+  .header-actions button.primary {
+    color: var(--blue); background: rgba(255,255,255,.66); border-color: var(--edge);
+    box-shadow: none;
+    display: inline-grid; place-items: center;
+  }
+  .header-actions button.primary:hover {
+    background: #fff; color: var(--blue); border-color: rgba(40,104,216,.28);
+    box-shadow: var(--lift-sm);
+  }
+  .header-actions button.primary:active { transform: translateY(1px); }
+  .header-actions a.theme-toggle {
+    color: var(--text-sub);
+    background: rgba(255, 255, 255, .66);
+    border: 1px solid var(--edge);
+    border-radius: 9px;
+    font: 600 11.5px var(--font);
+    padding: 0 11px;
+    height: 28px;
+    line-height: 26px;
+    box-sizing: border-box;
+    cursor: pointer;
+    transition: background-color .2s ease, color .2s ease, border-color .2s ease, box-shadow .2s ease, transform .15s ease;
+    box-shadow: var(--lift-sm);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .header-actions a.theme-toggle:hover {
+    background: #fff;
+    color: #7c3aed;
+    border-color: rgba(124, 58, 237, .28);
+    box-shadow: 0 4px 14px rgba(124, 58, 237, .14), var(--spec);
+    transform: translateY(-1px);
+  }
+  .header-actions a.theme-toggle:active { transform: translateY(1px); }
+  .header-actions button:disabled { opacity: .55; cursor: wait; }
+  .dock-sep { width: 1px; height: 16px; background: var(--edge); margin: 0 3px; flex: none; }
+
+  /* ── 顶部操作栏展开/收起控制抽屉 ── */
+  .controls-toggle {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    height: 28px; padding: 0 12px; min-width: 88px; box-sizing: border-box; border-radius: 999px;
+    background: rgba(255,255,255,.66); color: var(--muted);
+    border: 1px solid var(--edge);
+    font: 600 11.5px var(--font); cursor: pointer; white-space: nowrap;
+    transition: background-color .2s ease, color .2s ease, border-color .2s ease, box-shadow .2s ease;
+  }
+  .controls-toggle:hover {
+    background: #fff; color: var(--text); border-color: rgba(40,104,216,.28); box-shadow: var(--lift-sm);
+  }
+  .controls-toggle.active {
+    background: rgba(40, 104, 216, .10); color: var(--blue); border-color: rgba(40, 104, 216, .35);
+    box-shadow: 0 2px 8px rgba(40, 104, 216, .12), inset 0 1px 0 rgba(255,255,255,.8);
+  }
+  .controls-toggle .toggle-icon { font-size: 13px; line-height: 1; opacity: .85; }
+  .controls-toggle .toggle-chevron {
+    width: 9px; height: 5px; flex: none; opacity: .75;
+    transition: transform .28s cubic-bezier(.34, 1.56, .64, 1);
+  }
+  .controls-toggle.active .toggle-chevron {
+    transform: rotate(180deg);
+  }
+  .controls-drawer {
+    display: inline-flex; align-items: center; gap: 6px;
+    max-width: 0; opacity: 0; margin: 0;
+    pointer-events: none; overflow: hidden;
+    transform-origin: right center;
+    transform: scale(0.96) translateX(10px);
+    transition: max-width .38s cubic-bezier(.16, 1, .3, 1),
+                opacity .28s cubic-bezier(.16, 1, .3, 1),
+                transform .38s cubic-bezier(.16, 1, .3, 1),
+                margin .38s cubic-bezier(.16, 1, .3, 1);
+  }
+  .controls-drawer.open {
+    max-width: 650px; opacity: 1; margin: 0 6px 0 0;
+    pointer-events: auto; transform: scale(1) translateX(0);
+  }
+  .controls-drawer.expanded-visible {
+    overflow: visible;
+  }
+  .controls-drawer.open > * {
+    animation: drawerItemEnter .32s cubic-bezier(.16, 1, .3, 1) both;
+  }
+  /* 从右往左弹出：靠右侧（靠近按钮）的元素先弹出，靠左侧的依次向左展开 */
+  .controls-drawer.open > *:nth-last-child(1) { animation-delay: 20ms; }
+  .controls-drawer.open > *:nth-last-child(2) { animation-delay: 45ms; }
+  .controls-drawer.open > *:nth-last-child(3) { animation-delay: 70ms; }
+  .controls-drawer.open > *:nth-last-child(4) { animation-delay: 95ms; }
+  .controls-drawer.open > *:nth-last-child(5) { animation-delay: 120ms; }
+  .controls-drawer.open > *:nth-last-child(6) { animation-delay: 145ms; }
+
+  @keyframes drawerItemEnter {
+    from { opacity: 0; transform: translateX(12px) scale(0.95); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  .topbar-sep { width: 1px; height: 26px; background: var(--edge); flex: none; }
+
+  /* ── 自绘下拉（浮层级：接近实色，保证可读） ── */
+  .dropdown { position: relative; }
+  .dropdown .dropdown-toggle {
+    display: inline-flex; align-items: center; gap: 8px;
+    height: 28px; padding: 0 12px; border-radius: var(--radius-sm);
+    border: 1px solid var(--edge); background: rgba(255,255,255,.72); color: var(--text);
+    font: 600 11.5px var(--font); cursor: pointer; white-space: nowrap;
+    transition: background-color .2s ease, color .2s ease, border-color .2s ease, box-shadow .2s ease;
+  }
+  .dropdown .dropdown-toggle::after {
+    content: ""; flex: none; width: 10px; height: 6px; opacity: .8;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%235B6D85' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat;
+    transition: transform .2s ease;
+  }
+  .dropdown .dropdown-toggle:hover { background-color: #fff; border-color: rgba(40,104,216,.28); box-shadow: var(--lift-sm); }
+  .dropdown.open .dropdown-toggle { border-color: rgba(40,104,216,.55); color: var(--blue); background-color: #fff; }
+  .dropdown.open .dropdown-toggle::after { transform: rotate(180deg); }
+  .dropdown.sm .dropdown-toggle { height: 25px; padding: 0 9px; gap: 6px; font-size: 11px; border-radius: 10px; }
+  .dropdown-menu {
+    position: absolute; top: calc(100% + 6px); right: 0; min-width: 100%; z-index: 60;
+    padding: 5px; border-radius: 14px; border: 1px solid var(--hairline);
+    background: var(--glass-menu);
+    backdrop-filter: blur(var(--blur-menu)) saturate(160%); -webkit-backdrop-filter: blur(var(--blur-menu)) saturate(160%);
+    box-shadow: var(--lift), var(--spec), 0 0 0 .5px var(--ring);
+    opacity: 0; visibility: hidden; transform: translateY(-4px);
+    transition: opacity .18s ease, transform .18s ease, visibility .18s;
+  }
+  .dropdown.open .dropdown-menu { opacity: 1; visibility: visible; transform: none; }
+  .dropdown-option {
+    padding: 8px 12px; border-radius: 9px; white-space: nowrap;
+    font: 600 11.5px var(--font); color: var(--text); cursor: pointer;
+    transition: background-color .15s ease, color .15s ease;
+  }
+  .dropdown.sm .dropdown-option { padding: 7px 10px; font-size: 11px; }
+  .dropdown-option:hover { background: rgba(40, 104, 216, .10); }
+  .dropdown-option.selected { background: rgba(40, 104, 216, .14); color: var(--blue); }
+
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 0 3px rgba(178, 90, 0, .14); animation: pulse 1.6s infinite; }
+  .dot.on { background: var(--green); box-shadow: 0 0 0 3px rgba(11, 154, 106, .14); }
+  .dot.err { background: var(--red); box-shadow: 0 0 0 3px rgba(208, 52, 44, .14); }
+  @keyframes pulse { 50% { opacity: .45; } }
+
+  /* ── 第 2~5 层：面板（卡片级） ───────────── */
+  .panel {
+    /* 极淡的冷蓝面光，跟随光标；只提供体积感，不抢文字 */
+    background:
+      radial-gradient(320px circle at var(--mx,-500px) var(--my,-500px), rgba(40,104,216,.07), transparent 70%),
+      var(--glass-card);
+    border: 1px solid var(--hairline); border-radius: var(--radius);
+    backdrop-filter: blur(var(--blur-card)) saturate(150%);
+    -webkit-backdrop-filter: blur(var(--blur-card)) saturate(150%);
+    box-shadow: var(--lift), var(--spec), 0 0 0 .5px var(--ring);
+    position: relative; overflow: hidden;
+    transition: border-color .25s ease, box-shadow .25s ease;
+  }
+  /* 表面高光：斜向的白色渐变，模拟玻璃厚度 */
+  .panel::before {
+    content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+    background: linear-gradient(145deg, rgba(255,255,255,.55), rgba(255,255,255,0) 42%, rgba(255,255,255,0) 62%, rgba(255,255,255,.28));
+  }
+  /* 光标折射：只在玻璃边缘亮起一道蓝紫光，模拟 Liquid Glass 随视角变化的反射。
+     用 mask 把色光裁成 1.5px 的边环，避免浅底上出现一块发白的色斑。 */
+  .panel::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none; border-radius: inherit;
+    padding: 1.5px;
+    background: radial-gradient(260px circle at var(--mx,-500px) var(--my,-500px),
+      rgba(40,104,216,.9), rgba(91,63,224,.5) 42%, rgba(14,134,184,0) 72%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: exclude;
+  }
+  .panel > * { position: relative; }
+  .panel h2 {
+    font-size: var(--fs-title); font-weight: 700; letter-spacing: .6px; color: var(--text);
+    display: flex; align-items: center; gap: 10px; padding: 16px var(--pad-panel) 8px;
+  }
+  .panel h2 .bar {
+    width: 4px; height: 15px; border-radius: 3px; flex: none;
+    background: linear-gradient(180deg, var(--blue), var(--cyan));
+    box-shadow: 0 0 10px color-mix(in srgb, var(--blue) 45%, transparent);
+  }
+  .panel h2 .hint { margin-left: auto; font-weight: 500; font-size: 10.5px; color: var(--muted); letter-spacing: 0; }
+  .panel-title-tools { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+  .live-mark { display: inline-flex; align-items: center; gap: 6px; color: var(--green); font: 600 10px var(--mono); letter-spacing: .7px; }
+  .live-mark::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 3px rgba(11,154,106,.16); animation: pulse 1.5s ease-in-out infinite; }
+  .not-live .live-mark { color: var(--amber); }
+  .not-live .live-mark::before { background: var(--amber); box-shadow: 0 0 0 3px rgba(178,90,0,.14); animation: none; }
+
+  /* 分段控件：macOS 风格的白色滑块，不用彩色填充抢主操作 */
+  .segmented {
+    display: inline-grid; grid-auto-flow: column; padding: 3px; border-radius: 10px;
+    border: 1px solid var(--edge-soft); background: rgba(32, 44, 64, .045);
+  }
+  .segmented button {
+    min-width: 52px; height: 24px; border: 0; border-radius: 7px; padding: 0 9px;
+    color: var(--muted); background: transparent;
+    font: 600 11px var(--font); cursor: pointer;
+    transition: color .2s ease, background-color .2s ease, box-shadow .2s ease;
+  }
+  .segmented button:hover { color: var(--text); }
+  .segmented button.active {
+    color: var(--blue); background: #fff;
+    box-shadow: 0 1px 3px rgba(32, 44, 64, .12), inset 0 1px 0 rgba(255,255,255,.9);
+  }
+  .segmented.sm { padding: 2px; border-radius: 8px; gap: 2px; }
+  .segmented.sm button { min-width: 44px; height: 22px; padding: 0 7px; font-size: 10.5px; border-radius: 5px; }
+
+  /* ── 指标卡：仪表化 ─────────────────────────
+     顶部 3px 主色渐变灯带 + 大数字 + 分隔线 delta，三段式信息层级。 */
+  .kpis { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: var(--gap-sm); }
+  .kpi {
+    position: relative; overflow: hidden; min-width: 0;
+    padding: 15px 18px 12px; border-radius: var(--radius);
+    border: 1px solid var(--hairline);
+    /* 第 1 层：顶部主色灯带；第 2 层：跟随光标的面光；第 3 层：卡面 */
+    background:
+      linear-gradient(90deg, var(--accent, var(--cyan)), color-mix(in srgb, var(--accent, var(--cyan)) 45%, transparent) 55%, transparent 92%) left top / 100% 3px no-repeat,
+      radial-gradient(260px circle at var(--mx,-500px) var(--my,-500px), color-mix(in srgb, var(--accent, var(--cyan)) 13%, transparent), transparent 70%),
+      linear-gradient(150deg, rgba(255,255,255,.88), rgba(255,255,255,.60));
+    backdrop-filter: blur(18px) saturate(150%); -webkit-backdrop-filter: blur(18px) saturate(150%);
+    box-shadow: var(--lift), var(--spec), 0 0 0 .5px var(--ring);
+    transition: border-color .25s ease, box-shadow .25s ease, transform .25s ease;
+  }
+  /* 与面板同一套边环折射，颜色跟随本卡主色 */
+  .kpi::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none; border-radius: inherit;
+    padding: 1.5px;
+    background: radial-gradient(200px circle at var(--mx,-500px) var(--my,-500px),
+      color-mix(in srgb, var(--accent, var(--cyan)) 88%, transparent) 0%,
+      color-mix(in srgb, var(--accent, var(--cyan)) 0%, transparent) 70%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: exclude;
+  }
+  /* 主色只做极淡的环境反光，不做大面积色块 */
+  .kpi::before {
+    content: ""; position: absolute; left: -24%; top: -70%; width: 62%; height: 130%;
+    background: radial-gradient(closest-side, color-mix(in srgb, var(--accent, var(--cyan)) 16%, transparent), transparent 74%);
+    pointer-events: none;
+  }
+  .kpi:hover {
+    transform: translateY(-2px);
+    border-color: color-mix(in srgb, var(--accent, var(--cyan)) 40%, transparent);
+    box-shadow: 0 20px 46px rgba(55, 83, 118, .16), var(--spec);
+  }
+  .kpi .label { font-size: 11.5px; font-weight: 600; color: var(--muted); letter-spacing: .8px; display: flex; align-items: center; gap: 8px; }
+  .kpi .icon {
+    width: 24px; height: 24px; border-radius: 8px; display: grid; place-items: center; flex: none;
+    font-size: 12px; color: #fff;
+    background: var(--accent, var(--cyan));
+    box-shadow: 0 3px 10px color-mix(in srgb, var(--accent, var(--cyan)) 30%, transparent), inset 0 1px 0 rgba(255,255,255,.35);
+  }
+  .kpi .value {
+    font: 700 var(--fs-hero)/1.2 var(--mono); letter-spacing: -.5px; margin-top: 10px;
+    font-variant-numeric: tabular-nums;
+    background: linear-gradient(100deg, #16233C 0%, #2C3E5C 55%, var(--accent, var(--cyan)) 115%);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: transparent;
+  }
+  .kpi .value .unit, .kpi .value small {
+    display: inline-block;
+    font-size: 0.82em;
+    font-weight: 600;
+    margin-left: .22em;
+    letter-spacing: .02em;
+    color: var(--accent, var(--cyan));
+    -webkit-text-fill-color: var(--accent, var(--cyan));
+    vertical-align: baseline;
+  }
+  .kpi .value .unit:first-child { margin-left: 0; margin-right: .2em; font-size: 0.78em; }
+  .kpi .delta { font-size: var(--fs-micro); line-height: 1.55; margin-top: 8px; padding-top: 7px; border-top: 1px dashed var(--edge); color: var(--muted); font-variant-numeric: tabular-nums; letter-spacing: .2px; }
+  .kpi .delta b { font-weight: 700; color: var(--text); }
+  .kpi .delta .up { color: var(--green); }
+  .kpi .delta .down { color: var(--red); }
+  .kpi .delta .flat { color: var(--muted); }
+
+  /* ── 图表区 ─────────────────────────────── */
+  /* 主次分明：图表区占 1.6，日志流占 1；面板高度两套主题统一为 384px */
+  .grid-main { display: grid; grid-template-columns: 1fr; gap: var(--gap); }
+  .grid-main > .panel { height: 384px; }
+  .grid-side { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--gap); align-items: stretch; }
+  .grid-side > .panel { height: 384px; min-width: 0; }
+  .grid-side > .panel, .grid-main > .panel { display: flex; flex-direction: column; }
+  .chart-body { padding: 8px 18px 12px; }
+
+  /* ── 合并面板：mg-grid（实时监控 / 模型洞察）── */
+  .mg-grid { flex: 1 1 auto; display: grid; grid-template-columns: minmax(0, 1.55fr) 1px minmax(0, 1fr); min-height: 0; }
+  .mg-grid-insight { grid-template-columns: minmax(0, 1fr) 1px minmax(0, 1fr); }
+  .mg-sec { display: flex; flex-direction: column; min-width: 0; min-height: 0; padding: 0 22px 14px; }
+  .mg-sec:first-child { padding-left: var(--pad-panel); }
+  .mg-sec:last-child { padding-right: var(--pad-panel); }
+  .mg-divider {
+    background: linear-gradient(180deg, transparent, var(--edge-soft) 18%, var(--edge-soft) 82%, transparent);
+    margin: 10px 0 14px;
+  }
+  .mg-cap { display: flex; align-items: center; gap: 10px; padding: 2px 0 10px; }
+  .mg-cap-title { font-size: 11px; font-weight: 700; letter-spacing: 1.6px; color: var(--muted); white-space: nowrap; }
+  .mg-tools { margin-left: auto; display: inline-flex; align-items: center; gap: 10px; min-width: 0; }
+  .mg-tools .hint { font-size: 10.5px; color: var(--muted); white-space: nowrap; }
+  .panel-merge .chart-body { padding: 2px 0 6px; }
+  .panel-merge .legend { padding: 6px 0 0; }
+  .panel-merge .log-list { padding: 2px 2px 2px 6px; }
+  .panel-merge .bars { padding: 2px 6px 2px 0; overflow-x: hidden; scrollbar-gutter: stable; }
+  .grid-side .chart-body, .grid-main .chart-body { flex: 1 1 auto; display: flex; flex-direction: column; min-height: 0; }
+  canvas { width: 100%; display: block; }
+  #rateChart { flex: 1 1 0%; width: 100%; min-height: 0; }
+  .trend-layout { flex: 1 1 0%; width: 100%; min-height: 0; display: flex; position: relative; }
+  #trendYAxis { width: 28px; height: 100%; flex: none; display: block; }
+  .trend-scroll { flex: 1; min-width: 0; height: 100%; overflow-x: hidden; overflow-y: hidden; scrollbar-width: none; -ms-overflow-style: none; cursor: default; }
+  .trend-scroll.scrollable { overflow-x: auto; cursor: grab; }
+  .trend-scroll.dragging { cursor: grabbing; user-select: none; }
+  .trend-scroll::-webkit-scrollbar { display: none; width: 0; height: 0; }
+  #trendChart { flex: none; height: 100%; display: block; }
+  .legend { display: flex; gap: 8px; flex-wrap: wrap; padding: 2px 20px 14px; font-size: var(--fs-body); color: var(--muted); }
+  .legend > span {
+    display: inline-flex; align-items: center; gap: 7px; padding: 4px 11px 4px 8px;
+    border: 1px solid var(--edge-soft); border-radius: 999px; background: rgba(255,255,255,.55);
+    font-variant-numeric: tabular-nums;
+  }
+  .legend i { display: inline-block; width: 9px; height: 9px; border-radius: 3px; }
+
+  /* ── 模型热度 ───────────────────────────── */
+  .bars {
+    display: flex; flex-direction: column; gap: 2px; padding: 6px 14px 12px 16px;
+    flex: 1 1 auto; min-height: 0; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+    scrollbar-width: thin; scrollbar-color: rgba(32, 44, 64, .28) transparent;
+  }
+  .bars::-webkit-scrollbar { width: 5px; }
+  .bars::-webkit-scrollbar-track { background: transparent; }
+  .bars::-webkit-scrollbar-thumb { background: rgba(32, 44, 64, .22); border-radius: 999px; }
+  .bar-row {
+    display: grid; grid-template-columns: 26px minmax(60px, 1fr) minmax(82px, max-content);
+    grid-template-rows: 22px 6px; align-items: center; column-gap: 9px; row-gap: 5px;
+    padding: 8px 12px 8px 8px; border-radius: 10px; transition: background-color .2s ease;
+  }
+  .bar-row:hover { background: rgba(32, 44, 64, .045); }
+  .rank {
+    grid-row: 1 / 3; width: 25px; height: 25px; display: grid; place-items: center; border-radius: 8px;
+    color: var(--muted); background: var(--fill-inset); border: 1px solid var(--edge-soft);
+    font: 700 10px var(--mono); box-shadow: var(--spec);
+  }
+  .bar-row:nth-child(1) .rank { color: #8A4B00; background: linear-gradient(145deg, rgba(255,197,120,.95), rgba(255,170,90,.75)); border-color: rgba(214,152,60,.45); }
+  .bar-row:nth-child(2) .rank { color: #3B4B66; background: linear-gradient(145deg, rgba(214,226,245,.95), rgba(186,203,231,.75)); border-color: rgba(150,172,205,.45); }
+  .bar-row:nth-child(3) .rank { color: #8A5326; background: linear-gradient(145deg, rgba(240,198,150,.95), rgba(219,168,120,.75)); border-color: rgba(197,146,96,.45); }
+  .model-id { min-width: 0; display: flex; align-items: baseline; gap: 7px; }
+  .bar-row .name { min-width: 0; font-size: 12px; font-weight: 650; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .provider-tag { flex: none; color: color-mix(in srgb, var(--pv, var(--faint)) 72%, var(--faint)); font: 700 9px var(--mono); text-transform: uppercase; letter-spacing: .4px; }
+  .bar-row .track { grid-column: 2 / 4; height: 6px; border-radius: 5px; background: var(--fill-track); overflow: hidden; position: relative; contain: paint; }
+  .bar-row .fill {
+    height: 100%; border-radius: 6px; width: 0;
+    background: linear-gradient(90deg, var(--c1, var(--blue)), var(--c2, var(--cyan)));
+    transition: width 1s cubic-bezier(.22,1,.36,1);
+    position: relative;
+  }
+  .bar-row .val { min-width: 0; font: 700 12px var(--mono); color: var(--text); text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .bar-row .val small { display: block; margin-top: 1px; font: 500 9px var(--mono); color: var(--muted); white-space: nowrap; }
+
+  /* 骨架屏：清单就绪前占位，避免高度/滚动条跳动 */
+  .bars .bar-row.skel .rank, .bars .bar-row.skel .name, .bars .bar-row.skel .val, .bars .bar-row.skel .track {
+    background: linear-gradient(90deg, rgba(32,44,64,.05) 25%, rgba(32,44,64,.11) 50%, rgba(32,44,64,.05) 75%);
+    background-size: 200% 100%;
+    animation: skelShimmer 1.3s ease-in-out infinite;
+    border-radius: 8px; box-shadow: none; color: transparent;
+  }
+  .bars .bar-row.skel .rank { width: 25px; height: 25px; }
+  .bars .bar-row.skel .name { height: 12px; width: 55%; }
+  .bars .bar-row.skel .val { height: 12px; width: 100%; display: block; }
+  .bars .bar-row.skel .track { height: 6px; }
+  .bars .bar-row.skel .fill { display: none; }
+  @keyframes skelShimmer { to { background-position: -200% 0; } }
+
+  /* ── 供应商分布：玻璃数据环 ───────────────── */
+  .donut-wrap { flex: 1; display: flex; align-items: center; justify-content: center; gap: 26px; padding: 8px 18px 16px; min-height: 196px; }
+  .donut { position: relative; width: 182px; height: 182px; flex: none; }
+  .donut svg { transform: rotate(-90deg); overflow: visible; width: 100%; height: 100%; display: block; }
+  .donut .center { position: absolute; inset: 0; display: grid; place-items: center; align-content: center; justify-content: center; text-align: center; }
+  .donut .center b { font: 750 24px/1.15 var(--mono); color: var(--text); letter-spacing: -.5px; }
+  .donut .center span { font-size: 10.5px; color: var(--muted); display: block; margin-top: 2px; }
+  .donut-list { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 8px; min-width: 0; max-width: 240px; }
+  .d-item {
+    display: grid; grid-template-columns: 12px minmax(0,1fr) auto auto; align-items: center; gap: 9px; font-size: var(--fs-body);
+    border-radius: 11px; padding: 7px 9px; cursor: pointer;
+    transition: transform .18s ease, background-color .18s ease, box-shadow .18s ease;
+  }
+  .d-item .sw { width: 11px; height: 11px; border-radius: 4px; box-shadow: 0 1px 5px rgba(20,35,60,.22), inset 0 0 0 1px rgba(255,255,255,.28); }
+  .d-item .nm { color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .d-item .ct { color: var(--muted); font-family: var(--mono); font-size: 11px; font-variant-numeric: tabular-nums; }
+  .d-item .pc { color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums; }
+  .d-item:hover, .d-item.active { background: rgba(255,255,255,.85); transform: translateX(3px); box-shadow: var(--lift-sm); }
+  .d-item.active .nm { color: var(--blue); }
+  .donut svg .donut-seg { transition: stroke-dasharray .7s ease, stroke-width .18s ease, opacity .18s ease; cursor: pointer; }
+  .donut svg .donut-seg:hover, .donut svg .donut-seg.active { stroke-width: 15; }
+  /* 底槽 + 中心玻璃盘：不再有装饰性光球、线圈与火花 */
+  .donut-track { stroke: rgba(32, 44, 64, .06); }
+  .donut-glass {
+    fill: url(#od-glass);
+    stroke: rgba(255, 255, 255, .95); stroke-width: 1;
+    filter: drop-shadow(0 0 12px rgba(55, 83, 118, .16));
+  }
+  /* 悬停某个供应商时其余弧段退到背景，焦点落在当前段 */
+  .donut svg[data-glow] .donut-seg { opacity: .26; }
+  .donut svg[data-glow] .donut-seg.active { opacity: 1; }
+
+  /* ── 实时请求流 ─────────────────────────── */
+  .log-stream { overflow: hidden; display: flex; flex-direction: column; padding: 0 0 8px; flex: 1 1 auto; min-height: 0; }
+  .log-list {
+    flex: 1; overflow-y: auto; padding: 4px 12px 8px 20px;
+    scrollbar-width: thin; scrollbar-color: rgba(32, 44, 64, .28) transparent;
+  }
+  .log-item {
+    display: grid; grid-template-columns: 58px 96px minmax(75px, 1fr) 56px 78px; gap: 7px; align-items: baseline;
+    padding: 10px 8px; border-radius: 10px; font-size: 11px; font-family: var(--mono);
+    border-bottom: 1px solid var(--edge-soft);
+  }
+  .log-item.is-new { animation: logArrive .6s cubic-bezier(.2,.8,.2,1) both; }
+  @keyframes logArrive {
+    from { opacity: 0; transform: translateY(-8px); background: rgba(40,104,216,.10); }
+    to   { opacity: 1; transform: none; background: transparent; }
+  }
+  .log-item:hover { background: rgba(255,255,255,.7); box-shadow: var(--lift-sm); }
+  .log-item .t { color: var(--faint); font-variant-numeric: tabular-nums; }
+  /* 供应商标签：染上品牌色（JS 经 --pv 注入 brandPair 颜色） */
+  .log-item .p {
+    color: color-mix(in srgb, var(--pv, #0E7490) 80%, #10233B);
+    background: color-mix(in srgb, var(--pv, #0E7490) 10%, transparent);
+    border: 1px solid color-mix(in srgb, var(--pv, #0E7490) 30%, transparent);
+    border-radius: 5px;
+    padding: 1px 6px;
+    font-size: 10px;
+    line-height: 1.35;
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    box-sizing: border-box;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .log-item .m { color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .log-item .tok { color: var(--muted); text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .log-item .s { text-align: right; font-weight: 700; font-size: 10.5px; font-variant-numeric: tabular-nums; }
+  .log-item .s.ok { color: var(--green); }
+  .log-item .s.bad { color: var(--red); }
+  .log-item .s.wait { color: var(--amber); }
+  .empty { color: var(--muted); font-size: 13px; padding: 26px 18px; text-align: center; }
+
+  /* ── 实时吞吐 ───────────────────────────── */
+  .flow-wrap { flex: 1; display: flex; flex-direction: column; gap: 12px; padding: 10px 18px 16px; min-height: 190px; }
+  .flow-head { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .flow-k {
+    background: var(--fill-inset); border: 1px solid var(--edge-soft); border-radius: var(--radius-md); padding: 11px 14px;
+    box-shadow: var(--spec);
+  }
+  .flow-k b { display: block; font-family: var(--mono); font-size: 25px; font-weight: 750; letter-spacing: -.5px; color: var(--blue); font-variant-numeric: tabular-nums; }
+  .flow-k.alt b { color: var(--violet); }
+  .flow-k span { font-size: 11px; color: var(--muted); }
+  .flow-meta { display: flex; gap: 10px; flex-wrap: wrap; font-size: 11px; color: var(--muted); }
+  .flow-meta b { color: var(--text); font-family: var(--mono); font-weight: 600; }
+  .flow-meta span { display: inline-flex; align-items: baseline; gap: 4px; min-width: 62px; }
+  .flow-status { display: flex; gap: 14px; font-size: 12px; color: var(--text); }
+  .flow-status .st { display: inline-flex; align-items: center; gap: 6px; }
+  .flow-status .st i { width: 8px; height: 8px; border-radius: 50%; }
+  .flow-status .st b { font-family: var(--mono); font-weight: 700; }
+  #flowChart { flex: 1 1 auto; height: auto; min-height: 64px; }
+
+  /* ── 供应商 × 实时吞吐：合并指挥舱 ──────── */
+  #providerFlowPanel { grid-column: 1 / -1; }
+  #insightPanel { grid-column: 1 / -1; }
+  .pf-scan {
+    position: absolute; top: 0; left: -30%; width: 30%; height: 2px; border-radius: 2px;
+    background: linear-gradient(90deg, transparent, var(--blue), var(--violet), transparent);
+    opacity: .5; filter: blur(.4px); pointer-events: none; z-index: 3;
+    animation: pfScan 7s linear infinite;
+  }
+  @keyframes pfScan { from { left: -30%; } to { left: 100%; } }
+  .pf-grid { flex: 1; display: grid; grid-template-columns: minmax(380px, 450px) 1px minmax(0, 1fr); min-height: 0; }
+  .pf-sec { display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+  .pf-cap { font-size: 10.5px; color: var(--faint); letter-spacing: 1.5px; padding: 2px 22px 0; white-space: nowrap; }
+  .pf-donut { flex: 1; display: flex; align-items: center; justify-content: center; gap: 26px; padding: 6px 22px 14px; min-height: 0; }
+  .pf-divider {
+    background: linear-gradient(180deg, transparent, var(--edge-soft) 18%, var(--edge-soft) 82%, transparent);
+    margin: 16px 0;
+  }
+  .pf-flow { flex: 1; display: flex; flex-direction: column; gap: 10px; padding: 6px 22px 14px; min-height: 0; min-width: 0; }
+
+  footer { text-align: center; color: var(--muted); font: 500 10px/1.6 var(--mono); letter-spacing: 1px; padding: 6px 0; }
+  .footer-spark { color: var(--blue); padding: 0 10px; }
+  #logCount { font: 10px var(--mono); color: var(--muted); white-space: nowrap; }
+  .glow-num { text-shadow: 0 1px 0 rgba(255,255,255,.9); }
+
+  button, input, select { font: 12px var(--font); }
+  button:focus-visible, input:focus-visible, select:focus-visible,
+  .dropdown-toggle:focus-visible, .dropdown-option:focus-visible {
+    outline: 2px solid var(--blue); outline-offset: 2px; border-radius: 10px;
+  }
+  .refresh-icon { display: block; transition: transform .45s cubic-bezier(.2,.8,.2,1); }
+  #refreshNow:hover:not(:disabled) .refresh-icon { transform: rotate(45deg); }
+  .refreshing .refresh-icon { animation: bootSpin 1s linear infinite !important; }
+
+  /* 入场：只做一次位移淡入，不做长期装饰动画 */
+  .panel, .kpi { animation: panelEnter .7s cubic-bezier(.2,.8,.2,1) both; animation-delay: var(--enter-delay, 0ms); }
+  @keyframes panelEnter { from { opacity: 0; transform: translateY(16px) scale(.995); } to { opacity: 1; transform: none; } }
+
+  /* ── 响应式：结构重排，不是等比缩小 ────────── */
+  @media (max-width: 1180px) {
+    .kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid-main { grid-template-columns: 1fr; }
+    .grid-main > .panel, .grid-side > .panel { height: 340px; }
+  }
+  @media (max-width: 820px) {
+    .grid-side { grid-template-columns: 1fr; }
+    .wrap { padding: 20px 16px; }
+    /* 驾驶舱：移动端上下堆叠，分隔线转横向，面板高度自适应 */
+    .pf-grid { grid-template-columns: minmax(0, 1fr); }
+    .pf-divider {
+      width: auto; height: 1px; margin: 8px 18px;
+      background: linear-gradient(90deg, transparent, var(--edge-soft) 18%, var(--edge-soft) 82%, transparent);
+    }
+    #providerFlowPanel { height: auto; min-height: 340px; }
+    #flowChart { height: 110px; flex: none; }
+    .pf-flow { padding-bottom: 18px; }
+    /* 移动端：环形图与图例上下排列，图例占满宽度不再截断 */
+    .pf-donut { flex-wrap: wrap; gap: 14px; padding: 6px 16px 12px; }
+    .donut-list { flex: 1 1 280px; max-width: 340px; }
+    /* 合并面板：移动端上下堆叠，分隔线转横向，面板高度自适应 */
+    .mg-grid, .mg-grid-insight { grid-template-columns: minmax(0, 1fr); }
+    .mg-divider {
+      width: auto; height: 1px; margin: 4px 0 2px;
+      background: linear-gradient(90deg, transparent, var(--edge-soft) 18%, var(--edge-soft) 82%, transparent);
+    }
+    .panel-merge { height: auto !important; min-height: 340px; }
+    .panel-merge .mg-sec { min-height: 300px; padding: 0 18px 14px; }
+  }
+  @media (max-width: 700px) {
+    .wrap { padding: 16px 12px; gap: 12px; }
+    .topright { width: 100%; justify-content: space-between; gap: 8px; }
+    .clock { display: none; }
+    header.topbar { padding: 12px 14px; }
+    .brand h1 { font-size: 21px; }
+    .topbar-sep { display: none; }
+    .header-actions { flex: 1; justify-content: flex-start; }
+    .header-actions button:not(.dropdown-toggle) { padding: 0 9px; }
+    .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .kpi { padding: 14px 13px; }
+    .kpi .value { font-size: 25px; }
+    .panel h2 { padding: 14px 14px 6px; }
+    .panel h2.rate-title { align-items: flex-start; flex-wrap: wrap; }
+    .panel-title-tools { width: 100%; margin-left: 13px; justify-content: space-between; }
+    .log-item { grid-template-columns: 52px minmax(95px, 1fr) 50px 73px; font-size: 10px; gap: 5px; }
+    .log-item .p { display: none; }
+    .log-list { padding: 4px 10px 8px 12px; }
+    .donut-wrap { gap: 16px; padding: 8px 14px 14px; }
+    .grid-main > .panel, .grid-side > .panel { height: 320px; }
+  }
+
+  /* ── 渐进增强：没有模糊，页面也必须成立 ────── */
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    header.topbar, .panel, .kpi, .status-pill, .dropdown .dropdown-toggle, .dropdown-menu, .boot-overlay {
+      background: #FFFFFF;
+    }
+    .flow-k, .rank { background: rgba(255,255,255,.9); }
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    header.topbar, .panel, .kpi, .status-pill, .dropdown .dropdown-toggle, .dropdown-menu {
+      background: #FFFFFF;
+      backdrop-filter: none; -webkit-backdrop-filter: none;
+    }
+    .panel::before, .panel::after, .kpi::after { display: none; }
+    .aurora, .stars { display: none; }
+  }
+  @media (prefers-contrast: more) {
+    :root { --text: #10192B; --muted: #3D4C63; --faint: #4E5E75; --hairline: #8C9AB0; --edge: rgba(16,25,43,.28); }
+    .panel, .kpi { box-shadow: 0 0 0 1px rgba(16,25,43,.18); }
+    .panel::before, .panel::after { display: none; }
+    .aurora, .stars, .grid { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: .01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: .01ms !important;
+      scroll-behavior: auto !important;
+    }
+    .aurora span { animation: none; }
+    .panel::after, .kpi::after { display: none; }
+  }
+  /* 动效开关（页面内按钮）与页面隐藏时暂停连续绘图 */
+  .still *, .still *::before, .still *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+  .still .panel::after, .still .kpi::after { display: none; }
+  .still .kpi::before { display: none; }
+  /* 不支持 mask-composite 时退回淡色面光，不出现整块色斑 */
+  @supports not ((mask-composite: exclude) or (-webkit-mask-composite: xor)) {
+    .panel::after, .kpi::after {
+      padding: 0; -webkit-mask: none; mask: none;
+      background: radial-gradient(240px circle at var(--mx,-500px) var(--my,-500px), rgba(40,104,216,.14), transparent 70%);
+    }
+  }
+  .backgrounded *, .backgrounded *::before, .backgrounded *::after { animation-play-state: paused !important; }
+  
+  .header-actions { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .header-actions button,
+  .dropdown .dropdown-toggle {
+    height: 28px; line-height: 26px; border-radius: 999px;
+    border: 1px solid var(--edge); background: rgba(255, 255, 255, .66);
+    color: var(--text-sub); font: 600 11.5px var(--font); padding: 0 12px;
+    cursor: pointer; box-shadow: var(--lift-sm);
+    transition: background-color .2s ease, color .2s ease, border-color .2s ease, box-shadow .2s ease, transform .15s ease;
+    display: inline-flex; align-items: center; justify-content: center; gap: 4px; box-sizing: border-box;
+  }
+  .header-actions button:hover,
+  .dropdown .dropdown-toggle:hover {
+    background: #ffffff; color: var(--text); border-color: rgba(40, 104, 216, .32);
+    box-shadow: 0 4px 14px rgba(40, 104, 216, .12), var(--spec);
+    transform: translateY(-1px);
+  }
+  .header-actions button:active,
+  .dropdown .dropdown-toggle:active {
+    transform: translateY(1px); box-shadow: none;
+  }
+  .header-actions button#refreshNow { width: 28px; height: 28px; padding: 0; border-radius: 50%; }
+  .header-actions button:disabled { opacity: .55; cursor: wait; transform: none !important; }
+  .refresh-icon { display: block; transition: transform .4s cubic-bezier(.2, .8, .2, 1); }
+  #refreshNow:hover:not(:disabled) .refresh-icon { transform: rotate(180deg); }
+  .refreshing .refresh-icon { animation: bootSpin 1s linear infinite !important; }
+
+
+</style>
+<style id="theme-dark">
+
+  /* ══════════════════════════════════════════════════════
+     设计语言 v2「暗夜指挥舱」
+     与浅色主题同名字阶 / 间距 / 圆角 token，两套主题各自演绎：
+     深底 + 霓虹描边 + 品牌色光晕。
+     注意：深色主题的 @keyframes 必须用 -d 后缀命名空间
+    （Chrome 会注册 disabled 样式表里的 keyframes，造成跨主题冲突）。
+     ══════════════════════════════════════════════════════ */
+  :root {
+    --bg: #04060D;
+    --panel: linear-gradient(165deg, rgba(23, 36, 68, .60), rgba(8, 13, 28, .88));
+    --panel-strong: rgba(15, 23, 42, 0.78);
+    --line: rgba(126, 164, 255, 0.15);
+    --text: #e7edff;
+    --muted: #8b9bc0;
+    --faint: #5f6f94;
+    --cyan: #38e1ff;
+    --blue: #4f7cff;
+    --violet: #9d6bff;
+    --green: #2be3a3;
+    --amber: #ffb547;
+    --red: #ff5d73;
+
+    /* ── 圆角 / 字阶 / 间距：与浅色主题同名 ── */
+    --radius: 18px;
+    --radius-md: 14px;
+    --radius-sm: 12px;
+    --radius-xs: 8px;
+    --fs-hero: clamp(24px, 2vw, 31px);
+    --fs-title: 13px;
+    --fs-body: 12px;
+    --fs-meta: 11px;
+    --fs-micro: 10.5px;
+    --gap: 18px;
+    --gap-sm: 14px;
+    --pad-panel: 20px;
+
+    /* ── 供应商品牌色（CSS 侧兜底；JS 以 brandPair() 为准） ── */
+    --pv-gemini: #2E7CF6;
+    --pv-claude: #D97757;
+    --pv-codex: #8B5CF6;
+    --pv-openai: #10A37F;
+    --pv-xai: #7C8DB0;
+    --pv-kimi: #E8930C;
+
+    --font: "Inter", "HarmonyOS Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    --mono: "JetBrains Mono", "SFMono-Regular", Consolas, "Courier New", monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; scrollbar-gutter: stable; }
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  /* ── 背景 ─────────────────────────────── */
+  .bg {
+    position: fixed; inset: 0; z-index: -2;
+    background:
+      radial-gradient(900px 520px at 12% -10%, rgba(46, 105, 255, 0.38), transparent 60%),
+      radial-gradient(800px 480px at 88% 8%, rgba(139, 60, 255, 0.30), transparent 60%),
+      radial-gradient(1000px 700px at 50% 115%, rgba(0, 210, 255, 0.20), transparent 60%),
+      linear-gradient(180deg, #05070f 0%, #080d1d 55%, #05070f 100%);
+  }
+  .grid {
+    position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    background-image:
+      linear-gradient(rgba(100, 150, 255, 0.055) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(100, 150, 255, 0.055) 1px, transparent 1px);
+    background-size: 44px 44px;
+    mask-image: radial-gradient(ellipse 90% 75% at 50% 20%, black 30%, transparent 78%);
+    -webkit-mask-image: radial-gradient(ellipse 90% 75% at 50% 20%, black 30%, transparent 78%);
+  }
+  .aurora {
+    position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden;
+  }
+  .aurora span {
+    position: absolute; border-radius: 50%; filter: blur(65px); opacity: 0.48;
+    animation: float-d 16s ease-in-out infinite alternate;
+  }
+  .aurora span:nth-child(1) { width: 420px; height: 420px; left: -90px; top: 12%; background: #1d4ed8; }
+  .aurora span:nth-child(2) { width: 360px; height: 360px; right: -70px; top: 4%; background: #7c3aed; animation-delay: -5s; }
+  .aurora span:nth-child(3) { width: 320px; height: 320px; left: 42%; bottom: -120px; background: #0e7490; animation-delay: -9s; }
+  @keyframes float-d {
+    from { transform: translate3d(0, 0, 0) scale(1); }
+    to   { transform: translate3d(34px, 22px, 0) scale(1.12); }
+  }
+  .stars {
+    position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    background-image:
+      radial-gradient(1.4px 1.4px at 18% 24%, rgba(255,255,255,.8), transparent),
+      radial-gradient(1px 1px at 72% 12%, rgba(255,255,255,.6), transparent),
+      radial-gradient(1.6px 1.6px at 45% 68%, rgba(180,220,255,.7), transparent),
+      radial-gradient(1px 1px at 86% 42%, rgba(255,255,255,.5), transparent),
+      radial-gradient(1.2px 1.2px at 8% 78%, rgba(160,200,255,.6), transparent);
+    animation: twinkle-d 5s ease-in-out infinite alternate;
+  }
+  @keyframes twinkle-d { from { opacity: .45; } to { opacity: 1; } }
+
+  /* ── 布局 ─────────────────────────────── */
+  .wrap {
+    max-width: 1680px; margin: 0 auto; padding: 20px 24px 28px;
+    display: flex; flex-direction: column; gap: var(--gap);
+    animation: wrapIn-d .6s cubic-bezier(.22,1,.36,1) both;
+  }
+  @keyframes wrapIn-d { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+
+  /* 整页载入动画 */
+.boot-overlay {
+position: fixed; inset: 0; z-index: 9999;
+display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px;
+background: radial-gradient(760px 480px at 50% 42%, rgba(28,48,100,.34), rgba(5,7,15,.9) 72%);
+backdrop-filter: blur(9px); -webkit-backdrop-filter: blur(9px);
+transition: opacity .55s ease, visibility .55s ease;
+}
+.boot-overlay.hide { opacity: 0; visibility: hidden; pointer-events: none; }
+.boot-spinner { position: relative; width: 78px; height: 78px; }
+.boot-ring {
+position: absolute; inset: 0; border-radius: 50%;
+background: conic-gradient(from 0deg, transparent 0 16%, #38e1ff 32%, #7c5cff 47%, transparent 63%);
+-webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 7px), #000 calc(100% - 6px));
+mask: radial-gradient(farthest-side, transparent calc(100% - 7px), #000 calc(100% - 6px));
+animation: bootSpin-d 1.1s linear infinite;
+filter: drop-shadow(0 0 12px rgba(56,225,255,.45));
+}
+.boot-ring.rev { inset: 9px; animation-direction: reverse; animation-duration: 1.8s; filter: drop-shadow(0 0 10px rgba(124,92,255,.5)); }
+.boot-core {
+position: absolute; inset: 0; margin: auto; width: 13px; height: 13px; border-radius: 50%;
+background: linear-gradient(135deg, #38e1ff, #7c5cff);
+box-shadow: 0 0 18px rgba(56,225,255,.8);
+animation: bootCore-d 1.8s ease-in-out infinite;
+}
+@keyframes bootSpin-d { to { transform: rotate(360deg); } }
+@keyframes bootCore-d { 0%,100% { transform: scale(.8); opacity: .75; } 50% { transform: scale(1.15); opacity: 1; } }
+.boot-text { color: var(--muted); font-size: 13px; letter-spacing: 2.5px; animation: pulse-d 1.6s ease-in-out infinite; }
+  header.topbar {
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    flex-wrap: wrap; padding: 11px 18px; border-radius: var(--radius);
+    border: 1px solid var(--line);
+    background:
+      linear-gradient(90deg, transparent, rgba(56,225,255,.5) 22%, rgba(157,107,255,.5) 55%, rgba(79,124,255,.5) 80%, transparent) top left / 100% 2px no-repeat,
+      linear-gradient(115deg, rgba(23, 44, 80, .55), rgba(14, 18, 38, .72));
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 14px 36px rgba(2, 6, 20, .4), inset 0 1px 0 rgba(255, 255, 255, .05);
+    position: relative; z-index: 40;
+  }
+  /* 头部卡片左上角一抹青色柔光，与指标卡的点缀呼应 */
+  header.topbar::before {
+    content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+    background: radial-gradient(320px 170px at 3% 0%, rgba(56, 225, 255, .12), transparent 72%);
+  }
+  header.topbar > * { position: relative; }
+  .brand { display: flex; align-items: center; gap: 14px; }
+  .logo {
+    width: 42px; height: 42px; border-radius: 14px; position: relative;
+    background: radial-gradient(130% 130% at 28% 22%, #14294e 0%, #0a1526 72%);
+    border: 1px solid rgba(120, 180, 255, .32);
+    box-shadow: inset 0 0 18px rgba(56, 225, 255, .14), 0 8px 26px rgba(20, 60, 160, .35);
+    display: grid; place-items: center;
+  }
+  .logo svg { width: 30px; height: 30px; display: block; }
+  .logo svg .od-dot { transform-box: fill-box; transform-origin: center; animation: odPulse-d 2.2s ease-in-out infinite; }
+  @keyframes odPulse-d { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .45; transform: scale(1.4); } }
+  .logo::after {
+    content: ""; position: absolute; inset: -4px; border-radius: 18px; z-index: -1;
+    background: linear-gradient(135deg, rgba(56,225,255,.5), transparent 55%, rgba(157,107,255,.5));
+    filter: blur(10px); opacity: .7;
+  }
+  .brand h1 { font-size: 21px; letter-spacing: .6px; font-weight: 750; }
+  .brand .sub { color: var(--muted); font: 600 9.5px var(--mono); margin-top: 5px; letter-spacing: 2.6px; }
+  .topright { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .clock {
+    text-align: right; font-variant-numeric: tabular-nums;
+  }
+  .clock .time { font: 700 19px/1.1 var(--mono); letter-spacing: 1px; font-variant-numeric: tabular-nums; }
+  .clock .date { font-size: 10px; color: var(--muted); margin-top: 3px; letter-spacing: 1px; }
+  .status-pill {
+    display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px;
+    background: var(--panel); border: 1px solid var(--line); font-size: 13px; color: var(--muted);
+    backdrop-filter: blur(10px); white-space: nowrap;
+  }
+  .header-actions { display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+  .header-actions button {
+    height:28px; border:1px solid transparent; background:rgba(13,26,44,.6); color:#c2d2e9;
+    font:600 11.5px var(--font); padding:0 11px; border-radius:999px; cursor:pointer;
+    transition:background .2s ease, color .2s ease, border-color .2s ease;
+  }
+  .header-actions button:hover { background:#192e48; color:#fff; border-color:#38e1ff55; }
+  .header-actions button:active { transform:translateY(1px); }
+  .header-actions button.primary { color:#8ff2f4; background:rgba(13,26,44,.6); border-color:transparent; }
+  .header-actions button.primary:hover { background:#192e48; color:#fff; border-color:#38e1ff55; }
+  .header-actions button:disabled { opacity:.55; cursor:wait; }
+  .dock-sep { width:1px; height:16px; background:var(--line); margin:0 3px; flex:none; }
+
+  /* ── 顶部操作栏展开/收起控制抽屉 ── */
+  .controls-toggle {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    height: 28px; padding: 0 12px; min-width: 88px; box-sizing: border-box; border-radius: 999px;
+    background: rgba(13,26,44,.6); color: #c2d2e9;
+    border: 1px solid transparent;
+    font: 600 11.5px var(--font); cursor: pointer; white-space: nowrap;
+    transition: background .2s ease, color .2s ease, border-color .2s ease, box-shadow .2s ease;
+  }
+  .controls-toggle:hover {
+    background: #192e48; color: #fff; border-color: #38e1ff55;
+  }
+  .controls-toggle.active {
+    background: #1a3a5c; color: #8ff2f4; border-color: rgba(56, 225, 255, .5);
+    box-shadow: 0 0 12px rgba(56, 225, 255, .18);
+  }
+  .controls-toggle .toggle-icon { font-size: 13px; line-height: 1; opacity: .85; }
+  .controls-toggle .toggle-chevron {
+    width: 9px; height: 5px; flex: none; opacity: .75;
+    transition: transform .28s cubic-bezier(.34, 1.56, .64, 1);
+  }
+  .controls-toggle.active .toggle-chevron {
+    transform: rotate(180deg);
+  }
+  .controls-drawer {
+    display: inline-flex; align-items: center; gap: 6px;
+    max-width: 0; opacity: 0; margin: 0;
+    pointer-events: none; overflow: hidden;
+    transform: scale(0.96) translateX(-4px);
+    transition: max-width .38s cubic-bezier(.16, 1, .3, 1),
+                opacity .28s cubic-bezier(.16, 1, .3, 1),
+                transform .38s cubic-bezier(.16, 1, .3, 1),
+                margin .38s cubic-bezier(.16, 1, .3, 1);
+  }
+  .controls-drawer.open {
+    max-width: 650px; opacity: 1; margin: 0 1px;
+    pointer-events: auto; transform: scale(1) translateX(0);
+  }
+  .controls-drawer.expanded-visible {
+    overflow: visible;
+  }
+  .controls-drawer.open > * {
+    animation: drawerItemEnter .32s cubic-bezier(.16, 1, .3, 1) both;
+  }
+  .controls-drawer.open > *:nth-child(1) { animation-delay: 20ms; }
+  .controls-drawer.open > *:nth-child(2) { animation-delay: 45ms; }
+  .controls-drawer.open > *:nth-child(3) { animation-delay: 70ms; }
+  .controls-drawer.open > *:nth-child(4) { animation-delay: 95ms; }
+  .controls-drawer.open > *:nth-child(5) { animation-delay: 120ms; }
+  .controls-drawer.open > *:nth-child(6) { animation-delay: 145ms; }
+
+  .topbar-sep { width:1px; height:26px; background:var(--line); flex:none; }
+  /* 自绘下拉：彻底替换原生弹层，避免 Windows 系统菜单的亮色选中项破坏深色主题 */
+  .dropdown { position: relative; }
+  .dropdown .dropdown-toggle {
+    display: inline-flex; align-items: center; gap: 8px;
+    height: 28px; padding: 0 12px; border-radius: 9px;
+    border: 1px solid rgba(140,178,234,.3); background: rgba(13,26,44,.85); color: #c2d2e9;
+    font: 600 11.5px var(--font); cursor: pointer; white-space: nowrap;
+    transition: background-color .2s ease, color .2s ease, border-color .2s ease;
+  }
+  .dropdown .dropdown-toggle::after {
+    content: ""; flex: none; width: 10px; height: 6px; opacity: .85;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%238b9bc0' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat;
+    transition: transform .2s ease;
+  }
+  .dropdown .dropdown-toggle:hover { background-color: #192e48; border-color: #38e1ff55; color: #fff; }
+  .dropdown.open .dropdown-toggle { border-color: #38e1ff88; color: #fff; background-color: #132238; }
+  .dropdown.open .dropdown-toggle::after { transform: rotate(180deg); }
+  .dropdown.sm .dropdown-toggle { height: 24px; padding: 0 9px; gap: 6px; font-size: 11px; border-radius: 8px; }
+  .dropdown-menu {
+    position: absolute; top: calc(100% + 6px); right: 0; min-width: 100%; z-index: 60;
+    padding: 5px; border-radius: 11px; border: 1px solid rgba(140,178,234,.3);
+    background: #12233d; box-shadow: 0 16px 44px rgba(2,6,20,.65);
+    opacity: 0; visibility: hidden; transform: translateY(-4px);
+    transition: opacity .18s ease, transform .18s ease, visibility .18s;
+  }
+  .dropdown.open .dropdown-menu { opacity: 1; visibility: visible; transform: none; }
+  .dropdown-option {
+    padding: 8px 12px; border-radius: 7px; white-space: nowrap;
+    font: 600 11.5px var(--font); color: #c2d2e9; cursor: pointer;
+    transition: background-color .15s ease, color .15s ease;
+  }
+  .dropdown.sm .dropdown-option { padding: 7px 10px; font-size: 11px; }
+  .dropdown-option:hover { background: rgba(80,120,255,.16); color: #fff; }
+  .dropdown-option.selected { background: #1a3a5c; color: #8ff2f4; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 12px var(--amber); animation: pulse-d 1.6s infinite; }
+  .dot.on { background: var(--green); box-shadow: 0 0 12px var(--green); }
+  .dot.err { background: var(--red); box-shadow: 0 0 12px var(--red); }
+  @keyframes pulse-d { 50% { opacity: .4; } }
+
+  /* ── 面板 ─────────────────────────────── */
+  .panel {
+    background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 18px 48px rgba(2, 6, 20, .45), inset 0 1px 0 rgba(255,255,255,.05);
+    position: relative; overflow: hidden;
+  }
+  .panel::before {
+    content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+    background: linear-gradient(120deg, rgba(90,140,255,.10), transparent 32%, transparent 68%, rgba(140,90,255,.08));
+  }
+  .panel > * { position: relative; }
+  .panel h2 {
+    font-size: var(--fs-title); font-weight: 700; letter-spacing: .6px; color: var(--text);
+    display: flex; align-items: center; gap: 10px; padding: 16px var(--pad-panel) 8px;
+  }
+  .panel h2 .bar { width: 4px; height: 15px; border-radius: 3px; background: linear-gradient(180deg, var(--cyan), var(--blue)); box-shadow: 0 0 10px rgba(56,225,255,.6); }
+  .panel h2 .hint { margin-left: auto; font-weight: 500; font-size: 12px; color: var(--muted); }
+  .panel-title-tools { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+  .live-mark { display: inline-flex; align-items: center; gap: 6px; color: var(--cyan); font: 600 10px var(--mono); letter-spacing: .7px; }
+  .live-mark::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 9px var(--cyan); animation: pulse-d 1.5s ease-in-out infinite; }
+  .segmented { display: inline-grid; grid-auto-flow: column; padding: 3px; border-radius: 8px; border: 1px solid rgba(120,160,255,.16); background: rgba(4,8,20,.5); }
+  .segmented button { min-width: 52px; height: 25px; border: 0; border-radius: 6px; padding: 0 9px; color: var(--muted); background: transparent; font: 600 11px var(--font); cursor: pointer; transition: color .2s ease, background .2s ease, box-shadow .2s ease; }
+  .segmented button:hover { color: var(--text); }
+  .segmented button.active { color: #fff; background: linear-gradient(135deg, rgba(41,113,255,.9), rgba(105,77,255,.88)); box-shadow: 0 3px 12px rgba(61,100,255,.28), inset 0 1px 0 rgba(255,255,255,.22); }
+  .segmented.sm { padding: 2px; border-radius: 8px; gap: 2px; }
+  .segmented.sm button { min-width: 44px; height: 22px; padding: 0 7px; font-size: 10.5px; border-radius: 5px; }
+
+  /* ── 指标卡：仪表化 ─────────────────────────
+     顶部 3px 主色霓虹灯带 + 大数字 + 分隔线 delta，三段式信息层级。 */
+  .kpis {
+    display: grid; grid-template-columns: repeat(6, 1fr); gap: var(--gap-sm);
+  }
+  .kpi {
+    position: relative; overflow: hidden; min-width: 0;
+    padding: 15px 18px 12px; border-radius: var(--radius);
+    border: 1px solid rgba(140, 178, 234, .14);
+    /* 第 1 层：顶部主色霓虹灯带；第 2 层：卡面渐变 */
+    background:
+      linear-gradient(90deg, var(--accent, var(--cyan)), color-mix(in srgb, var(--accent, var(--cyan)) 45%, transparent) 55%, transparent 92%) left top / 100% 3px no-repeat,
+      linear-gradient(150deg, rgba(26, 47, 82, .58), rgba(12, 19, 37, .85));
+    box-shadow: 0 14px 36px rgba(2, 6, 20, .4), inset 0 1px 0 rgba(255, 255, 255, .05);
+    transition: border-color .25s ease, box-shadow .25s ease, transform .25s ease;
+  }
+  /* 左上角点缀本卡主色的柔光，代替旧的顶部细线 */
+  .kpi::before {
+    content: ""; position: absolute; left: -24%; top: -70%; width: 62%; height: 130%;
+    background: radial-gradient(closest-side, color-mix(in srgb, var(--accent, var(--cyan)) 20%, transparent), transparent 74%);
+    pointer-events: none;
+  }
+  .kpi:hover {
+    transform: translateY(-2px);
+    border-color: color-mix(in srgb, var(--accent, var(--cyan)) 38%, transparent);
+    box-shadow: 0 18px 44px rgba(2, 6, 20, .5), 0 0 22px color-mix(in srgb, var(--accent, var(--cyan)) 12%, transparent);
+  }
+  .kpi .label { font-size: 11.5px; font-weight: 600; color: var(--muted); letter-spacing: .8px; display: flex; align-items: center; gap: 8px; }
+  .kpi .icon {
+    width: 24px; height: 24px; border-radius: 8px; display: grid; place-items: center; flex: none;
+    font-size: 12px; color: var(--accent, var(--cyan));
+    background: color-mix(in srgb, var(--accent, var(--cyan)) 13%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent, var(--cyan)) 28%, transparent);
+    box-shadow: 0 0 12px color-mix(in srgb, var(--accent, var(--cyan)) 18%, transparent);
+  }
+  .kpi .value {
+    font: 750 var(--fs-hero)/1.2 var(--mono); letter-spacing: -.5px; margin-top: 10px;
+    font-variant-numeric: tabular-nums;
+    background: linear-gradient(115deg, #f4f9ff 30%, #bcd6ff 62%, var(--accent, var(--cyan)));
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: transparent;
+  }
+  .kpi .value .unit, .kpi .value small {
+    display: inline-block;
+    font-size: 0.82em;
+    font-weight: 600;
+    margin-left: .22em;
+    letter-spacing: .02em;
+    color: var(--accent, var(--cyan));
+    -webkit-text-fill-color: var(--accent, var(--cyan));
+    text-shadow: 0 0 10px color-mix(in srgb, var(--accent, var(--cyan)) 40%, transparent);
+    vertical-align: baseline;
+  }
+  .kpi .value .unit:first-child { margin-left: 0; margin-right: .2em; font-size: 0.78em; }
+  .kpi .delta { font-size: var(--fs-micro); line-height: 1.55; margin-top: 8px; padding-top: 7px; border-top: 1px dashed rgba(140, 178, 234, .16); color: var(--muted); font-variant-numeric: tabular-nums; letter-spacing: .2px; }
+  .kpi .delta b { font-weight: 700; color: #cdd9f2; }
+  .kpi .delta .up { color: var(--green); }
+  .kpi .delta .down { color: var(--red); }
+  .kpi .delta .flat { color: var(--muted); }
+
+  /* ── 图表区 ───────────────────────────── */
+  .grid-main {
+    display: grid; grid-template-columns: 1fr; gap: var(--gap);
+  }
+  .grid-main > .panel { height: 384px; }
+  .grid-side > .panel { height: 384px; }
+  .grid-side { display: grid; grid-template-columns: 1fr 1fr; gap: var(--gap); align-items: stretch; }
+  .grid-side > .panel, .grid-main > .panel { display: flex; flex-direction: column; }
+  .chart-body { padding: 10px 16px 14px; }
+  .grid-side .chart-body, .grid-main .chart-body { flex: 1 1 auto; display: flex; flex-direction: column; min-height: 0; }
+  canvas { width: 100%; display: block; }
+  #rateChart { flex: 1 1 0%; width: 100%; min-height: 0; }
+
+  /* ── 合并面板：mg-grid（实时监控 / 模型洞察）── */
+  .mg-grid { flex: 1 1 auto; display: grid; grid-template-columns: minmax(0, 1.55fr) 1px minmax(0, 1fr); min-height: 0; }
+  .mg-grid-insight { grid-template-columns: minmax(0, 1fr) 1px minmax(0, 1fr); }
+  .mg-sec { display: flex; flex-direction: column; min-width: 0; min-height: 0; padding: 0 22px 14px; }
+  .mg-sec:first-child { padding-left: var(--pad-panel); }
+  .mg-sec:last-child { padding-right: var(--pad-panel); }
+  .mg-divider {
+    background: linear-gradient(180deg, transparent, var(--line) 18%, var(--line) 82%, transparent);
+    margin: 10px 0 14px;
+  }
+  .mg-cap { display: flex; align-items: center; gap: 10px; padding: 2px 0 10px; }
+  .mg-cap-title { font-size: 11px; font-weight: 700; letter-spacing: 1.6px; color: var(--muted); white-space: nowrap; }
+  .mg-tools { margin-left: auto; display: inline-flex; align-items: center; gap: 10px; min-width: 0; }
+  .mg-tools .hint { font-size: 10.5px; color: var(--muted); white-space: nowrap; }
+  .panel-merge .chart-body { padding: 2px 0 6px; }
+  .panel-merge .legend { padding: 6px 0 0; }
+  .panel-merge .log-list { padding: 2px 2px 2px 6px; }
+  .panel-merge .bars { padding: 2px 6px 2px 0; overflow-x: hidden; scrollbar-gutter: stable; }
+  .trend-layout { flex: 1 1 0%; width: 100%; min-height: 0; display: flex; position: relative; }
+  #trendYAxis { width: 28px; height: 100%; flex: none; display: block; }
+  .trend-scroll { flex: 1; min-width: 0; height: 100%; overflow-x: hidden; overflow-y: hidden; scrollbar-width: none; -ms-overflow-style: none; cursor: default; }
+  .trend-scroll.scrollable { overflow-x: auto; cursor: grab; }
+  .trend-scroll.dragging { cursor: grabbing; user-select: none; }
+  .trend-scroll::-webkit-scrollbar { display: none; width: 0; height: 0; }
+  #trendChart { flex: none; height: 100%; display: block; }
+  .legend { display: flex; gap: 8px; flex-wrap: wrap; padding: 2px 18px 14px; font-size: var(--fs-body); color: var(--muted); }
+  .legend > span {
+    display: inline-flex; align-items: center; gap: 7px; padding: 4px 11px 4px 8px;
+    border: 1px solid var(--line); border-radius: 999px; background: rgba(10, 16, 32, .45);
+    font-variant-numeric: tabular-nums;
+  }
+  .legend i { display: inline-block; width: 9px; height: 9px; border-radius: 3px; }
+
+  /* 模型热度 */
+  .bars {
+    display: flex; flex-direction: column; gap: 3px; padding: 6px 14px 12px 16px;
+    flex: 1 1 auto; min-height: 0; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+    scrollbar-width: thin; scrollbar-color: rgba(90,140,255,.35) transparent;
+  }
+  .bars::-webkit-scrollbar { width: 5px; }
+  .bars::-webkit-scrollbar-track { background: transparent; }
+  .bars::-webkit-scrollbar-thumb { background: rgba(90, 140, 255, .3); border-radius: 999px; }
+  .bar-row { display: grid; grid-template-columns: 26px minmax(60px, 1fr) minmax(82px, max-content); grid-template-rows: 22px 6px; align-items: center; column-gap: 9px; row-gap: 5px; padding: 6px 12px 6px 8px; border-radius: 8px; transition: background .2s ease; }
+  .bar-row:hover { background: rgba(80,120,255,.055); }
+  .rank { grid-row: 1 / 3; width: 25px; height: 25px; display: grid; place-items: center; border-radius: 7px; color: #9fb0d8; background: rgba(255,255,255,.045); border: 1px solid rgba(255,255,255,.07); font: 700 10px var(--mono); }
+  .bar-row:nth-child(1) .rank { color: #fff4bd; background: linear-gradient(135deg,rgba(255,184,71,.32),rgba(255,107,74,.16)); border-color: rgba(255,188,84,.34); box-shadow: 0 0 13px rgba(255,181,71,.13); }
+  .bar-row:nth-child(2) .rank { color: #dce7ff; background: linear-gradient(135deg,rgba(155,178,222,.26),rgba(89,119,184,.12)); border-color: rgba(180,200,238,.25); }
+  .bar-row:nth-child(3) .rank { color: #ffd0ae; background: linear-gradient(135deg,rgba(196,116,65,.28),rgba(127,67,44,.12)); border-color: rgba(218,138,84,.25); }
+  .model-id { min-width: 0; display: flex; align-items: baseline; gap: 7px; }
+  .bar-row .name { min-width: 0; font-size: 12px; font-weight: 650; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .provider-tag { flex: none; color: color-mix(in srgb, var(--pv, #8fa3ce) 78%, #8fa3ce); font: 700 9px var(--mono); text-transform: uppercase; letter-spacing: .4px; }
+  .bar-row .track { grid-column: 2 / 4; height: 5px; border-radius: 5px; background: rgba(255,255,255,.045); overflow: hidden; position: relative; contain: paint; }
+  .bar-row .fill {
+    height: 100%; border-radius: 6px; width: 0;
+    background: linear-gradient(90deg, var(--c1, var(--blue)), var(--c2, var(--cyan)));
+    transition: width 1s cubic-bezier(.22,1,.36,1);
+    position: relative;
+    box-shadow: 0 0 10px var(--c1, var(--blue)), 0 0 4px var(--c2, var(--cyan));
+  }
+  .bar-row .val { min-width: 0; font: 700 12px var(--mono); color: var(--text); text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .bar-row .val small { display: block; margin-top: 1px; font: 500 9px var(--mono); color: var(--muted); white-space: nowrap; }
+
+  /* 模型热度骨架屏：清单就绪前占位，避免高度/滚动条跳动 */
+  .bars .bar-row.skel .rank, .bars .bar-row.skel .name, .bars .bar-row.skel .val, .bars .bar-row.skel .track {
+background: linear-gradient(90deg, rgba(255,255,255,.045) 25%, rgba(255,255,255,.12) 50%, rgba(255,255,255,.045) 75%);
+background-size: 200% 100%;
+animation: skelShimmer-d 1.3s ease-in-out infinite;
+border-radius: 6px;
+box-shadow: none;
+  }
+  .bars .bar-row.skel .rank { width: 25px; height: 25px; }
+  .bars .bar-row.skel .name { height: 12px; width: 55%; }
+  .bars .bar-row.skel .val { height: 12px; width: 100%; display: block; }
+  .bars .bar-row.skel .track { height: 5px; }
+  .bars .bar-row.skel .fill { display: none; }
+  @keyframes skelShimmer-d { to { background-position: -200% 0; } }
+
+  /* 环形 */
+  .donut-wrap { flex: 1; display: flex; align-items: center; justify-content: center; gap: 20px; padding: 10px 18px 16px; min-height: 196px; }
+  .donut { position: relative; width: 182px; height: 182px; flex: none; }
+  .donut svg { transform: rotate(-90deg); width: 100%; height: 100%; display: block; }
+  .donut .center {
+    position: absolute; inset: 0; display: grid; place-items: center; text-align: center;
+  }
+  .donut .center b { font-size: 24px; font-weight: 800; }
+  .donut .center span { font-size: 11px; color: var(--muted); display: block; margin-top: -3px; }
+  .donut-list { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 9px; min-width: 0; max-width: 240px; }
+  .d-item { display: grid; grid-template-columns: 12px minmax(0,1fr) auto auto; align-items: center; gap: 9px; font-size: var(--fs-body); }
+  .d-item .sw { width: 11px; height: 11px; border-radius: 4px; box-shadow: 0 0 8px rgba(120,170,255,.35), inset 0 0 0 1px rgba(255,255,255,.25); }
+  .d-item .nm { color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .d-item .ct { color: var(--muted); font-family: var(--mono); font-size: 11px; font-variant-numeric: tabular-nums; }
+  .d-item .pc { color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums; }
+  .d-item { transition: transform .18s ease, background .18s ease; border-radius: 11px; padding: 7px 9px; cursor: pointer; }
+  .d-item:hover, .d-item.active { background: rgba(80,120,255,.10); transform: translateX(3px); }
+  .d-item.active .nm { color: #fff; }
+  .donut svg .donut-seg { stroke-width: 12; transition: stroke-dasharray .7s ease, stroke-width .18s ease, opacity .18s ease; cursor: pointer; }
+  .donut svg .donut-seg:hover, .donut svg .donut-seg.active { stroke-width: 15; filter: drop-shadow(0 0 10px currentColor); }
+  .donut svg[data-glow] .donut-seg { opacity: .26; }
+  .donut svg[data-glow] .donut-seg.active { opacity: 1; }
+
+  /* ── 方舟反应堆能量核心 ─────────────────── */
+  .donut svg { overflow: visible; }
+  .donut-core { transform-origin: 73px 73px; }
+  .donut-coil { transform-origin: 73px 73px; animation: coilSpin-d 16s linear infinite; }
+  .donut-coil.rev { animation-direction: reverse; animation-duration: 26s; }
+  .donut-spark { transform-origin: 73px 73px; animation: coilSpin-d 3.8s linear infinite; }
+  .donut-spark.rev { animation-direction: reverse; animation-duration: 5.4s; }
+  .donut-halo { transform-origin: 73px 73px; animation: haloGlow-d 5s ease-in-out infinite; }
+  .donut-aura { animation: auraPulse-d 4s ease-in-out infinite; }
+  .donut-arm { stroke: rgba(120,170,255,.22); stroke-width: 1.5; transition: stroke .3s ease; }
+  .donut-bolt { fill: #7ae9ff; filter: drop-shadow(0 0 3px #38e1ff); }
+  .donut-core { filter: drop-shadow(0 0 6px rgba(56,225,255,.45)); transition: filter .3s ease; }
+  @keyframes coilSpin-d { to { transform: rotate(360deg); } }
+  @keyframes haloGlow-d { 0%,100% { opacity: .35; } 50% { opacity: .85; } }
+  @keyframes auraPulse-d { 0%,100% { opacity: .5; } 50% { opacity: 1; } }
+  .donut .center b { text-shadow: 0 1px 10px rgba(4,12,44,.95), 0 0 14px rgba(90,180,255,.35); }
+  .donut .center span { color: #b9cdf2; }
+
+  /* 数据弧段叠在能量核心外层时略降透明度，避免抢掉核心光感 */
+  .donut svg .donut-seg { opacity: .92; }
+
+  /* 悬停联动：核心整体被点亮并染成选中供应商的颜色 */
+  .donut svg[data-glow] .donut-core { filter: drop-shadow(0 0 14px var(--glow, rgba(56,225,255,.7))); }
+  .donut svg[data-glow] .donut-orb { fill: var(--glow, #38e1ff); }
+  .donut svg[data-glow] .donut-core-orb { fill: color-mix(in srgb, var(--glow, #38e1ff) 22%, transparent); }
+  .donut svg[data-glow] .donut-halo { stroke: var(--glow, #78c8ff); }
+  .donut svg[data-glow] .donut-base { stroke: var(--glow, rgba(120,180,255,.35)); }
+
+  /* 实时流 */
+  .log-stream { overflow: hidden; display: flex; flex-direction: column; padding: 0 0 8px; flex: 1 1 auto; min-height: 0; }
+  .log-list { flex: 1; overflow-y: auto; padding: 6px 10px 8px 18px; scrollbar-width: thin; scrollbar-color: rgba(90,140,255,.35) transparent; }
+  .log-item {
+    display: grid; grid-template-columns: 58px 96px minmax(0,1fr) 56px 78px; gap: 10px; align-items: baseline;
+    padding: 6px 4px; border-radius: 8px; font-size: 12px; font-family: var(--mono);
+    border-bottom: 1px solid rgba(255,255,255,.035);
+  }
+  .log-item.is-new { animation: logEnter-d 520ms cubic-bezier(.22,1,.36,1) both; }
+  @keyframes logEnter-d { from { opacity: 0; transform: translateY(-9px); } to { opacity: 1; transform: none; } }
+  .log-item:hover { background: rgba(255,255,255,.035); }
+  .log-item .t { color: var(--muted); font-variant-numeric: tabular-nums; }
+  /* 供应商标签：染上品牌色（JS 经 --pv 注入 brandPair 颜色） */
+  .log-item .p {
+    color: color-mix(in srgb, var(--pv, #38e1ff) 82%, #e7edff);
+    background: color-mix(in srgb, var(--pv, #38e1ff) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--pv, #38e1ff) 32%, transparent);
+    border-radius: 5px;
+    padding: 1px 6px;
+    font-size: 10px;
+    line-height: 1.35;
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    box-sizing: border-box;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .log-item .m { color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .log-item .tok { color: #a9b9dc; text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .log-item .s { text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .log-item .s.ok { color: var(--green); }
+  .log-item .s.bad { color: var(--red); }
+  .log-item .s.wait { color: var(--amber); }
+  .empty { color: var(--muted); font-size: 13px; padding: 26px 18px; text-align: center; }
+
+  footer { text-align: center; color: var(--muted); font-size: 12px; padding-top: 4px; letter-spacing: .4px; }
+  .glow-num { text-shadow: 0 0 18px rgba(90, 160, 255, .35); }
+
+  @media (max-width: 1180px) {
+    .kpis { grid-template-columns: repeat(3, 1fr); }
+    .grid-main { grid-template-columns: 1fr; }
+    .grid-main > .panel { height: 340px; }
+    .grid-side > .panel { height: 340px; }
+  }
+  @media (max-width: 700px) {
+    .kpis { grid-template-columns: repeat(2, 1fr); }
+    .grid-side { grid-template-columns: 1fr; }
+    .panel h2.rate-title { align-items: flex-start; flex-wrap: wrap; }
+    .panel-title-tools { width: 100%; margin-left: 13px; justify-content: space-between; }
+    .log-list { padding-left: 10px; }
+    .log-item { grid-template-columns: 52px 62px minmax(0,1fr) 54px 62px; gap: 5px; font-size: 10px; }
+    /* 驾驶舱：移动端上下堆叠，分隔线转横向，面板高度自适应 */
+    .pf-grid { grid-template-columns: minmax(0, 1fr); }
+    .pf-divider {
+      width: auto; height: 1px; margin: 8px 18px;
+      background: linear-gradient(90deg, transparent, var(--line) 18%, var(--line) 82%, transparent);
+    }
+    #providerFlowPanel { height: auto; min-height: 340px; }
+    #flowChart { height: 110px; flex: none; }
+    .pf-flow { padding-bottom: 18px; }
+    /* 移动端：环形图与图例上下排列，图例占满宽度不再截断 */
+    .pf-donut { flex-wrap: wrap; gap: 14px; padding: 6px 16px 12px; }
+    .donut-list { flex: 1 1 280px; max-width: 340px; }
+    /* 合并面板：移动端上下堆叠，分隔线转横向，面板高度自适应 */
+    .mg-grid, .mg-grid-insight { grid-template-columns: minmax(0, 1fr); }
+    .mg-divider {
+      width: auto; height: 1px; margin: 4px 0 2px;
+      background: linear-gradient(90deg, transparent, var(--line) 18%, var(--line) 82%, transparent);
+    }
+    .panel-merge { height: auto !important; min-height: 340px; }
+    .panel-merge .mg-sec { min-height: 300px; padding: 0 18px 14px; }
+  }
+
+  /* ── 实时吞吐卡片 ── */
+  .flow-wrap { flex: 1; display: flex; flex-direction: column; gap: 12px; padding: 12px 18px 16px; min-height: 190px; }
+  .flow-head { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .flow-k { background: rgba(255,255,255,.03); border: 1px solid var(--line); border-radius: var(--radius-md); padding: 10px 13px; }
+  .flow-k b { display: block; font-family: var(--mono); font-size: 25px; font-weight: 800; letter-spacing: -.5px; color: var(--cyan); font-variant-numeric: tabular-nums; text-shadow: 0 0 18px color-mix(in srgb, var(--cyan) 45%, transparent); }
+  .flow-k.alt b { color: var(--violet); }
+  .flow-k span { font-size: 11px; color: var(--muted); }
+  .flow-meta { display: flex; gap: 10px; flex-wrap: wrap; font-size: 11px; color: var(--muted); }
+  .flow-meta b { color: var(--text); font-family: var(--mono); font-weight: 600; }
+  .flow-meta span { display: inline-flex; align-items: baseline; gap: 4px; min-width: 62px; }
+  .flow-status { display: flex; gap: 14px; font-size: 12px; color: var(--text); }
+  .flow-status .st { display: inline-flex; align-items: center; gap: 6px; }
+  .flow-status .st i { width: 8px; height: 8px; border-radius: 50%; }
+  .flow-status .st b { font-family: var(--mono); font-weight: 700; }
+  /* Observatory polish: restrained glass, readable telemetry and optional motion. */
+  :root { --panel: rgba(13,22,40,.76); --muted:#9baac7; --line:rgba(140,178,234,.15); --radius:20px; color-scheme:dark; }
+  body { background:#060b16; }
+  .wrap { max-width:1680px; padding:30px 32px 26px; gap:18px; }
+  .bg { background:radial-gradient(ellipse at 5% 0%,#102b4d 0,transparent 45%),radial-gradient(ellipse at 97% 20%,#251b46 0,transparent 48%),#060b16; }
+  .grid { opacity:.45; background-size:56px 56px; }
+  .aurora span { opacity:.19; }
+  .brand h1 { font-size:25px; letter-spacing:1.2px; }
+  .brand .sub { font:10px var(--mono); letter-spacing:2.4px; margin-top:7px; }
+  .clock .time { font-family:var(--mono); font-size:21px; }
+  .clock .date { font-size:10px; }
+  .status-pill { font-size:11px; padding:8px 12px; }
+  button, input, select { font:12px var(--font); }
+  .refresh-icon { display:block; }
+  .refreshing .refresh-icon { animation:bootSpin-d 1s linear infinite; }
+  button:focus-visible, input:focus-visible, select:focus-visible { outline:2px solid var(--cyan); outline-offset:3px; }
+  .kpis { gap:14px; }
+  .panel { transition:border-color .25s,box-shadow .25s; }
+  .panel, .kpi { animation:panelEnter-d .7s cubic-bezier(.2,.8,.2,1) both; animation-delay:var(--enter-delay,0ms); }
+  .panel:hover { border-color:#78b6db40; box-shadow:0 16px 50px #0003,0 0 24px #38e1ff06; }
+  .panel::after { content:""; position:absolute; inset:0; pointer-events:none; border-radius:inherit; background:radial-gradient(360px circle at var(--mx,-500px) var(--my,-500px),#78dfff0b,transparent 70%); }
+  @keyframes panelEnter-d { from { opacity:0; transform:translateY(18px) scale(.99); } to { opacity:1; transform:none; } }
+  .grid-main { grid-template-columns:1fr; }
+  .grid-main > .panel { height:350px; }
+  .grid-side { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .grid-side > .panel { height:350px; min-width:0; }
+  .panel h2 { padding:19px 20px 9px; font-size:13px; }
+  .panel h2 .hint { font-size:10px; letter-spacing:0; }
+  #logCount { font:10px var(--mono); color:var(--muted); white-space:nowrap; }
+  .log-item { grid-template-columns:58px 96px minmax(75px,1fr) 56px 78px; gap:7px; font-size:11px; padding:9px 4px; }
+  .log-item .s { font-size:10px; }
+  .log-item.is-new { animation:logArrive-d .65s cubic-bezier(.2,.8,.2,1) both; }
+  @keyframes logArrive-d { from { opacity:0; transform:translateX(12px); background:#38e1ff18; } to { opacity:1; transform:none; background:transparent; } }
+  .bar-row { padding:9px 12px 9px 8px; row-gap:8px; }
+  .donut-wrap { flex:1; align-items:center; justify-content:center; gap:30px; }
+  .donut-list { min-width:140px; }
+  .donut svg { overflow:visible; }
+  .flow-wrap { gap:12px; }
+  .flow-k { padding:12px; }
+  .flow-k b { font-size:26px; }
+  #flowChart { flex:1 1 auto; height:auto; min-height:64px; }
+
+  /* ── 供应商 × 实时吞吐：合并指挥舱（深色） ── */
+  #providerFlowPanel { grid-column:1 / -1; }
+  #insightPanel { grid-column:1 / -1; }
+  .pf-scan {
+    position:absolute; top:0; left:-30%; width:30%; height:2px; border-radius:2px;
+    background:linear-gradient(90deg, transparent, var(--cyan), var(--violet), transparent);
+    opacity:.55; filter:blur(.4px); pointer-events:none; z-index:3;
+    animation:pfScan-d 7s linear infinite;
+  }
+  @keyframes pfScan-d { from { left:-30%; } to { left:100%; } }
+  .pf-grid { flex:1; display:grid; grid-template-columns:minmax(380px, 450px) 1px minmax(0, 1fr); min-height:0; }
+  .pf-sec { display:flex; flex-direction:column; min-width:0; min-height:0; }
+  .pf-cap { font-size:10.5px; color:var(--muted); letter-spacing:1.5px; padding:2px 22px 0; white-space:nowrap; opacity:.75; }
+  .pf-donut { flex:1; display:flex; align-items:center; justify-content:center; gap:26px; padding:6px 22px 14px; min-height:0; }
+  .pf-divider {
+    background:linear-gradient(180deg, transparent, var(--line) 18%, var(--line) 82%, transparent);
+    margin:16px 0;
+  }
+  .pf-flow { flex:1; display:flex; flex-direction:column; gap:10px; padding:6px 22px 14px; min-height:0; min-width:0; }
+  .footer-spark { color:var(--cyan); padding:0 10px; }
+  footer { font:10px var(--mono); letter-spacing:1px; padding:6px 0; }
+  .not-live .live-mark { color:var(--muted); }
+  .not-live .live-mark::before { background:var(--amber); animation:none; box-shadow:none; }
+  .still *, .still *::before, .still *::after { animation:none !important; transition:none !important; scroll-behavior:auto !important; }
+  .still .panel::after { display:none; }
+  .still .kpi::before { display:none; }
+  .backgrounded *, .backgrounded *::before, .backgrounded *::after { animation-play-state:paused !important; }
+  @media (max-width:1180px) { .grid-main { grid-template-columns:1fr; } .kpis { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+  @media (max-width:700px) {
+    .wrap { padding:20px 14px; gap:14px; } .topright { width:100%; justify-content:space-between; gap:8px; } .clock { display:none; }
+    header.topbar { padding:12px 14px; } .brand h1 { font-size:23px; }
+    .topbar-sep { display:none; }
+    .header-actions { flex:1; justify-content:flex-start; }
+    .header-actions button:not(.dropdown-toggle) { padding:0 9px; }
+    .kpis { grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+    .kpi { padding:16px 14px; } .kpi .value { font-size:27px; } .grid-side { grid-template-columns:1fr; }
+    .panel h2 { padding:16px 14px 7px; } .log-item { grid-template-columns:52px minmax(95px,1fr) 50px 73px; font-size:10px; gap:5px; }
+    .log-item .p { display:none; } .log-list { padding-right:10px; }
+    .donut-wrap { gap:20px; } .panel-title-tools { margin-left:0; } .brand .sub { font-size:9px; }
+  }
+  
+  .header-actions { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .header-actions button,
+  .dropdown .dropdown-toggle {
+    height: 28px; line-height: 26px; border-radius: 999px;
+    border: 1px solid rgba(140, 178, 234, .20); background: rgba(13, 26, 44, .65);
+    color: #c2d2e9; font: 600 11.5px var(--font); padding: 0 12px;
+    cursor: pointer; box-shadow: 0 2px 8px rgba(0, 0, 0, .35);
+    transition: background-color .2s ease, color .2s ease, border-color .2s ease, box-shadow .2s ease, transform .15s ease;
+    display: inline-flex; align-items: center; justify-content: center; gap: 4px; box-sizing: border-box;
+  }
+  .header-actions button:hover,
+  .dropdown .dropdown-toggle:hover {
+    background: rgba(23, 44, 74, .85); color: #ffffff; border-color: rgba(56, 225, 255, .45);
+    box-shadow: 0 0 14px rgba(56, 225, 255, .22);
+    transform: translateY(-1px);
+  }
+  .header-actions button:active,
+  .dropdown .dropdown-toggle:active {
+    transform: translateY(1px); box-shadow: none;
+  }
+  .header-actions button#refreshNow { width: 28px; height: 28px; padding: 0; border-radius: 50%; }
+  .header-actions button:disabled { opacity: .55; cursor: wait; transform: none !important; }
+  .refresh-icon { display: block; transition: transform .4s cubic-bezier(.2, .8, .2, 1); }
+  #refreshNow:hover:not(:disabled) .refresh-icon { transform: rotate(180deg); }
+  .refreshing .refresh-icon { animation: bootSpin-d 1s linear infinite !important; }
+
+
+</style>
+<script>/* 主题预初始化：首次绘制前启用对应主题样式，避免无样式闪烁 */
+try {
+  var __odTheme = localStorage.getItem("opendash-theme") === "dark" ? "dark" : "light";
+  document.documentElement.dataset.theme = __odTheme;
+  document.getElementById("theme-light").disabled = (__odTheme !== "light");
+  document.getElementById("theme-dark").disabled = (__odTheme !== "dark");
+} catch (e) { document.documentElement.dataset.theme = "light"; }</script>
+
+</head>
+<body class="theme-light">
+
+  <div class="boot-overlay" id="bootOverlay" aria-hidden="true">
+    <div class="boot-spinner">
+      <div class="boot-ring"></div>
+      <div class="boot-ring rev"></div>
+      <div class="boot-core"></div>
+    </div>
+    <div class="boot-text">OPENDASH 正在载入观测数据…</div>
+  </div>
+  <div class="bg"></div>
+  <div class="grid"></div>
+  <div class="aurora"><span></span><span></span><span></span></div>
+  <div class="stars"></div>
+
+  <div class="wrap">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo"><svg viewBox="0 0 64 64" aria-hidden="true">
+          <defs>
+            <linearGradient id="od-wave" x1="6" y1="32" x2="58" y2="32" gradientUnits="userSpaceOnUse">
+              <stop offset="0" stop-color="#2868D8"/>
+              <stop offset="1" stop-color="#5B3FE0"/>
+            </linearGradient>
+          </defs>
+          <line x1="8" y1="36" x2="56" y2="36" stroke="rgba(32,44,64,.14)" stroke-width="1.5"/>
+          <polyline points="8,36 19,36 24,18 29,47 34,28 39,36 44,26 48,42 52,36 56,36" fill="none" stroke="url(#od-wave)" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle class="od-dot" cx="56" cy="36" r="3" fill="#2868D8"/>
+        </svg></div>
+        <div>
+          <h1>OPENDASH<span style="color:var(--blue)"> · 观测台</span></h1>
+          <div class="sub">LLM PROXY · REQUEST OBSERVATORY</div>
+        </div>
+      </div>
+      <div class="topright">
+        <div class="header-actions" role="toolbar" aria-label="观测控制">
+          <div class="controls-drawer" id="controlsDrawer" aria-hidden="true">
+            <div class="dropdown" id="rangeDrop">
+              <button type="button" class="dropdown-toggle" id="rangeSelect" aria-haspopup="listbox" aria-expanded="false">近 7 天</button>
+              <div class="dropdown-menu" role="listbox" aria-label="时间范围">
+                <div class="dropdown-option" role="option" aria-selected="false" data-value="today">今日</div>
+                <div class="dropdown-option selected" role="option" aria-selected="true" data-value="7d">近 7 天</div>
+                <div class="dropdown-option" role="option" aria-selected="false" data-value="30d">近 30 天</div>
+                <div class="dropdown-option" role="option" aria-selected="false" data-value="all">所有时间</div>
+              </div>
+            </div>
+            <div class="dropdown" id="scopeDrop">
+              <button type="button" class="dropdown-toggle" id="scopeSelect" aria-haspopup="listbox" aria-expanded="false">全部模型</button>
+              <div class="dropdown-menu" role="listbox" aria-label="统计范围">
+                <div class="dropdown-option selected" role="option" aria-selected="true" data-value="all">全部模型</div>
+                <div class="dropdown-option" role="option" aria-selected="false" data-value="active">启用模型</div>
+              </div>
+            </div>
+            <span class="dock-sep"></span>
+            <button type="button" id="motionToggle" aria-pressed="true">✧ 动效开</button>
+            <button type="button" id="pauseToggle" aria-pressed="false">Ⅱ 暂停</button>
+            <button type="button" id="themeToggle" class="theme-toggle" title="切换到深空极光黑夜版" aria-label="切换到深空极光黑夜版">☾ 深空极光</button>
+          </div>
+          <button type="button" class="controls-toggle" id="controlsToggle" aria-expanded="false" aria-controls="controlsDrawer" title="展开控制选项">
+            <span class="toggle-icon">⚙</span>
+            <span class="toggle-label" id="controlsToggleLabel">控制选项</span>
+            <svg class="toggle-chevron" viewBox="0 0 10 6" width="9" height="5" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button type="button" id="refreshNow" class="primary" title="立即刷新" aria-label="立即刷新"><svg class="refresh-icon" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M17.65 6.35A7.95 7.95 0 0 0 12 4a8 8 0 1 0 7.73 10h-2.08A6 6 0 1 1 12 6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" fill="currentColor"/></svg></button>
+        </div>
+        <span class="topbar-sep"></span>
+        <div class="status-pill"><span class="dot" id="statusDot"></span><span id="statusText">连接中…</span></div>
+        <div class="clock">
+          <div class="time" id="clockTime">--:--:--</div>
+          <div class="date" id="clockDate"></div>
+        </div>
+      </div>
+    </header>
+    <section class="kpis" id="kpis">
+      <div class="kpi" style="--accent:var(--cyan)"><div class="label"><span class="icon">⚡︎</span>总请求</div><div class="value full" id="k-requests">—</div><div class="delta" id="k-requests-d">近 7 天</div></div>
+      <div class="kpi" style="--accent:var(--green)"><div class="label"><span class="icon">✓</span>成功率</div><div class="value" id="k-success">—</div><div class="delta" id="k-success-d">实时窗口</div></div>
+      <div class="kpi" style="--accent:var(--amber)"><div class="label"><span class="icon">⏱︎</span>平均耗时</div><div class="value" id="k-latency">—</div><div class="delta" id="k-latency-d">实时窗口</div></div>
+      <div class="kpi" style="--accent:var(--violet)"><div class="label"><span class="icon">◎</span>Token 总量</div><div class="value" id="k-tokens">—</div><div class="delta" id="k-tokens-d">7 天累计</div></div>
+      <div class="kpi" style="--accent:var(--blue)"><div class="label"><span class="icon">◈</span>模型数量</div><div class="value" id="k-models">—</div><div class="delta" id="k-models-d">近 7 天</div></div>
+      <div class="kpi" style="--accent:var(--red)"><div class="label"><span class="icon">$</span>估算费用</div><div class="value" id="k-cost">—</div><div class="delta" id="k-cost-d">7 天累计</div></div>
+    </section>
+
+    <div class="grid-main">
+      <section class="panel panel-merge" id="livePanel">
+        <h2><span class="bar" style="background:linear-gradient(180deg,#2868D8,#0E86B8)"></span>实时监控
+          <span class="panel-title-tools"><span class="live-mark">LIVE</span></span>
+        </h2>
+        <div class="mg-grid mg-grid-live">
+          <div class="mg-sec mg-sec-rate">
+            <div class="mg-cap"><span class="mg-cap-title">请求速率</span>
+              <span class="mg-tools">
+                <span class="segmented" id="rateRange" role="group" aria-label="请求速率时间范围">
+                  <button type="button" data-range="5m" class="active">5 分钟</button>
+                  <button type="button" data-range="60m">60 分钟</button>
+                </span>
+              </span>
+            </div>
+            <div class="chart-body"><canvas role="img" aria-label="请求速率曲线，基于最近一小时已获取日志样本" id="rateChart" height="210"></canvas></div>
+            <div class="legend"><span><i style="background:linear-gradient(90deg,#2868D8,#0E86B8)"></i><span id="rateLegend">请求数 / 分钟</span></span><span><i style="background:rgba(32,44,64,.28)"></i>当前均值</span></div>
+          </div>
+          <div class="mg-divider" aria-hidden="true"></div>
+          <div class="mg-sec mg-sec-logs">
+            <div class="mg-cap"><span class="mg-cap-title">实时请求流</span>
+              <span class="mg-tools">
+                <div class="dropdown sm" id="logDrop">
+                  <button type="button" class="dropdown-toggle" id="logFilter" aria-haspopup="listbox" aria-expanded="false">全部状态</button>
+                  <div class="dropdown-menu" role="listbox" aria-label="请求状态">
+                    <div class="dropdown-option selected" role="option" aria-selected="true" data-value="all">全部状态</div>
+                    <div class="dropdown-option" role="option" aria-selected="false" data-value="error">仅异常</div>
+                    <div class="dropdown-option" role="option" aria-selected="false" data-value="429">仅限流</div>
+                  </div>
+                </div>
+                <span id="logCount">0 条</span>
+              </span>
+            </div>
+            <div class="log-list" id="logList"><div class="empty">等待数据…</div></div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="grid-side" id="sidebar">
+      <section class="panel panel-merge" id="insightPanel">
+        <h2><span class="bar" style="background:linear-gradient(180deg,#E08000,#D0342C)"></span>模型洞察</h2>
+        <div class="mg-grid mg-grid-insight">
+          <div class="mg-sec mg-sec-heat">
+            <div class="mg-cap"><span class="mg-cap-title">模型热度</span>
+              <span class="mg-tools">
+                <span class="hint" id="heatHint">TOP 20 · 按请求量</span>
+                <span class="segmented sm" id="heatLimitSeg" role="group" aria-label="模型显示数量">
+                  <button type="button" data-limit="20" class="active">Top 20</button>
+                  <button type="button" data-limit="all">全部</button>
+                </span>
+              </span>
+            </div>
+            <div class="bars" id="modelBars"></div>
+          </div>
+          <div class="mg-divider" aria-hidden="true"></div>
+          <div class="mg-sec mg-sec-trend">
+            <div class="mg-cap"><span class="mg-cap-title"><span id="trendTitle">7 天趋势</span></span>
+              <span class="mg-tools"><span class="hint" id="trendHint">每日请求</span></span>
+            </div>
+            <div class="chart-body" id="trendChartBody">
+              <div class="trend-layout">
+                <canvas id="trendYAxis" height="210"></canvas>
+                <div class="trend-scroll" id="trendScroll">
+                  <canvas role="img" aria-label="每日请求趋势" id="trendChart" height="210"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" id="providerFlowPanel">
+        <div class="pf-scan" aria-hidden="true"></div>
+        <h2><span class="bar" style="background:linear-gradient(180deg,#0B9A6A,#0E86B8)"></span>供应商 · 实时吞吐
+          <span class="panel-title-tools">
+            <span class="live-mark">LIVE</span>
+            <span class="hint" id="pfProviders">— 个供应商</span>
+          </span>
+        </h2>
+        <div class="pf-grid">
+          <div class="pf-sec">
+            <div class="pf-cap" id="donutHint">近 7 天请求占比</div>
+            <div class="pf-donut">
+              <div class="donut">
+                <svg width="146" height="146" viewBox="0 0 146 146" id="donutSvg"></svg>
+                <div class="center"></div>
+              </div>
+              <div class="donut-list" id="donutList"></div>
+            </div>
+          </div>
+          <div class="pf-divider" aria-hidden="true"></div>
+          <div class="pf-sec">
+            <div class="pf-cap">最近 10 分钟 · 按供应商堆叠</div>
+            <div class="pf-flow">
+              <div class="flow-head">
+                <div class="flow-k alt">
+                  <b id="flowRps">—</b>
+                  <span>实时请求</span>
+                </div>
+                <div class="flow-k">
+                  <b id="flowTokens">—</b>
+                  <span>实时 Token</span>
+                </div>
+              </div>
+              <canvas role="img" aria-label="最近十分钟最后四十条请求的 Token 用量" id="flowChart" height="70"></canvas>
+              <div class="flow-meta">
+                <span>输入 <b id="flowIn">—</b></span>
+                <span>输出 <b id="flowOut">—</b></span>
+                <span>P50 <b id="flowP50">—</b></span>
+                <span>P95 <b id="flowP95">—</b></span>
+              </div>
+              <div class="flow-status">
+                <span class="st"><i style="background:#0B9A6A"></i>成功 <b id="flowOk">0</b></span>
+                <span class="st"><i style="background:#E08000"></i>限流 <b id="flowThr">0</b></span>
+                <span class="st"><i style="background:#D0342C"></i>失败 <b id="flowFail">0</b></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+                </div>
+
+    <footer>OPENDASH <span class="footer-spark">✧</span> REQUEST OBSERVATORY · 日志 3 秒 / 用量 15 秒同步</footer>
+  </div>
+
+
+<script>
+
+"use strict";
+/* ── 常量与状态 ─────────────────────────────── */
+const API = {
+  usage: (range = state.usageRange || "7d") => `/api/usage?range=${range}`,
+  logs:  (limit = 120) => `/api/logs?limit=${limit}`,
+};
+const POLL_MS = 3000;
+const LIVE_WINDOW_MS = 10 * 60 * 1000;
+const HISTORY_MS = 60 * 60 * 1000;
+const MAX_LOGS = 20000;
+const POLL_BASE_DELAYS = { usage: 15000, logs: POLL_MS, catalog: 60000 };
+const POLL_MAX_DELAY = 60000;
+/* 分类色板：浅色玻璃底上提高饱和度、压低明度，保证条纹与文字的对比度。 */
+/* ── 双主题调色板与核心配置 ── */
+const PALETTE_LIGHT = [
+  ["#2868D8", "#5B9BFF"], ["#5B3FE0", "#A78BFA"], ["#0B9A6A", "#4ADE9F"],
+  ["#E08000", "#FFB547"], ["#D9384E", "#FF7A8A"], ["#0E86B8", "#5CD5FA"],
+  ["#4E64D8", "#82E299"], ["#9333EA", "#5B9BFF"], ["#059669", "#5CD5FA"],
+  ["#D97706", "#FFB547"],
+];
+
+const PALETTE_DARK = [
+  ["#38e1ff", "#4f7cff"], ["#9d6bff", "#d17bff"], ["#2be3a3", "#38e1ff"],
+  ["#ffb547", "#ff7a59"], ["#ff5d73", "#ff9d6b"], ["#6ee7ff", "#9d6bff"],
+  ["#7c9cff", "#2be3a3"], ["#e879f9", "#4f7cff"], ["#5eead4", "#38e1ff"],
+  ["#fda4af", "#ffb547"],
+];
+
+/* ── 供应商品牌色 ─────────────────────────────
+   按供应商名取色：donut 弧段 / 图例 / 实时吞吐堆叠 / 模型热度条 / 日志供应商标签
+   全部走这里，保证同一供应商在各处颜色一致（供应商导向的视觉语言）。
+   未命中时按名字哈希落到当前主题调色板，保证稳定、可区分。 */
+const PROVIDER_BRAND = {
+  "gemini":   ["#2E7CF6", "#7FB0FF"],  /* Google 蓝 */
+  "claude":   ["#D97757", "#F0A583"],  /* Anthropic 珊瑚 */
+  "codex":    ["#8B5CF6", "#B79CFF"],  /* 堇紫 */
+  "openai":   ["#10A37F", "#4ADE9F"],  /* OpenAI 绿 */
+  "xai":      ["#7C8DB0", "#B9C6DE"],  /* X 银灰 */
+  "kimi":     ["#E8930C", "#FFC25E"],  /* 月之暗面 琥珀 */
+  "moonshot": ["#E8930C", "#FFC25E"],
+  "deepseek": ["#4D6BFE", "#8FA0FF"],
+  "qwen":     ["#7C5CFF", "#A68FFF"],
+  "zhipu":    ["#3E6BFA", "#7E9DFF"],
+  "glm":      ["#3E6BFA", "#7E9DFF"],
+};
+function brandKeyOf(provider) {
+  return String(provider || "").replace(/^provider-/i, "").trim().toLowerCase();
+}
+function brandPair(provider) {
+  const hit = PROVIDER_BRAND[brandKeyOf(provider)];
+  if (hit) return hit;
+  const key = brandKeyOf(provider) || "unknown";
+  let h = 0;
+  for (let i = 0; i < key.length; i++) h = (h * 31 + key.charCodeAt(i)) >>> 0;
+  return PALETTE[h % PALETTE.length];
+}
+
+const CHART_LIGHT = {
+  grid: "rgba(32,44,64,.10)",
+  axis: "rgba(91,109,133,.9)",
+  empty: "rgba(91,109,133,.9)",
+  areaTop: "rgba(40,104,216,.24)",
+  areaMid: "rgba(40,104,216,.10)",
+  areaEnd: "rgba(40,104,216,.02)",
+  lineA: "rgba(40,104,216,.85)",
+  lineB: "#0E86B8",
+  lineC: "#2868D8",
+  glow: "rgba(40,104,216,.35)",
+  avg: "rgba(32,44,64,.30)",
+  avgText: "rgba(32,44,64,.62)",
+  dotFill: "#FFFFFF",
+  barTop: "rgba(11,154,106,.85)",
+  barEnd: "rgba(14,134,184,.30)",
+  barGlow: "rgba(11,154,106,.40)",
+  flowTop: "rgba(14,134,184,.34)",
+  flowEnd: "rgba(91,63,224,.08)",
+  flowLine: "rgba(14,134,184,.9)",
+  flowGlow: "rgba(14,134,184,.35)",
+};
+
+const CHART_DARK = {
+  grid: "rgba(140,178,234,.10)",
+  axis: "rgba(140,178,234,.75)",
+  empty: "rgba(140,178,234,.75)",
+  areaTop: "rgba(56,225,255,.32)",
+  areaMid: "rgba(80,120,255,.14)",
+  areaEnd: "rgba(157,107,255,.02)",
+  lineA: "rgba(56,225,255,.9)",
+  lineB: "#9d6bff",
+  lineC: "#38e1ff",
+  glow: "rgba(56,225,255,.55)",
+  avg: "rgba(140,178,234,.22)",
+  avgText: "rgba(140,178,234,.65)",
+  dotFill: "#FFFFFF",
+  barTop: "rgba(43,227,163,.85)",
+  barEnd: "rgba(56,225,255,.35)",
+  barGlow: "rgba(43,227,163,.45)",
+  flowTop: "rgba(56,225,255,.45)",
+  flowEnd: "rgba(157,107,255,.05)",
+  flowLine: "rgba(56,225,255,.9)",
+  flowGlow: "rgba(56,225,255,.55)",
+};
+
+let PALETTE = PALETTE_LIGHT;
+let CHART = CHART_LIGHT;
+
+const DONUT_CORE_LIGHT = `<g class="donut-core">
+      <defs>
+        <radialGradient id="od-glass" cx="50%" cy="50%" r="62%">
+          <stop offset="0" stop-color="#ffffff"/>
+          <stop offset="74%" stop-color="#ffffff"/>
+          <stop offset="100%" stop-color="#E4EDF9"/>
+        </radialGradient>
+      </defs>
+      <circle class="donut-track" cx="73" cy="73" r="58" fill="none" stroke-width="12"></circle>
+      <circle class="donut-glass" cx="73" cy="73" r="45" fill="url(#od-glass)"></circle>
+    </g>`;
+
+const DONUT_CORE_DARK = `<g class="donut-core">
+      <defs>
+        <radialGradient id="od-aura" cx="50%" cy="50%" r="50%">
+          <stop offset="60%" stop-color="rgba(56,225,255,0)"/>
+          <stop offset="100%" stop-color="rgba(66,190,255,.5)"/>
+        </radialGradient>
+      </defs>
+      <circle class="donut-aura" cx="73" cy="73" r="64" fill="url(#od-aura)"></circle>
+      <circle class="donut-halo" cx="73" cy="73" r="60" fill="none" stroke="rgba(120,200,255,.4)" stroke-width="2" stroke-dasharray="30 14 6 14"></circle>
+      <circle class="donut-base" cx="73" cy="73" r="63" fill="rgba(10,22,48,.5)" stroke="rgba(120,180,255,.35)" stroke-width="2"></circle>
+      <circle cx="73" cy="73" r="52" fill="rgba(8,18,42,.65)" stroke="rgba(120,180,255,.18)" stroke-width="1"></circle>
+      <circle cx="73" cy="73" r="43" fill="rgba(56,190,255,.03)" stroke="rgba(120,190,255,.14)" stroke-width="1"></circle>
+      <circle class="donut-core-orb" cx="73" cy="73" r="22" fill="rgba(56,225,255,.09)"></circle>
+      <circle cx="73" cy="73" r="13" fill="#0a223f" stroke="rgba(120,210,255,.85)" stroke-width="1.4"></circle>
+      <circle class="donut-orb" cx="73" cy="73" r="7.5" fill="#38e1ff"></circle>
+      <circle cx="73" cy="73" r="10" fill="none" stroke="#38e1ff" stroke-width="1.2" opacity=".5"></circle>
+      <circle cx="73" cy="73" r="16" fill="none" stroke="#38e1ff" stroke-width=".8" opacity=".28"></circle>
+      <g stroke="rgba(120,170,255,.22)" stroke-width="1.5">
+        <line class="donut-arm" x1="73" y1="12" x2="73" y2="52"></line>
+        <line class="donut-arm" x1="73" y1="94" x2="73" y2="134"></line>
+        <line class="donut-arm" x1="12" y1="73" x2="52" y2="73"></line>
+        <line class="donut-arm" x1="94" y1="73" x2="134" y2="73"></line>
+      </g>
+      <g class="donut-coil">
+        <circle cx="73" cy="73" r="57" fill="none" stroke="rgba(80,160,255,.28)" stroke-width="1.5" stroke-dasharray="4 10"></circle>
+      </g>
+      <g class="donut-coil rev">
+        <circle cx="73" cy="73" r="49" fill="none" stroke="rgba(80,200,255,.2)" stroke-width="1.2" stroke-dasharray="3 8"></circle>
+      </g>
+      <g class="donut-spark"><circle cx="73" cy="15" r="1.8" fill="#eafcff" stroke="rgba(56,225,255,.9)" stroke-width=".6"></circle></g>
+      <g class="donut-spark rev"><circle cx="73" cy="23" r="1.2" fill="#a7e9ff" stroke="rgba(120,200,255,.8)" stroke-width=".5"></circle></g>
+      <circle class="donut-bolt" cx="73" cy="16" r="2"></circle>
+      <circle class="donut-bolt" cx="73" cy="130" r="2"></circle>
+      <circle class="donut-bolt" cx="16" cy="73" r="2"></circle>
+      <circle class="donut-bolt" cx="130" cy="73" r="2"></circle>
+    </g>`;
+
+function applyTheme(theme) {
+  const isDark = theme === "dark";
+  state.theme = isDark ? "dark" : "light";
+  document.documentElement.dataset.theme = state.theme;
+  // 只切换主题类，保留 body 上其它类（如 visibilitychange 添加的 backgrounded）
+  document.body.classList.remove("theme-light", "theme-dark");
+  document.body.classList.add(isDark ? "theme-dark" : "theme-light");
+
+  // 双样式表方案：切换 disabled 开关即时换肤，无需重新解析样式表，
+  // 且两套样式保持作者原样，零特异性风险
+  const lightStyle = document.getElementById("theme-light");
+  const darkStyle = document.getElementById("theme-dark");
+  if (lightStyle) lightStyle.disabled = isDark;
+  if (darkStyle) darkStyle.disabled = !isDark;
+
+  PALETTE = isDark ? PALETTE_DARK : PALETTE_LIGHT;
+  CHART = isDark ? CHART_DARK : CHART_LIGHT;
+
+  const toggle = document.getElementById("themeToggle");
+  if (toggle) {
+    toggle.textContent = isDark ? "☼ 液态玻璃" : "☾ 深空极光";
+    toggle.setAttribute("title", isDark ? "切换到液态玻璃白天版" : "切换到深空极光黑夜版");
+    toggle.setAttribute("aria-label", isDark ? "切换到液态玻璃白天版" : "切换到深空极光黑夜版");
+    toggle.setAttribute("aria-pressed", String(isDark));
+  }
+
+  try { localStorage.setItem("opendash-theme", state.theme); } catch {}
+
+  const svg = $("donutSvg");
+  if (svg) delete svg.dataset.coreTheme;
+  if (state.usage) renderUsage();
+  renderFlowCard();
+  updateRateTarget(false);
+  startRateAnimation();
+}
+  const state = {
+  usage: null,
+  logs: [],
+  liveWindowLogs: [],
+  seen: new Set(),
+  byMinute: new Map(),
+  byTenSeconds: new Map(),
+  liveStats: { total: 0, ok: 0, err: 0, ms: [], models: new Set() },
+  flowStreams: [],            // 实时吞吐堆叠层：[{ provider, color, values }]
+  flowHighlightProvider: null, // 环形图悬停联动高亮的供应商（null = 无）
+  online: false,
+  lastPoll: 0,
+  lastHeatKeys: null,
+  logsVersion: 0,      // state.logs 发生实质变化时递增，驱动增量重渲染
+  filterVersion: 0,    // 模型可见性（目录/作用域）变化时递增
+  catalogSig: "",      // 模型目录签名，用于检测可见性是否真变了
+  logListSig: "",      // renderLogs 上次渲染时的签名，无变化时跳过 DOM 重建
+  modelBarsGeneration: 0,
+  modelBarsAnimationPlayed: false,
+  initialLogsLoaded: false,
+  scope: "all",
+  usageRange: "7d",
+  heatLimit: "20",
+  motion: true,
+  paused: false,
+  logFollow: true,
+  logFilter: "all",
+  sessionPromise: null,
+  trendRaf: 0,
+  pollSlots: {
+    usage: { busy: false, consec: 0, timer: 0, lastSuccess: 0 },
+    logs: { busy: false, consec: 0, timer: 0, lastSuccess: 0 },
+    catalog: { busy: false, consec: 0, timer: 0, lastSuccess: 0 },
+  },
+  rateRange: "5m",
+  rateAnimation: { displayed: [], from: [], target: [], labels: [], startedAt: 0, duration: 720, lastSignature: "", raf: 0 },
+  catalog: { ready: false, providersReady: false, modelsReady: false, activeProviders: new Set(), disabledKeys: new Set(), disabledPlain: new Set(), enabledPlain: new Set() },
+  auth: { token: null, csrf: null, origin: null },
+};
+
+/* ── 工具函数 ─────────────────────────────── */
+const $ = (id) => document.getElementById(id);
+function fmt(n, digits = 0) {
+  if (!Number.isFinite(n)) return "—";
+  if (Math.abs(n) >= 1e6) {
+    const val = n / 1e6;
+    const str = val.toFixed(digits);
+    const trimmed = digits > 0 && str.endsWith(".0") && Math.abs(val) >= 100 ? str.slice(0, -2) : str;
+    return trimmed + "M";
+  }
+  if (Math.abs(n) >= 1e3) {
+    const val = n / 1e3;
+    const str = val.toFixed(digits);
+    const trimmed = digits > 0 && str.endsWith(".0") && Math.abs(val) >= 100 ? str.slice(0, -2) : str;
+    return trimmed + "K";
+  }
+  return String(Math.round(n));
+}
+/** 完整数字版：不做 K/M/B 缩写，可直接用于指标卡主数值。 */
+function fmtFull(n) {
+  if (!Number.isFinite(n)) return "—";
+  return Math.round(n).toLocaleString("zh-CN");
+}
+function fmtUsd(n) {
+  if (!Number.isFinite(n)) return "—";
+  return "$" + n.toLocaleString("en-US", {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+function fmtDur(ms) {
+  if (!Number.isFinite(ms)) return "—";
+  if (ms < 1000) return ms.toFixed(0) + "ms";
+  if (ms < 60000) return (ms / 1000).toFixed(1) + "s";
+  return Math.floor(ms / 60000) + "m" + Math.round((ms % 60000) / 1000) + "s";
+}
+function pad(n) { return String(n).padStart(2, "0"); }
+function hhmm(ts) { const d = new Date(ts); return pad(d.getHours()) + ":" + pad(d.getMinutes()); }
+function hhmmss(ts) { const d = new Date(ts); return pad(d.getHours()) + ":" + pad(d.getMinutes()) + ":" + pad(d.getSeconds()); }
+function shortModel(m) { return String(m || "unknown").replace(/^[^/]+\//, "").slice(0, 26); }
+function shortProvider(p) { return String(p || "unknown").replace(/^provider-/, "").slice(0, 14); }
+function shade(hex, amt) {
+  const n = parseInt(hex.slice(1), 16);
+  const r = Math.min(255, (n >> 16) + amt), g = Math.min(255, ((n >> 8) & 255) + amt), b = Math.min(255, (n & 255) + amt);
+  return `rgb(${r},${g},${b})`;
+}
+function isOk(s) { return s >= 200 && s < 400; }
+function clearNode(node) { while (node.firstChild) node.removeChild(node.firstChild); }
+function appendTextElement(parent, tag, className, text, title) {
+  const el = document.createElement(tag);
+  if (className) el.className = className;
+  el.textContent = String(text ?? "");
+  if (title !== undefined) el.title = String(title ?? "");
+  parent.appendChild(el);
+  return el;
+}
+function showEmpty(container, text) {
+  clearNode(container);
+  appendTextElement(container, "div", "empty", text);
+}
+function resetLiveData() {
+  state.byMinute.clear();
+  state.byTenSeconds.clear();
+  state.liveWindowLogs = [];
+  state.liveStats = { total: 0, ok: 0, err: 0, ms: [], models: new Set() };
+  state.rateAnimation.displayed = [];
+  state.rateAnimation.from = [];
+  state.rateAnimation.target = [];
+  state.rateAnimation.lastSignature = "";
+}
+
+/** 用量记录里 model 可能自带“供应商/”前缀，统一剥掉后再比较。 */
+function normalizeModel(provider, model) {
+  const m = String(model || "").trim();
+  const p = String(provider || "").trim();
+  if (p && m.startsWith(p + "/")) return m.slice(p.length + 1);
+  return m;
+}
+
+/** 当前配置里仍然启用（供应商存在且未禁用）的模型才统计显示。 */
+function visibleModel(provider, model) {
+  const m = normalizeModel(provider, model);
+  const p = String(provider || "").trim();
+  if (state.scope === "all") return true;
+  if (!m || m === "unknown" || !p || p === "unknown") return false;
+  const cat = state.catalog;
+  if (cat.providersReady && cat.modelsReady) {
+    if (cat.providersReady && !cat.activeProviders.has(p)) return false;
+    if (cat.modelsReady && cat.disabledKeys.has(`${p}/${m}`)) return false;
+
+  }
+  return true;
+}
+
+async function refreshCatalog() {
+  await runPoll("catalog", 12000, async () => {
+    const [cfgResult, modelsResult] = await Promise.allSettled([
+      fetchJsonTimeout("/api/config", 12000),
+      fetchJsonTimeout("/api/models", 12000),
+    ]);
+    if (cfgResult.status === "fulfilled") {
+      const cfg = cfgResult.value;
+      if (!cfg?.providers || typeof cfg.providers !== "object") throw new Error("供应商清单格式异常");
+      const providers = Object.entries(cfg.providers).filter(([, value]) => value?.disabled !== true).map(([key]) => key);
+      state.catalog.activeProviders = new Set(providers);
+      state.catalog.providersReady = true;
+    }
+    if (modelsResult.status === "fulfilled") {
+      const disabledKeys = new Set();
+      const disabledPlain = new Set();
+      const enabledPlain = new Set();
+      if (!Array.isArray(modelsResult.value)) throw new Error("模型清单格式异常");
+      for (const row of modelsResult.value) {
+        const id = normalizeModel(row?.provider, row?.id);
+        const prov = String(row?.provider || "").trim();
+        if (!id) continue;
+        if (row?.disabled === true) { disabledKeys.add(`${prov}/${id}`); disabledPlain.add(id); }
+        else enabledPlain.add(id);
+      }
+      state.catalog.disabledKeys = disabledKeys;
+      state.catalog.disabledPlain = disabledPlain;
+      state.catalog.enabledPlain = enabledPlain;
+      state.catalog.modelsReady = true;
+    }
+    if (cfgResult.status === "rejected" && modelsResult.status === "rejected") {
+      throw cfgResult.reason || modelsResult.reason || new Error("模型清单加载失败");
+    }
+    // 模型可见性变化时才重建实时窗口与列表；无变化时跳过（目录每 60 秒轮询一次）
+    const catalogSig = [
+      ...state.catalog.activeProviders
+    ].sort().join(",") + "|" + [...state.catalog.disabledKeys].sort().join(",") +
+      "|" + [...state.catalog.disabledPlain].sort().join(",");
+    if (catalogSig !== state.catalogSig) {
+      state.catalogSig = catalogSig;
+      state.filterVersion++;
+      rebuildLiveData(state.logs);
+    }
+    state.catalog.ready = state.catalog.providersReady || state.catalog.modelsReady;
+    if (state.usage) renderUsage();
+    renderLogs([]);
+  });
+}
+
+/* ── 数据拉取 ─────────────────────────────── */
+function authHeaders(extra = {}) {
+  const h = { "Accept": "application/json", ...extra };
+  if (state.auth.token) h["X-OpenCodex-API-Key"] = state.auth.token;
+  if (state.auth.origin) h["X-OpenCodex-GUI-Origin"] = state.auth.origin;
+  if (state.auth.csrf) h["X-OpenCodex-CSRF-Token"] = state.auth.csrf;
+  return h;
+}
+
+/* ── 轮询防误报 ─────────────────────────────
+   给每个轮询请求加超时、防并发重入，并只在“连续失败”达到阈值时
+   才把连接状态标红，避免偶发超时或请求堆积造成“接口异常”误报。 */
+const POLL_ERROR_THRESHOLD = 3;
+function pollTimeoutSignal(ms) {
+  const ctrl = new AbortController();
+  const timer = window.setTimeout(() => ctrl.abort(), ms);
+  return { signal: ctrl.signal, done: () => window.clearTimeout(timer) };
+}
+async function fetchJsonTimeout(path, timeoutMs = 12000, extra = {}, retry = true) {
+  const t = pollTimeoutSignal(timeoutMs);
+  try {
+    const res = await fetch(path, {
+      cache: "no-store",
+      headers: authHeaders(extra),
+      signal: t.signal,
+    });
+    if ((res.status === 401 || res.status === 403) && retry) {
+      t.done();
+      await renewSession();
+      return fetchJsonTimeout(path, timeoutMs, extra, false);
+    }
+    if (!res.ok) throw new Error(path + " → " + res.status);
+    return await res.json();
+  } finally {
+    t.done();
+  }
+}
+async function runPoll(label, timeoutMs, action) {
+  const slot = state.pollSlots[label];
+  if (!slot || slot.busy) return false;        // 上一轮还没结束，跳过本轮，避免堆积
+  slot.busy = true;
+  try {
+    await action();
+    slot.consec = 0;
+    slot.lastError = "";
+    slot.lastSuccess = Date.now();
+    state.lastPoll = slot.lastSuccess;
+    updateConnectionStatus();
+    return true;
+  } catch (err) {
+    console.warn("[opendash] poll failed (" + label + "):", err);
+    slot.consec++;
+    slot.lastError = err?.message || "连接失败";
+    updateConnectionStatus();
+    return false;
+  } finally {
+    slot.busy = false;
+  }
+}
+function updateConnectionStatus() {
+  const slots = [state.pollSlots.usage, state.pollSlots.logs];
+  const failed = slots.some(slot => slot.consec > 0);
+  const ready = slots.every(slot => slot.lastSuccess > 0);
+  if (state.paused) setStatus(false, "已暂停刷新");
+  else if (document.hidden) setStatus(false, "后台休息中");
+  else if (failed) setStatus(false, slots.some(slot => slot.consec >= POLL_ERROR_THRESHOLD) ? "连接异常 · 自动重试" : "重试中 · 保留上次数据");
+  else if (ready && slots.some(slot => Date.now() - slot.lastSuccess > 80000)) setStatus(false, "等待恢复同步");
+  else setStatus(ready, ready ? "实时同步" : "正在连接");
+}
+
+function nextPollDelay(label) {
+  const slot = state.pollSlots[label];
+  const base = POLL_BASE_DELAYS[label];
+  if (!slot || !base || slot.consec < POLL_ERROR_THRESHOLD) return base;
+  return Math.min(POLL_MAX_DELAY, base * (2 ** Math.min(slot.consec - POLL_ERROR_THRESHOLD + 1, 4)));
+}
+function schedulePoll(label, action, immediate = false) {
+  const slot = state.pollSlots[label];
+  if (!slot) return;
+  if (slot.timer) window.clearTimeout(slot.timer);
+  const run = async () => {
+    if (!state.paused && !document.hidden) await action();
+    slot.timer = window.setTimeout(run, nextPollDelay(label));
+  };
+  slot.timer = window.setTimeout(run, immediate ? 0 : nextPollDelay(label));
+}
+
+/** 通过会话引导端点拿同源凭证（兼容任何挂载路径，不依赖 meta 注入）。 */
+async function bootstrapSession(force = false) {
+  // 页面自身的 meta（若服务注入了）
+  const meta = document.querySelector('meta[name="opencodex-session-token"]');
+  if (!force && meta && meta.content.startsWith("ocx_session_")) {
+    state.auth.token = meta.content;
+    state.auth.csrf = document.querySelector('meta[name="opencodex-session-csrf"]')?.content || "";
+    state.auth.origin = document.querySelector('meta[name="opencodex-session-origin"]')?.content || location.origin;
+    return true;
+  }
+  try {
+    const timeout = pollTimeoutSignal(8000);
+    let html;
+    try {
+      const res = await fetch("/opencodex-session", { cache: "no-store", signal: timeout.signal });
+      if (!res.ok) throw new Error("session status " + res.status);
+      html = await res.text();
+    } finally {
+      timeout.done();
+    }
+    const sessionDoc = new DOMParser().parseFromString(html, "text/html");
+    const get = (name) => {
+      const m = sessionDoc.querySelector(`meta[name="${name}"]`);
+      return m ? m.getAttribute("content") : null;
+    };
+    const token = get("opencodex-session-token");
+    const csrf = get("opencodex-session-csrf");
+    const origin = get("opencodex-session-origin");
+    if (!token || !token.startsWith("ocx_session_") || !csrf || origin !== location.origin) {
+      throw new Error("invalid session bootstrap");
+    }
+    state.auth = { token, csrf, origin };
+    return true;
+  } catch (err) {
+    console.warn("[opendash] session bootstrap failed:", err);
+  }
+}
+
+async function renewSession() {
+  if (!state.sessionPromise) {
+    state.auth = { token: null, csrf: null, origin: null };
+    state.sessionPromise = bootstrapSession(true).finally(() => { state.sessionPromise = null; });
+  }
+  return state.sessionPromise;
+}
+
+async function pollUsage() {
+  await runPoll("usage", 12000, async () => {
+    const range = state.usageRange || "7d";
+    const u = await fetchJsonTimeout(API.usage(range), 15000);
+    if (!u?.summary || !Array.isArray(u.models) || !Array.isArray(u.days)) throw new Error("用量数据格式异常");
+    hideBootOverlay();
+    state.usage = u;
+    renderUsage();
+  });
+}
+
+async function pollLogs() {
+  await runPoll("logs", 12000, async () => {
+    let data = await fetchJsonTimeout(API.logs(state.initialLogsLoaded ? 120 : 2000), 20000);
+    if (!Array.isArray(data.logs)) throw new Error("请求日志格式异常");
+    if (state.initialLogsLoaded && data.logs.length >= 120) {
+      const oldest = Math.min(...data.logs.map(l => Number(l.timestamp)));
+      const newestKnown = state.logs.at(-1)?.timestamp || 0;
+      if (oldest > newestKnown) {
+        data = await fetchJsonTimeout(API.logs(2000), 20000);
+        if (!Array.isArray(data.logs)) throw new Error("请求日志格式异常");
+      }
+    }
+    const logs = data.logs;
+    const previousIds = new Set(state.logs.map(l => l.requestId));
+    const fresh = logs.filter(l => l?.requestId && !previousIds.has(l.requestId));
+    const merged = mergeLogs(state.logs, logs);
+    state.logs = merged;
+    // 无实质变化时跳过 O(N) 全量重算（排序/过滤/重建实时窗口）
+    if (merged.changed) {
+      state.logsVersion++;
+      rebuildLiveData(state.logs);
+    }
+    hideBootOverlay();
+    state.initialLogsLoaded = true;
+    renderLogs(fresh);
+    updateRateTarget(true);
+    renderLiveKpis();
+  });
+}
+
+/**
+ * 合并新旧日志：按 requestId 去重（新数据覆盖旧状态）、过滤过期时间窗、按时间排序并截断。
+ * 返回的数组上附带 `changed` 标记：只有真正新增 / 更新 / 过期剔除 / 截断时才为 true，
+ * 调用方可据此跳过 rebuildLiveData 等 O(N) 全量重算。
+ */
+function mergeLogs(previous, incoming, now = Date.now()) {
+  const byId = new Map();
+  const cutoff = now - HISTORY_MS, future = now + 60000;
+  let changed = false;
+  const sameRow = (a, b) =>
+    a.status === b.status &&
+    a.timestamp === b.timestamp &&
+    (a.durationMs ?? null) === (b.durationMs ?? null) &&
+    (a.totalTokens ?? null) === (b.totalTokens ?? null) &&
+    (a.requestedModel ?? null) === (b.requestedModel ?? null) &&
+    (a.model ?? null) === (b.model ?? null) &&
+    (a.provider ?? null) === (b.provider ?? null) &&
+    JSON.stringify(a.usage ?? null) === JSON.stringify(b.usage ?? null);
+  for (const row of previous) {
+    const ts = Number(row?.timestamp);
+    if (!row?.requestId || !Number.isFinite(ts) || ts < cutoff || ts > future) { changed = true; continue; }
+    byId.set(row.requestId, row);
+  }
+  for (const row of incoming) {
+    const ts = Number(row?.timestamp);
+    if (!row?.requestId || !Number.isFinite(ts) || ts < cutoff || ts > future) continue;
+    const prev = byId.get(row.requestId);
+    if (!prev) changed = true;
+    else if (prev !== row && !sameRow(prev, row)) changed = true;
+    byId.set(row.requestId, row);
+  }
+  const merged = [...byId.values()].sort((a,b) => a.timestamp - b.timestamp);
+  const out = merged.length > MAX_LOGS ? merged.slice(-MAX_LOGS) : merged;
+  if (merged.length !== out.length) changed = true;
+  if (!changed && (previous.length !== out.length ||
+      previous.some((r, i) => r.requestId !== out[i].requestId))) changed = true;
+  out.changed = changed;
+  return out;
+}
+function rebuildLiveData(logs) {
+  state.byMinute.clear();
+  state.byTenSeconds.clear();
+  state.liveWindowLogs = [];
+  for (const l of logs || []) {
+    const ts = Number(l?.timestamp);
+    if (!Number.isFinite(ts) || !visibleModel(l.provider, l.resolvedModel || l.model)) continue;
+    addRateBucket(state.byMinute, Math.floor(ts / 60000), l.status);
+    addRateBucket(state.byTenSeconds, Math.floor(ts / 10000), l.status);
+    state.liveWindowLogs.push(l);
+  }
+  pruneLiveWindowLogs();
+  recomputeLiveStats();
+}
+function pruneLiveWindowLogs(now = Date.now()) {
+  const cutoff = now - LIVE_WINDOW_MS;
+  state.liveWindowLogs = state.liveWindowLogs.filter(l => {
+    const ts = Number(l?.timestamp);
+    return Number.isFinite(ts) && ts >= cutoff && ts <= now + 60000;
+  });
+}
+
+/** 实时指标始终从最近 10 分钟日志重算，历史首屏数据和静默过期都不会污染窗口。 */
+function recomputeLiveStats(now = Date.now()) {
+  pruneLiveWindowLogs(now);
+  const recent = state.liveWindowLogs;
+  const next = { total: recent.length, ok: 0, err: 0, ms: [], models: new Set() };
+  for (const l of recent) {
+    isOk(l.status) ? next.ok++ : next.err++;
+    if (Number.isFinite(l.durationMs)) next.ms.push(l.durationMs);
+    if (l.model || l.requestedModel) next.models.add(shortModel(l.requestedModel || l.model));
+  }
+  state.liveStats = next;
+  return next;
+}
+
+function addRateBucket(map, key, status) {
+  const cur = map.get(key);
+  if (cur) { cur.total++; if (isOk(status)) cur.ok++; else cur.err++; }
+  else map.set(key, { key, total: 1, ok: isOk(status) ? 1 : 0, err: isOk(status) ? 0 : 1 });
+  if (map.size > 400) {
+    const cutoff = key - 360;
+    for (const bucketKey of map.keys()) if (bucketKey < cutoff) map.delete(bucketKey);
+  }
+}
+
+/* ── 渲染：指标卡 ─────────────────────────── */
+function renderLiveKpis() {
+  const s = recomputeLiveStats();
+  const rate = s.total > 0 ? (s.ok / s.total) * 100 : 0;
+  const avgMs = s.ms.length ? s.ms.reduce((a, b) => a + b, 0) / s.ms.length : 0;
+  if (!s.total) {
+    if (kpiAnim.success.timer) cancelAnimationFrame(kpiAnim.success.timer);
+    kpiAnim.success.val = 0;
+    kpiAnim.success.hasVal = false;
+    $("k-success").textContent = "—";
+  } else {
+    if (!kpiAnim.success.hasVal) { kpiAnim.success.val = rate; kpiAnim.success.hasVal = true; }
+    animateKpi("success", rate, (v) => v.toFixed(1) + "%");
+  }
+  $("k-success-d").innerHTML = s.total ? `近 10 分钟 · <b>${s.total}</b> 次` : "等待实时数据";
+  if (!s.ms.length) {
+    if (kpiAnim.latency.timer) cancelAnimationFrame(kpiAnim.latency.timer);
+    kpiAnim.latency.val = 0;
+    kpiAnim.latency.hasVal = false;
+    $("k-latency").textContent = "—";
+  } else {
+    if (!kpiAnim.latency.hasVal) { kpiAnim.latency.val = avgMs; kpiAnim.latency.hasVal = true; }
+    animateKpi("latency", avgMs, (v) => fmtDur(v));
+  }
+  $("k-latency-d").innerHTML = s.ms.length ? `平均 <b>${avgMs.toFixed(0)}</b> ms` : "等待实时数据";
+  renderFlowCard(); // 实时窗口吞吐与延迟卡片
+}
+
+/** 让数字从旧值平滑滚动到新值（配合 requestAnimationFrame，只对数值型字段生效）。 */
+const kpiAnim = {
+  requests: { val: 0, timer: null },
+  tokens: { val: 0, timer: null },
+  cost: { val: 0, timer: null },
+  models: { val: 0, timer: null },
+  success: { val: 0, timer: null, hasVal: false },
+  latency: { val: 0, timer: null, hasVal: false },
+};
+function formatKpiHtml(str) {
+  if (!str || str === "—") return str;
+  if (typeof str !== "string") str = String(str);
+  if (str.startsWith("$")) return `<span class="unit">$</span>${str.slice(1)}`;
+  const m = str.match(/^(.+?)(%|ms|s|m|B|M|K)$/);
+  if (m) return `${m[1]}<span class="unit">${m[2]}</span>`;
+  return str;
+}
+function renderKpiValue(el, formattedStr) {
+  if (!el) return;
+  el.textContent = formattedStr;
+  if (typeof formattedStr === "string" && formattedStr !== "—") {
+    el.innerHTML = formatKpiHtml(formattedStr);
+  }
+}
+function animateKpi(key, target, formatter) {
+  const entry = kpiAnim[key];
+  if (!entry) return;
+  const from = entry.val;
+  const to = target;
+  const finish = () => {
+    if (entry.timer) cancelAnimationFrame(entry.timer);
+    if (entry.watchdog) window.clearTimeout(entry.watchdog);
+    entry.val = to; entry.timer = null; entry.watchdog = 0;
+    const el = document.getElementById("k-" + key);
+    if (el) renderKpiValue(el, formatter(to));
+  };
+  if (from === to || !state.motion) { finish(); return; }
+  if (entry.timer) cancelAnimationFrame(entry.timer);
+  if (entry.watchdog) window.clearTimeout(entry.watchdog);
+  const start = performance.now();
+  const dur = 650;
+  const el = document.getElementById("k-" + key);
+  const step = (t) => {
+    if (entry.watchdog) { window.clearTimeout(entry.watchdog); entry.watchdog = 0; }
+    const p = Math.max(0, Math.min(1, (t - start) / dur));
+    const eased = 1 - Math.pow(1 - p, 3);
+    const current = from + (to - from) * eased;
+    entry.val = current;
+    if (el) renderKpiValue(el, formatter(current));
+    if (p < 1) entry.timer = requestAnimationFrame(step);
+    else { entry.val = to; entry.timer = null; }
+  };
+  entry.timer = requestAnimationFrame(step);
+  // 被遮挡的窗口或嵌入式视图里 rAF 可能长期不派发，超时后直接落到最终值，避免数字停在 “—”
+  entry.watchdog = window.setTimeout(finish, 900);
+}
+
+function renderUsage() {
+  const u = state.usage;
+  if (!u || !u.summary) return;
+  renderTrend(filteredUsageDays(u));
+  const visibleModels = (u.models || []).filter(item => visibleModel(item.provider, item.model || item.resolvedModel));
+  const heat = modelHeatData({ models: visibleModels }, []);
+  const providerTotals = new Map();
+  for (const row of visibleModels) providerTotals.set(row.provider, (providerTotals.get(row.provider) || 0) + (row.requests || 0));
+  renderDonut([...providerTotals].map(([provider, requests]) => ({provider, requests})));
+  const models = heat.length;
+  const sum = (field) => state.scope === "all" && Number.isFinite(u.summary[field]) ? u.summary[field] : visibleModels.reduce((acc, item) => acc + (Number(item[field]) || 0), 0);
+  const req = sum("requests");
+  const tokens = sum("totalTokens");
+  const cost = sum("estimatedCostUsd");
+  const input = sum("inputTokens");
+  const out = sum("outputTokens");
+  const cached = sum("cachedInputTokens") || sum("cacheReadInputTokens");
+
+  animateKpi("requests", req, (v) => fmtFull(v));
+  $("k-requests-d").textContent = `${rangeLabel()} · ${scopeLabel()}`;
+  animateKpi("tokens", tokens, (v) => fmt(v, 1));
+  $("k-tokens-d").innerHTML = `输入 ${fmt(input)} · 缓存 ${fmt(cached)} · 输出 ${fmt(out)}`;
+  animateKpi("models", models, (v) => Math.round(v) + "");
+  $("k-models-d").textContent = `${rangeLabel()}有请求 · 按供应商区分`;
+  animateKpi("cost", cost, (v) => fmtUsd(v));
+  const priced = sum("pricedRequests");
+  $("k-cost-d").textContent = `估算 · 计价覆盖 ${req ? (100 * priced / req).toFixed(1) : "0"}%`;
+  $("k-cost").title = "估算费用，不等于账单；未计价请求不计入费用";
+
+  const limit = state.heatLimit === "all" ? heat.length : 20;
+  renderModelBars(heat.slice(0, limit));
+  state.lastHeatKeys = heat.slice(0, limit).map(m => m.provider + "/" + m.model);
+  const hintEl = $("heatHint");
+  if (hintEl) {
+    hintEl.textContent = state.heatLimit === "all"
+      ? `${rangeLabel()} · 全部 ${heat.length} 个模型`
+      : (heat.length > 20 ? `${rangeLabel()} · TOP 20 / 共 ${heat.length} 个` : `${rangeLabel()} · 共 ${heat.length} 个模型`);
+  }
+}
+
+/* 模型排行只使用用量账本，避免将请求别名当成额外模型。 */
+function modelHeatData(usage, logs) {
+  const map = new Map();
+  const usageKeys = new Set();
+  const add = (model, provider, requests, tokens) => {
+    const norm = normalizeModel(provider, model);
+    const prov = String(provider || "").trim();
+    // 同一个模型接入不同供应商时，按“供应商/模型”分开统计，避免被合并成一个。
+    const key = prov + "/" + norm;
+    if (!visibleModel(prov, norm)) return;
+    const cur = map.get(key) || { model: norm, provider: prov, requests: 0, totalTokens: 0 };
+    cur.requests += requests || 0;
+    cur.totalTokens += tokens || 0;
+    map.set(key, cur);
+  };
+  for (const item of usage?.models || []) {
+    const norm = normalizeModel(item.provider, item.model || item.resolvedModel);
+    const prov = String(item.provider || "").trim();
+    const key = prov + "/" + norm;
+    if (norm) usageKeys.add(key);
+    add(item.model || item.resolvedModel, item.provider, item.requests, item.totalTokens);
+  }
+  const rows = [...map.values()];
+  rows.sort((a, b) => (b.requests || 0) - (a.requests || 0));
+  return rows;
+}
+
+function filteredUsageDays(usage) {
+  return (usage?.days || []).map(day => {
+    const dayModels = (day.models || []).filter(item => visibleModel(item.provider, item.model));
+    return { ...day, requests: state.scope === "all" ? (day.requests || 0) : dayModels.reduce((acc, item) => acc + (item.requests || 0), 0), models: dayModels };
+  });
+}
+
+/* ── 渲染：环形图 ─────────────────────────── */
+function renderDonut(providers, svgEl, listEl) {
+  const known = (providers || []).filter(p => {
+    const name = String(p?.provider || "").trim();
+    if (!name) return false;
+    if (state.scope === "active" && state.catalog.providersReady && state.catalog.modelsReady && !state.catalog.activeProviders.has(name)) return false;
+    return true;
+  });
+  const total = known.reduce((a, p) => a + (p.requests || 0), 0) || 1;
+  const sorted = known.slice().sort((a, b) => (b.requests || 0) - (a.requests || 0));
+  const top = sorted.slice(0, 6);
+  if (sorted.length > 6) {
+    const otherRequests = sorted.slice(5).reduce((sum, p) => sum + (p.requests || 0), 0);
+    top.splice(5, 1, { provider: "其他", requests: otherRequests });
+  }
+  const svg = svgEl || $("donutSvg");
+  const C = 2 * Math.PI * 58;
+  let acc = 0;
+
+  // ── 环骨架：只建一次（数据变化不重建，避免每次刷新整段闪烁）──
+  const coreTheme = state.theme === "dark" ? "dark" : "light";
+  if (svg.dataset.coreTheme !== coreTheme) {
+    svg.dataset.coreTheme = coreTheme;
+    const oldCore = svg.querySelector(".donut-core");
+    if (oldCore) oldCore.remove();
+    const core = coreTheme === "dark" ? DONUT_CORE_DARK : DONUT_CORE_LIGHT;
+    svg.insertAdjacentHTML("afterbegin", core);
+    // 预生成 6 个数据弧段，后续更新时只改 dash 值（颜色按供应商品牌色，更新循环会校准）
+    for (let i = 0; i < 6; i++) {
+      const c = brandPair(top[i] && top[i].provider)[0];
+      svg.insertAdjacentHTML("beforeend", `<circle class="donut-seg" data-donut-index="${i}" cx="73" cy="73" r="58" fill="none" stroke="${c}"
+        stroke-dasharray="0 ${C}" stroke-dashoffset="0" stroke-linecap="butt" stroke-width="12"></circle>`);
+    }
+  }
+
+  const idle = total <= 1 && !top.length;
+  svg.classList.toggle("idle", idle);
+  // 读屏可访问的动态摘要
+  svg.setAttribute("role", "img");
+  const realTotal = known.reduce((a, p) => a + (p.requests || 0), 0);
+  const topDesc = sorted.slice(0, 3)
+    .map(p => `${shortProvider(p.provider)} ${((p.requests || 0) / total * 100).toFixed(0)}%`).join("、");
+  svg.setAttribute("aria-label",
+    realTotal > 0 ? `供应商请求分布：共 ${fmtFull(realTotal)} 次，占比最高为${topDesc}` : "供应商请求分布：暂无数据");
+
+  const segs = [...svg.querySelectorAll(".donut-seg")];
+  // 数据排序可能变化：用“provider 名到段”的映射，尽量原地更新 dash，避免整段重建
+  acc = 0;
+  segs.forEach((seg, i) => {
+    const p = top[i];
+    const frac = p ? (p.requests || 0) / total : 0;
+    // 段间留 2.5px 缝隙，相邻颜色不糊在一起
+    const dash = Math.max(0, frac * C - (frac > 0.004 ? 2.5 : 0));
+    seg.setAttribute("stroke-dasharray", `${dash} ${C - dash}`);
+    seg.setAttribute("stroke-dashoffset", `${-acc * C}`);
+    const [c1] = brandPair(p && p.provider);
+    seg.setAttribute("stroke", c1);
+    seg.setAttribute("data-donut-index", String(i));
+    seg.style.display = frac > 0 ? "" : "none";
+    acc += frac;
+  });
+
+  // 中心玻璃盘写入口径内的请求总数，避免中间空着一块
+  const centerEl = svg.parentElement && svg.parentElement.querySelector(".center");
+  if (centerEl) {
+    const realTotal = known.reduce((a, p) => a + (p.requests || 0), 0);
+    clearNode(centerEl);
+    appendTextElement(centerEl, "b", "", fmt(realTotal));
+    appendTextElement(centerEl, "span", "", `${rangeLabel()}请求`);
+  }
+
+  const donutHint = $("donutHint");
+  if (donutHint) donutHint.textContent = `${rangeLabel()}请求占比`;
+  // 合并卡片：头部显示供应商数量
+  const pfProviders = $("pfProviders");
+  if (pfProviders) pfProviders.textContent = known.length ? `${known.length} 个供应商` : "— 个供应商";
+  const list = listEl || $("donutList");
+
+  // 列表也尽量原地更新：数量一致时只改文字，不重建 DOM
+  const items = [...list.querySelectorAll(".d-item")];
+  if (items.length === top.length) {
+    items.forEach((item, i) => {
+      const p = top[i];
+      const [c1] = brandPair(p.provider);
+      const pc = ((p.requests || 0) / total) * 100;
+      item.querySelector(".sw").style.background = c1;
+      item.querySelector(".nm").textContent = shortProvider(p.provider);
+      item.querySelector(".nm").title = p.provider;
+      item.querySelector(".ct").textContent = fmt(p.requests || 0);
+      item.querySelector(".pc").textContent = pc.toFixed(1) + "%";
+      item.dataset.donutIndex = String(i);
+    });
+  } else {
+    clearNode(list);
+    top.forEach((p, i) => {
+      const [c1] = brandPair(p.provider);
+      const pc = ((p.requests || 0) / total) * 100;
+      const item = document.createElement("div");
+      item.className = "d-item";
+      item.dataset.donutIndex = String(i);
+      const sw = appendTextElement(item, "span", "sw", "");
+      sw.style.background = c1;
+      appendTextElement(item, "span", "nm", shortProvider(p.provider), p.provider);
+      appendTextElement(item, "span", "ct", fmt(p.requests || 0));
+      appendTextElement(item, "span", "pc", pc.toFixed(1) + "%");
+      list.appendChild(item);
+    });
+  }
+
+  // 环形弧段与右侧列表联动：只在容器上绑定一次事件委托，
+  // 列表/弧段重建后事件依然有效，避免悬浮失效或重复绑定
+  if (!svg.dataset.linked) {
+    svg.dataset.linked = "1";
+    list.dataset.linked = "1";
+    let clearTimer = null;
+    const setActive = (index) => {
+      if (clearTimer) { clearTimeout(clearTimer); clearTimer = null; }
+      svg.querySelectorAll(".donut-seg").forEach(seg => {
+        const on = seg.dataset.donutIndex === index;
+        seg.classList.toggle("active", on);
+      });
+      // 核心点亮：悬停某个供应商时，反应堆整体染上它的主色
+      if (index != null) {
+        const seg = svg.querySelector(`.donut-seg[data-donut-index="${index}"]`);
+        const c = seg ? seg.getAttribute("stroke") : "";
+        if (c) { svg.dataset.glow = c; svg.style.setProperty("--glow", c); }
+        else { delete svg.dataset.glow; }
+      } else {
+        delete svg.dataset.glow;
+      }
+      // 联动：高亮流量图里同一供应商的堆叠层（index 是环形图内序号，转成供应商名再匹配）
+      const pname = index == null ? null : (String((top[Number(index)] || {}).provider || "") || null);
+      if (state.flowHighlightProvider !== pname) {
+        state.flowHighlightProvider = pname;
+        redrawFlowChart();
+      }
+    };
+    // 延迟清除：鼠标快速划过项与项之间的空白时，不会立刻熄灭导致闪烁
+    const clearActive = () => {
+      if (clearTimer) clearTimeout(clearTimer);
+      clearTimer = setTimeout(() => setActive(null), 120);
+    };
+    // 事件委托：悬浮列表项或弧段时联动高亮；重建 DOM 后依然生效
+    const onHover = (e) => {
+      const item = e.target.closest(".d-item");
+      if (item) { setActive(item.dataset.donutIndex); return; }
+      const seg = e.target.closest(".donut-seg");
+      if (seg) { setActive(seg.dataset.donutIndex); return; }
+      clearActive();
+    };
+    list.addEventListener("mouseover", onHover);
+    list.addEventListener("mouseout", (e) => {
+      const item = e.target.closest(".d-item");
+      if (item && item.contains(e.relatedTarget)) return;
+      clearActive();
+    });
+    svg.addEventListener("mouseover", onHover);
+    svg.addEventListener("mouseout", (e) => {
+      const seg = e.target.closest(".donut-seg");
+      if (seg && seg.contains(e.relatedTarget)) return;
+      clearActive();
+    });
+  }
+}
+
+/* ── 渲染：模型条形 ───────────────────────── */
+
+function flowTokensOf(l) {
+  const u = l && l.usage;
+  const inT = Number.isFinite(u && u.inputTokens) ? u.inputTokens : 0;
+  const outT = Number.isFinite(u && u.outputTokens) ? u.outputTokens : 0;
+  const tot = Number.isFinite(l && l.totalTokens) ? l.totalTokens : 0;
+  const sum = inT + outT;
+  return tot > 0 ? tot : sum;
+}
+/* hex 颜色转 rgba（堆叠流量图的渐变填充用） */
+function hexToRgba(hex, alpha) {
+  const h = String(hex || "").replace("#", "");
+  const v = h.length === 3 ? h.split("").map(c => c + c).join("") : h;
+  const n = parseInt(v, 16);
+  if (!Number.isFinite(n) || v.length !== 6) return `rgba(120,140,180,${alpha})`;
+  return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${alpha})`;
+}
+/* 轻量重绘流量图（悬停联动高亮时用，不重算数据） */
+function redrawFlowChart() {
+  drawFlowChart(state.flowStreams || []);
+}
+function pctile(arr, q) {
+  if (!arr.length) return null;
+  const s = arr.slice().sort((a, b) => a - b);
+  const idx = Math.min(s.length - 1, Math.floor(q * (s.length - 1)));
+  return s[idx];
+}
+function renderFlowCard() {
+  const recent = state.liveWindowLogs || [];
+  let ok = 0, throttled = 0, failed = 0, tokens = 0, input = 0, output = 0;
+  const ms = [];
+  for (const l of recent) {
+    const st = Number(l && l.status) || 0;
+    if (isOk(st)) ok++;
+    else if (st === 429) throttled++;
+    else failed++;
+    const t = flowTokensOf(l);
+    if (t > 0) {
+      tokens += t;
+      const u = l.usage || {};
+      const inT = Number.isFinite(u.inputTokens) ? u.inputTokens : 0;
+      const outT = Number.isFinite(u.outputTokens) ? u.outputTokens : 0;
+      input += inT;
+      output += outT;
+    }
+    if (Number.isFinite(l.durationMs)) ms.push(l.durationMs);
+  }
+  // ── 按供应商 × 时间桶堆叠：最近 10 分钟分成 40 桶 ──
+  const BUCKETS = 40;
+  const nowMs = Date.now();
+  const winStart = nowMs - LIVE_WINDOW_MS;
+  const byProv = new Map();
+  for (const l of recent) {
+    const ts = Number(l && l.timestamp);
+    if (!Number.isFinite(ts)) continue;
+    const t = flowTokensOf(l);
+    if (t <= 0) continue;
+    const p = String((l && l.provider) || "未知");
+    if (!byProv.has(p)) byProv.set(p, { total: 0, vals: new Array(BUCKETS).fill(0) });
+    const e = byProv.get(p);
+    e.total += t;
+    const b = Math.max(0, Math.min(BUCKETS - 1, Math.floor((ts - winStart) / LIVE_WINDOW_MS * BUCKETS)));
+    e.vals[b] += t;
+  }
+  const ranked = [...byProv.entries()].sort((a, b) => b[1].total - a[1].total);
+  const TOP_STREAMS = 4;
+  const streams = [];
+  ranked.slice(0, TOP_STREAMS).forEach(([p, e]) => {
+    streams.push({ provider: p, color: brandPair(p)[0], values: e.vals });
+  });
+  if (ranked.length > TOP_STREAMS) {
+    const other = new Array(BUCKETS).fill(0);
+    ranked.slice(TOP_STREAMS).forEach(([, e]) => e.vals.forEach((v, i) => { other[i] += v; }));
+    streams.push({ provider: "其他", color: brandPair("其他")[0], values: other });
+  }
+  state.flowStreams = streams;
+  const sum = ok + throttled + failed;
+  const set = (id, v) => { const el = $(id); if (el) el.textContent = v; };
+  set("flowRps", state.initialLogsLoaded ? fmtFull(sum) : "—");
+  set("flowTokens", state.initialLogsLoaded ? fmt(tokens, 1) : "—");
+  set("flowIn", input ? fmt(input) : "—");
+  set("flowOut", output ? fmt(output) : "—");
+  set("flowOk", String(ok));
+  set("flowThr", String(throttled));
+  set("flowFail", String(failed));
+  const p50 = pctile(ms, 0.5), p95 = pctile(ms, 0.95);
+  set("flowP50", p50 == null ? "—" : fmtDur(p50));
+  set("flowP95", p95 == null ? "—" : fmtDur(p95));
+  const flowCanvas = $("flowChart");
+  const streamDesc = streams.filter(s => s.values.some(v => v > 0)).slice(0, 4)
+    .map(s => `${shortProvider(s.provider)} ${fmt(s.values.reduce((a, b) => a + b, 0))}`).join("、");
+  if (flowCanvas) flowCanvas.setAttribute("aria-label",
+    sum > 0 ? `最近十分钟请求：成功 ${ok} 次，限流 ${throttled} 次，失败 ${failed} 次，共 ${fmt(tokens)} Token${streamDesc ? "，分供应商：" + streamDesc : ""}`
+            : "最近十分钟请求：暂无数据");
+  drawFlowChart(streams);
+}
+function drawFlowChart(streams) {
+  const canvas = document.getElementById("flowChart");
+  if (!canvas) return;
+  const dpr = window.devicePixelRatio || 1;
+  const W = canvas.clientWidth || 320;
+  const H = canvas.clientHeight || 70;
+  if (H < 20 || W < 60) return;
+  canvas.width = W * dpr; canvas.height = H * dpr;
+  const ctx = canvas.getContext("2d");
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, W, H);
+  const list = (streams || []).filter(s => s.values && s.values.length);
+  const N = list.length ? list[0].values.length : 0;
+  const padT = 8, padB = 8;
+  const base = H - padB, ih = H - padT - padB;
+  const highlight = state.flowHighlightProvider || null;
+  if (!N) {
+    // 空态：一条淡虚线基线，卡片不塌
+    ctx.strokeStyle = "rgba(120,140,180,.28)";
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath(); ctx.moveTo(0, base); ctx.lineTo(W, base); ctx.stroke();
+    ctx.setLineDash([]);
+    return;
+  }
+  // 逐层累计堆叠高度（tops[si][i] = 第 si 层在第 i 个点的顶部累计值）
+  const cum = new Array(N).fill(0);
+  const tops = list.map(s => s.values.map((v, i) => (cum[i] += Math.max(0, v))));
+  const max = Math.max(1, ...cum);
+  const step = N > 1 ? W / (N - 1) : 0;
+  const X = i => i * step;
+  const Y = v => padT + ih - (v / max) * ih;
+  // 路径：沿顶部累计线走，底部收回基线（平滑曲线）
+  const traceTop = (pts) => {
+    ctx.beginPath();
+    if (N === 1) { ctx.moveTo(X(0) - 3, Y(pts[0])); ctx.lineTo(X(0) + 3, Y(pts[0])); return; }
+    ctx.moveTo(X(0), Y(pts[0]));
+    for (let i = 1; i < N - 1; i++) {
+      const xc = (X(i) + X(i + 1)) / 2, yc = (Y(pts[i]) + Y(pts[i + 1])) / 2;
+      ctx.quadraticCurveTo(X(i), Y(pts[i]), xc, yc);
+    }
+    ctx.lineTo(X(N - 1), Y(pts[N - 1]));
+  };
+  // 从底层向上逐层绘制：先铺渐变，再描顶边线
+  list.forEach((s, si) => {
+    const dim = !!(highlight && s.provider !== highlight);
+    const pts = tops[si];
+    ctx.save();
+    if (dim) ctx.globalAlpha = 0.15;
+    traceTop(pts);
+    if (N > 1) { ctx.lineTo(X(N - 1), base); ctx.lineTo(X(0), base); ctx.closePath(); }
+    const g = ctx.createLinearGradient(0, padT, 0, base);
+    g.addColorStop(0, hexToRgba(s.color, dim ? 0.30 : 0.55));
+    g.addColorStop(1, hexToRgba(s.color, 0.05));
+    ctx.fillStyle = g;
+    ctx.fill();
+    traceTop(pts);
+    ctx.strokeStyle = s.color;
+    ctx.lineWidth = si === list.length - 1 ? 1.8 : 1.2;
+    ctx.lineJoin = "round";
+    if (!dim) { ctx.shadowColor = hexToRgba(s.color, 0.5); ctx.shadowBlur = 6; }
+    ctx.stroke();
+    ctx.restore();
+  });
+  // 末端总量圆点
+  const lastTop = cum[N - 1];
+  if (lastTop > 0) {
+    const dotC = list[list.length - 1].color;
+    ctx.beginPath(); ctx.arc(X(N - 1), Y(lastTop), 2.6, 0, Math.PI * 2);
+    ctx.fillStyle = "#fff";
+    ctx.shadowColor = hexToRgba(dotC, 0.8); ctx.shadowBlur = 8;
+    ctx.fill(); ctx.shadowBlur = 0;
+  }
+}
+
+function renderModelSkeleton() {
+  const el = $("modelBars");
+  if (!el) return;
+  state.modelBarsGeneration++;
+  clearNode(el);
+  const N = 6;
+  for (let i = 0; i < N; i++) {
+    const row = document.createElement("div");
+    row.className = "bar-row skel";
+    appendTextElement(row, "span", "rank", "");
+    const modelId = appendTextElement(row, "span", "model-id", "");
+    appendTextElement(modelId, "span", "name", "");
+    appendTextElement(row, "span", "val", "");
+    const track = appendTextElement(row, "div", "track", "");
+    appendTextElement(track, "div", "fill", "");
+    el.appendChild(row);
+  }
+}
+function hideBootOverlay() {
+  const ov = document.getElementById("bootOverlay");
+  if (!ov || ov.classList.contains("hide")) return;
+  ov.classList.add("hide");
+  void ov.offsetWidth; // 强制一次重排，确保过渡动画生效
+}
+function renderModelBars(models) {
+  const el = $("modelBars");
+  if (!models.length) { state.modelBarsGeneration++; showEmpty(el, "当前范围暂无模型用量"); hideBootOverlay(); return; }
+  hideBootOverlay();
+  const max = Math.max(...models.map(m => m.requests || 0), 1);
+  const keys = models.map(m => `${m.provider || ""}/${m.model || ""}`);
+  const existing = [...el.querySelectorAll(".bar-row")];
+  const existingKeys = existing.map(row => row.dataset.modelKey || "");
+  const canPatchInPlace = existing.length === models.length && existingKeys.every((key, i) => key === keys[i]);
+
+  if (canPatchInPlace) {
+    existing.forEach((row, i) => {
+      const m = models[i];
+      const [pc1, pc2] = brandPair(m.provider);
+      if (row.style) row.style.setProperty("--pv", pc1);
+      const fill = row.querySelector(".fill");
+      const name = row.querySelector(".name");
+      const provider = row.querySelector(".provider-tag");
+      const value = row.querySelector(".val");
+      const w = ((m.requests || 0) / max) * 100;
+      // 已有行只平滑过渡到新宽度，不归零重播，避免刷新时看起来再次“生长”。
+      const prevW = parseFloat(fill?.dataset.w || "0") || 0;
+      if (fill && Math.abs(w - prevW) > 0.05) {
+        fill.dataset.w = String(w);
+        fill.style.width = `${w}%`;
+        fill.style.setProperty("--c1", pc1);
+        fill.style.setProperty("--c2", pc2);
+      }
+      if (name) { name.textContent = shortModel(m.model); name.title = `${m.model} · ${m.provider}`; }
+      if (provider) provider.textContent = shortProvider(m.provider);
+      if (value) {
+        clearNode(value);
+        value.appendChild(document.createTextNode(fmtFull(m.requests)));
+        appendTextElement(value, "small", "", `${fmtFull(m.totalTokens || 0)} TOK`, `${fmtFull(m.totalTokens || 0)} Tokens`);
+      }
+    });
+    return;
+  }
+
+  const generation = ++state.modelBarsGeneration;
+  const shouldAnimate = state.motion && !state.modelBarsAnimationPlayed;
+  state.modelBarsAnimationPlayed = true;
+  clearNode(el);
+  models.forEach((m, i) => {
+    const [c1, c2] = brandPair(m.provider);
+    const w = ((m.requests || 0) / max) * 100;
+    const tokens = m.totalTokens || 0;
+    const key = `${m.provider || ""}/${m.model || ""}`;
+    const row = document.createElement("div");
+    row.className = "bar-row";
+    row.dataset.modelKey = key;
+    if (row.style) row.style.setProperty("--pv", c1);
+    appendTextElement(row, "span", "rank", String(i + 1).padStart(2, "0"));
+    const modelId = appendTextElement(row, "span", "model-id", "");
+    appendTextElement(modelId, "span", "name", shortModel(m.model), `${m.model || ""} · ${m.provider || ""}`);
+    appendTextElement(modelId, "span", "provider-tag", shortProvider(m.provider));
+    const value = appendTextElement(row, "span", "val", fmtFull(m.requests));
+    appendTextElement(value, "small", "", `${fmtFull(tokens)} TOK`, `${fmtFull(tokens)} Tokens`);
+    const track = appendTextElement(row, "div", "track", "");
+    const fill = appendTextElement(track, "div", "fill", "");
+    fill.dataset.w = String(w);
+    fill.style.setProperty("--c1", c1);
+    fill.style.setProperty("--c2", c2);
+    // 页面生命周期内只让第一批非空条形从 0 生长；后续重排直接以目标宽度插入。
+    if (!shouldAnimate) fill.style.width = `${w}%`;
+    el.appendChild(row);
+  });
+  if (!shouldAnimate) return;
+  // 首帧宽度为 0，下一帧写入目标宽度触发 CSS 过渡；按行号错峰，形成自顶部向下的级联生长
+  let growStarted = false;
+  const grow = () => {
+    if (growStarted) return;
+    growStarted = true;
+    el.querySelectorAll(".bar-row").forEach((row, i) => {
+      window.setTimeout(() => {
+        if (generation !== state.modelBarsGeneration || !row.isConnected) return;
+        const fill = row.querySelector(".fill");
+        // 动画等待期间数据可能已刷新；读取最新目标，避免旧回调把宽度写回去。
+        if (fill) {
+          const targetWidth = parseFloat(fill.dataset.w || "0") || 0;
+          fill.style.width = `${targetWidth}%`;
+        }
+      }, 60 + i * 45);
+    });
+  };
+  requestAnimationFrame(grow);
+  // rAF 不派发时条形会一直停在 0 宽度，超时后直接落到目标宽度
+  window.setTimeout(grow, 300);
+}
+
+/* ── 渲染：速率图（Canvas） ───────────────── */
+function rateConfig() {
+  return state.rateRange === "5m"
+    ? { bucketMs: 10000, count: 30, map: state.byTenSeconds, labelStep: 5, suffix: "/10s", legend: "请求数 / 10 秒" }
+    : { bucketMs: 60000, count: 60, map: state.byMinute, labelStep: 10, suffix: "/min", legend: "请求数 / 分钟" };
+}
+
+function currentRateSeries() {
+  const cfg = rateConfig();
+  const end = Math.floor(Date.now() / cfg.bucketMs);
+  const start = end - (cfg.count - 1);
+  const values = [];
+  const labels = [];
+  for (let i = 0; i < cfg.count; i++) {
+    const key = start + i;
+    values.push(cfg.map.get(key)?.total || 0);
+    labels.push(key * cfg.bucketMs);
+  }
+  return { values, labels, cfg };
+}
+
+function resample(values, length) {
+  if (!values.length) return Array(length).fill(0);
+  if (values.length === length) return values.slice();
+  return Array.from({ length }, (_, i) => {
+    const at = length === 1 ? 0 : (i / (length - 1)) * (values.length - 1);
+    const left = Math.floor(at), right = Math.min(values.length - 1, Math.ceil(at));
+    const mix = at - left;
+    return values[left] * (1 - mix) + values[right] * mix;
+  });
+}
+
+function updateRateTarget(animate = true) {
+  const { values, labels, cfg } = currentRateSeries();
+  const animation = state.rateAnimation;
+  const signature = `${state.rateRange}:${labels[0]}:${values.join(",")}`;
+  $("rateLegend").textContent = cfg.legend;
+  document.querySelectorAll("#rateRange button").forEach(button => {
+    button.classList.toggle("active", button.dataset.range === state.rateRange);
+    button.setAttribute("aria-pressed", String(button.dataset.range === state.rateRange));
+  });
+  if (signature === animation.lastSignature) return;
+  animation.lastSignature = signature;
+  animation.from = resample(animation.displayed.length ? animation.displayed : values.map(() => 0), values.length);
+  animation.target = values;
+  animation.labels = labels;
+  animation.startedAt = performance.now();
+  animation.duration = animate && state.motion ? 720 : 0;
+  armRateFrame();
+}
+
+/** rAF 派发不可靠（窗口被遮挡、嵌入式视图）时兜底同步画一帧，保证曲线内容始终正确。 */
+function armRateFrame() {
+  const animation = state.rateAnimation;
+  if (animation.raf || document.hidden) return;
+  animation.raf = requestAnimationFrame(drawRateFrame);
+  window.setTimeout(() => {
+    if (animation.raf) {
+      cancelAnimationFrame(animation.raf);
+      animation.raf = 0;
+      drawRateFrame(performance.now());
+    }
+  }, 300);
+}
+
+function traceSmooth(ctx, points) {
+  if (!points.length) return;
+  ctx.moveTo(points[0].x, points[0].y);
+  for (let i = 1; i < points.length - 1; i++) {
+    const current = points[i], next = points[i + 1];
+    ctx.quadraticCurveTo(current.x, current.y, (current.x + next.x) / 2, (current.y + next.y) / 2);
+  }
+  if (points.length > 1) ctx.lineTo(points[points.length - 1].x, points[points.length - 1].y);
+}
+
+function drawRateFrame(frameTime) {
+  state.rateAnimation.raf = 0;
+  if (document.hidden) return;
+  const animation = state.rateAnimation;
+  const canvas = $("rateChart");
+  const dpr = window.devicePixelRatio || 1;
+  const W = canvas.clientWidth || 600;
+  const H = canvas.clientHeight || 210;
+  if (H < 90 || W < 120) return;
+  const pixelW = Math.round(W * dpr), pixelH = Math.round(H * dpr);
+  if (canvas.width !== pixelW || canvas.height !== pixelH) { canvas.width = pixelW; canvas.height = pixelH; }
+  const ctx = canvas.getContext("2d");
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, W, H);
+
+  const rawProgress = animation.duration ? Math.min(1, (frameTime - animation.startedAt) / animation.duration) : 1;
+  const progress = 1 - Math.pow(1 - Math.max(0, rawProgress), 3);
+  const length = animation.target.length;
+  animation.displayed = Array.from({ length }, (_, i) => {
+    const from = animation.from[i] || 0, target = animation.target[i] || 0;
+    return from + (target - from) * progress;
+  });
+  const pts = animation.displayed.length ? animation.displayed : [0];
+  const cfg = rateConfig();
+  const max = Math.max(...pts, ...animation.target, 1);
+  const padL = 28, padR = 28, padT = 18, padB = 24;
+  const iw = W - padL - padR, ih = H - padT - padB;
+
+  ctx.strokeStyle = CHART.grid; ctx.lineWidth = 1;
+  ctx.font = "10px " + (typeof getComputedStyle === "function" ? getComputedStyle(document.body).fontFamily : "sans-serif");
+  ctx.fillStyle = CHART.axis;
+  for (let g = 0; g <= 3; g++) {
+    const y = padT + ih - (ih * g) / 3;
+    ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(W - padR, y); ctx.stroke();
+    ctx.fillText(((max * g) / 3).toFixed(max < 4 ? 1 : 0), 2, y + 3);
+  }
+  animation.labels.forEach((timestamp, i) => {
+    if (i % cfg.labelStep !== 0 && i !== animation.labels.length - 1) return;
+    const x = padL + (i / Math.max(1, pts.length - 1)) * iw;
+    const label = state.rateRange === "5m" ? hhmmss(timestamp) : hhmm(timestamp);
+    ctx.fillText(label, x - (state.rateRange === "5m" ? 22 : 16), H - 8);
+  });
+
+  const points = pts.map((value, i) => ({
+    x: padL + (i / Math.max(1, pts.length - 1)) * iw,
+    y: padT + ih - (value / max) * ih,
+  }));
+  const grad = ctx.createLinearGradient(0, padT, 0, padT + ih);
+  grad.addColorStop(0, CHART.areaTop);
+  grad.addColorStop(.58, CHART.areaMid);
+  grad.addColorStop(1, CHART.areaEnd);
+  ctx.beginPath(); traceSmooth(ctx, points);
+  ctx.lineTo(padL + iw, padT + ih); ctx.lineTo(padL, padT + ih); ctx.closePath();
+  ctx.fillStyle = grad; ctx.fill();
+
+  ctx.beginPath(); traceSmooth(ctx, points);
+  const lineGrad = ctx.createLinearGradient(padL, 0, W - padR, 0);
+  lineGrad.addColorStop(0, CHART.lineA);
+  lineGrad.addColorStop(.6, CHART.lineB);
+  lineGrad.addColorStop(1, CHART.lineC);
+  ctx.strokeStyle = lineGrad; ctx.lineWidth = 2.2; ctx.shadowColor = CHART.glow; ctx.shadowBlur = 6;
+  ctx.stroke(); ctx.shadowBlur = 0;
+
+  const avg = pts.reduce((a, b) => a + b, 0) / pts.length;
+  if (avg > 0) {
+    const y = padT + ih - (avg / max) * ih;
+    ctx.setLineDash([5, 5]); ctx.strokeStyle = CHART.avg; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(W - padR, y); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = CHART.avgText;
+    ctx.fillText(`均值 ${avg.toFixed(1)}${cfg.suffix}`, W - padR - 88, y - 5);
+  }
+
+  if (points.length) {
+    const last = points[points.length - 1];
+    const pulse = 4.2 + (Math.sin(frameTime / 270) + 1) * 1.15;
+    ctx.beginPath(); ctx.arc(last.x, last.y, pulse, 0, Math.PI * 2);
+    ctx.fillStyle = CHART.dotFill; ctx.shadowColor = CHART.glow; ctx.shadowBlur = 10; ctx.fill(); ctx.shadowBlur = 0;
+
+  }
+  if (state.motion) animation.raf = requestAnimationFrame(drawRateFrame);
+}
+
+function startRateAnimation() {
+  if (state.rateAnimation.raf) return;
+  updateRateTarget(false);
+  armRateFrame();
+}
+
+/* ── 渲染：7 天 / 全量趋势（Canvas，超出 50 天支持横向滑动） ── */
+function renderTrend(days) {
+  if (state.trendRaf) cancelAnimationFrame(state.trendRaf);
+  state.trendRaf = 0;
+  const canvas = $("trendChart");
+  const yCanvas = $("trendYAxis");
+  const scrollEl = $("trendScroll");
+  if (!canvas || !scrollEl) return;
+
+  const dpr = window.devicePixelRatio || 1;
+  const H = Math.max(scrollEl.clientHeight || 0, 200);
+  const visibleW = Math.max(scrollEl.clientWidth || 0, 320);
+
+  const titleEl = $("trendTitle");
+  if (titleEl) {
+    if (state.usageRange === "all") titleEl.textContent = "全量趋势";
+    else if (state.usageRange === "30d") titleEl.textContent = "30 天趋势";
+    else if (state.usageRange === "today") titleEl.textContent = "今日趋势";
+    else titleEl.textContent = "7 天趋势";
+  }
+  // 读屏可访问的动态摘要
+  const trendTotal = (days || []).reduce((a, d) => a + (Number(d.requests) || 0), 0);
+  canvas.setAttribute("aria-label",
+    `${titleEl ? titleEl.textContent : "请求趋势"}：${(days || []).length} 天，累计 ${fmtFull(trendTotal)} 次请求`);
+
+  if (!days || !days.length) {
+    canvas.width = visibleW * dpr; canvas.height = H * dpr;
+    if (canvas.style) canvas.style.width = visibleW + "px";
+    if (yCanvas && yCanvas.getContext) {
+      yCanvas.width = 28 * dpr; yCanvas.height = H * dpr; if (yCanvas.style) { yCanvas.style.width = "28px"; yCanvas.style.height = H + "px"; }
+      const yCtx = yCanvas.getContext("2d");
+      if (yCtx) { yCtx.setTransform(dpr, 0, 0, dpr, 0, 0); yCtx.clearRect(0, 0, 28, H); }
+    }
+    const ctx = canvas.getContext ? canvas.getContext("2d") : null;
+    if (ctx) {
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, visibleW, H);
+      ctx.fillStyle = CHART.empty; ctx.font = "13px sans-serif"; ctx.fillText("暂无趋势数据", 16, 40);
+    }
+    const hintEl = $("trendHint");
+    if (hintEl) hintEl.textContent = `${rangeLabel()}暂无记录`;
+    return;
+  }
+
+  const vals = days.map(d => d.requests || 0);
+  const max = Math.max(...vals, 1);
+  const padT = 16, padB = 26, ih = H - padT - padB;
+
+  // 画固定在左侧的 Y 轴标签（不论横向滚动多远，数值尺度始终清晰可见）
+  if (yCanvas && yCanvas.getContext) {
+    const yW = 28;
+    yCanvas.width = yW * dpr; yCanvas.height = H * dpr;
+    yCanvas.style.width = yW + "px";
+    const yCtx = yCanvas.getContext("2d");
+    if (yCtx) {
+      yCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      yCtx.clearRect(0, 0, yW, H);
+      yCtx.fillStyle = CHART.axis;
+      yCtx.font = "10px " + (typeof getComputedStyle === "function" ? getComputedStyle(document.body).fontFamily : "sans-serif");
+      for (let g = 0; g <= 3; g++) {
+        const y = padT + ih - (ih * g) / 3;
+        yCtx.fillText(((max * g) / 3).toFixed(max < 4 ? 1 : 0), 2, y + 3);
+      }
+    }
+  }
+
+  // 视口最多显示 50 根柱子；超出 50 根柱子展开宽度并激活横向滑动
+  const maxVisibleBars = 50;
+  const isScrollable = vals.length > maxVisibleBars;
+  scrollEl.classList.toggle("scrollable", isScrollable);
+
+  const slotW = visibleW / Math.min(vals.length, maxVisibleBars);
+  const totalW = isScrollable ? Math.round(slotW * vals.length) : visibleW;
+  const bw = slotW;
+  const barMaxW = 28;
+  const barW = Math.min(bw * 0.70, barMaxW);
+  const labelEvery = isScrollable ? 5 : (vals.length > 25 ? Math.ceil(vals.length / 6) : (vals.length > 10 ? 5 : 1));
+
+  canvas.width = totalW * dpr;
+  canvas.height = H * dpr;
+  if (canvas.style) { canvas.style.width = totalW + "px"; canvas.style.height = H + "px"; }
+  const ctx = canvas.getContext ? canvas.getContext("2d") : null;
+  if (!ctx) return;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, totalW, H);
+
+  const animate = state.motion && !state.trendAnimated;
+  state.trendAnimated = true;
+  if (animate) {
+    const t0 = performance.now();
+    const dur = 900;
+    const frame = (now) => {
+      const p = Math.max(0, Math.min(1, (now - t0) / dur));
+      const ease = 1 - Math.pow(1 - p, 3);
+      ctx.clearRect(0, 0, totalW, H);
+      drawTrend(ctx, vals, days, { W: totalW, H, padT, ih, max, bw, barW, labelEvery, progress: ease });
+      if (p < 1) state.trendRaf = requestAnimationFrame(frame);
+    };
+    state.trendRaf = requestAnimationFrame(frame);
+  } else {
+    drawTrend(ctx, vals, days, { W: totalW, H, padT, ih, max, bw, barW, labelEvery, progress: 1 });
+  }
+
+  // 若超出 50 根柱子，默认平滑滚动至最右侧（显示最新的历史）
+  if (isScrollable) {
+    const doScroll = () => { scrollEl.scrollLeft = Math.max(0, scrollEl.scrollWidth - scrollEl.clientWidth); };
+    doScroll();
+    if (typeof requestAnimationFrame === "function") requestAnimationFrame(doScroll);
+    setTimeout(doScroll, 80);
+  }
+}
+
+/* 顶部圆角的柱体路径：优先原生 roundRect，旧浏览器用二次贝塞尔回退 */
+function roundRectPath(ctx, x, y, w, h, r) {
+  if (typeof ctx.roundRect === "function") { ctx.roundRect(x, y, w, h, [r, r, 0, 0]); return; }
+  r = Math.max(0, Math.min(r, w / 2));
+  ctx.moveTo(x, y + h);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h);
+  ctx.closePath();
+}
+
+function drawTrend(ctx, vals, days, o) {
+  const { W, H, padT, ih, max, bw, barW, labelEvery, progress } = o;
+
+  // 网格横线延伸贯穿整个时间轴宽度
+  ctx.strokeStyle = CHART.grid; ctx.lineWidth = 1; ctx.fillStyle = CHART.axis;
+  ctx.font = "10px " + (typeof getComputedStyle === "function" ? getComputedStyle(document.body).fontFamily : "sans-serif");
+  for (let g = 0; g <= 3; g++) {
+    const y = padT + ih - (ih * g) / 3;
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+  }
+
+  vals.forEach((v, i) => {
+    const full = Math.max(1, (v / max) * ih);
+    const h = full * progress || 1;
+    const x = i * bw + (bw - barW) / 2;
+    const w = barW;
+    const y = padT + ih - h;
+    const grad = ctx.createLinearGradient(0, y, 0, padT + ih);
+    grad.addColorStop(0, CHART.barTop);
+    grad.addColorStop(1, CHART.barEnd);
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    if (i === vals.length - 1) {
+      ctx.shadowColor = CHART.barGlow; ctx.shadowBlur = 8;
+    }
+    const r = Math.min(3, w / 2);
+    roundRectPath(ctx, x, y, w, h, r); ctx.fill(); ctx.shadowBlur = 0;
+    if (i % labelEvery === 0 || i === vals.length - 1) {
+      ctx.fillStyle = CHART.axis;
+      ctx.textAlign = "center";
+      ctx.fillText((days[i].date || "").slice(5).replace("-", "/"), x + barW / 2, H - 9);
+      ctx.textAlign = "start";
+    }
+  });
+
+  const total = vals.reduce((a, b) => a + b, 0);
+  const isScrollable = vals.length > 50;
+  const rangeTxt = state.usageRange === "all" ? `共 ${vals.length} 天` : rangeLabel();
+  const scrollTip = isScrollable ? " · ↔ 可左右滑动" : "";
+  const hintEl = $("trendHint");
+  if (hintEl) hintEl.textContent = `${rangeTxt} · 累计 ${fmtFull(total)} 次${scrollTip}`;
+}
+
+/* ── 渲染：实时流 ─────────────────────────── */
+function renderLogs(fresh = []) {
+  const list = $("logList");
+  // 数据、可见性、筛选条件都无变化时跳过 O(N) 过滤与 DOM 重建
+  const sig = [state.logsVersion, state.filterVersion, state.logFilter, state.scope,
+               state.initialLogsLoaded ? 1 : 0].join("|");
+  if (!fresh.length && sig === state.logListSig) return;
+  state.logListSig = sig;
+  const shown = state.logs.filter(l => visibleModel(l.provider, l.resolvedModel || l.model))
+    .filter(l => state.logFilter === "all" || (state.logFilter === "error" ? !isOk(l.status) : Number(l.status) === 429)).slice(-120);
+  $("logCount").textContent = `${shown.length} 条`;
+  if (!shown.length) { showEmpty(list, state.initialLogsLoaded ? "当前筛选下暂无请求" : "等待请求数据…"); return; }
+  // 跟随状态由滚动位置驱动（滚动监听里维护）：上滑阅读旧记录就停住，回到底部自动恢复吸附
+  const follow = state.logFollow !== false &&
+    (!list.querySelector(".log-item") || list.scrollHeight - list.scrollTop - list.clientHeight < 96);
+  const oldTop = list.scrollTop;
+  const existing = new Map([...list.querySelectorAll(".log-item")].map(row => [row.dataset.id, row]));
+  const newIds = new Set(fresh.map(l => l.requestId));
+  const keep = new Set(shown.map(l => l.requestId));
+  for (const row of [...list.children]) if (!keep.has(row.dataset.id)) row.remove();
+  shown.forEach((l, i) => {
+    const signature = JSON.stringify([l.status, l.durationMs, l.totalTokens, l.usage, l.model, l.requestedModel, l.provider]);
+    let row = existing.get(l.requestId);
+    if (row && row.dataset.signature !== signature) { row.remove(); row = null; }
+    if (!row) { row = logItem(l, newIds.has(l.requestId)); row.dataset.id = l.requestId; row.dataset.signature = signature; }
+    if (list.children[i] !== row) list.insertBefore(row, list.children[i] || null);
+  });
+  if (follow) {
+    const distance = list.scrollHeight - list.scrollTop - list.clientHeight;
+    // 大跨度跳转用瞬时滚动，平滑动画只用于贴底时的小步跟随，避免动画没跑完就被下一次渲染打断
+    list.scrollTo({ top: list.scrollHeight, behavior: state.motion && fresh.length && distance < 400 ? "smooth" : "auto" });
+  } else list.scrollTop = oldTop;
+}
+
+function logItem(l, isNew = false) {
+  const st = l.status || 0;
+  const cls = isOk(st) ? "ok" : (st === 429 ? "wait" : "bad");
+  const dur = Number.isFinite(l.durationMs) ? fmtDur(l.durationMs) : "—";
+  const usageTokens = l.usage && Number.isFinite(l.usage.inputTokens) && Number.isFinite(l.usage.outputTokens)
+    ? l.usage.inputTokens + l.usage.outputTokens
+    : undefined;
+  const tokens = Number.isFinite(l.totalTokens) ? l.totalTokens : usageTokens;
+  const row = document.createElement("div");
+  row.className = `log-item${isNew ? " is-new" : ""}`;
+  appendTextElement(row, "span", "t", hhmmss(l.timestamp));
+  const pvTag = appendTextElement(row, "span", "p", shortProvider(l.provider), l.provider);
+  /* 供应商标签染上品牌色（测试桩 DOM 无 style 时跳过） */
+  if (pvTag.style) pvTag.style.setProperty("--pv", brandPair(l.provider)[0]);
+  const model = l.requestedModel || l.model;
+  appendTextElement(row, "span", "m", shortModel(model), `${l.provider || "unknown"} / ${model || "unknown"}`);
+  appendTextElement(
+    row,
+    "span",
+    "tok",
+    `${Number.isFinite(tokens) ? fmt(tokens) : "—"} tok`,
+    Number.isFinite(tokens) ? tokens.toLocaleString("zh-CN") + " Token" : "Token 未上报",
+  );
+  appendTextElement(row, "span", `s ${cls}`, `${st} · ${dur}`);
+  return row;
+}
+
+/* ── 状态与时钟 ─────────────────────────── */
+function setStatus(ok, text) {
+  state.online = ok;
+  const dot = $("statusDot"), txt = $("statusText");
+  dot.className = "dot " + (ok ? "on" : "err");
+  txt.textContent = text;
+  document.body.classList.toggle("not-live", !ok);
+  const streamDot = $("streamDot");
+  if (streamDot) streamDot.className = "dot " + (ok ? "on" : "err");
+}
+function tickClock() {
+  const d = new Date();
+  $("clockTime").textContent = d.toLocaleTimeString("zh-CN", { hour12: false });
+  $("clockDate").textContent = d.toLocaleDateString("zh-CN", { year: "numeric", month: "long", day: "numeric", weekday: "long" });
+}
+
+function bindRateControls() {
+  $("rateRange").addEventListener("click", event => {
+    const button = event.target.closest("button[data-range]");
+    if (!button || button.dataset.range === state.rateRange) return;
+    state.rateRange = button.dataset.range;
+    state.rateAnimation.lastSignature = "";
+    updateRateTarget(true);
+  });
+}
+
+/* 自绘下拉：原生弹层在 Windows 上会用系统亮色高亮选中项，无法融入深色主题 */
+function initDropdown(id, onPick) {
+  const root = $(id);
+  const toggle = root.querySelector(".dropdown-toggle");
+  const options = [...root.querySelectorAll(".dropdown-option")];
+  const isOpen = () => root.classList.contains("open");
+  const setOpen = (open) => {
+    document.querySelectorAll(".dropdown.open").forEach(d => {
+      d.classList.remove("open");
+      d.querySelector(".dropdown-toggle").setAttribute("aria-expanded", "false");
+    });
+    if (open) { root.classList.add("open"); toggle.setAttribute("aria-expanded", "true"); }
+  };
+  const currentIndex = () => Math.max(0, options.findIndex(o => o.classList.contains("selected")));
+  // roving tabindex：菜单打开时焦点在选项间移动，关闭后回到按钮
+  const focusOption = (i) => {
+    if (!options.length) return;
+    const idx = ((i % options.length) + options.length) % options.length;
+    options.forEach(o => { o.tabIndex = -1; });
+    options[idx].tabIndex = 0;
+    options[idx].focus();
+  };
+  const pick = (opt) => {
+    options.forEach(o => {
+      o.classList.toggle("selected", o === opt);
+      o.setAttribute("aria-selected", String(o === opt));
+    });
+    toggle.textContent = opt.textContent;
+    setOpen(false);
+    toggle.focus();
+    onPick(opt.dataset.value);
+  };
+  toggle.addEventListener("click", e => {
+    e.stopPropagation();
+    const willOpen = !isOpen();
+    setOpen(willOpen);
+    if (willOpen) focusOption(currentIndex());
+  });
+  toggle.addEventListener("keydown", e => {
+    if (e.key === "ArrowDown" || e.key === "Enter" || e.key === " ") {
+      // 阻止按钮默认的空格/回车激活，避免与下面的 click 切换逻辑打架
+      e.preventDefault();
+      if (!isOpen()) { setOpen(true); focusOption(currentIndex()); }
+    } else if (e.key === "Escape" && isOpen()) {
+      setOpen(false);
+    }
+  });
+  options.forEach((opt, i) => {
+    opt.tabIndex = -1;
+    opt.addEventListener("click", () => pick(opt));
+    opt.addEventListener("keydown", e => {
+      if (e.key === "ArrowDown") { e.preventDefault(); focusOption(i + 1); }
+      else if (e.key === "ArrowUp") { e.preventDefault(); focusOption(i - 1); }
+      else if (e.key === "Home") { e.preventDefault(); focusOption(0); }
+      else if (e.key === "End") { e.preventDefault(); focusOption(options.length - 1); }
+      else if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(opt); }
+      else if (e.key === "Escape") { setOpen(false); toggle.focus(); }
+      else if (e.key === "Tab") { setOpen(false); }
+    });
+  });
+}
+
+function rangeLabel() {
+  switch (state.usageRange) {
+    case "today": return "今日";
+    case "30d": return "近 30 天";
+    case "all": return "所有时间";
+    default: return "近 7 天";
+  }
+}
+
+function scopeLabel() {
+  return state.scope === "all"
+    ? "全部模型"
+    : (state.catalog.providersReady && state.catalog.modelsReady ? "启用模型" : "全部模型（待同步）");
+}
+
+function syncRangeUI(range) {
+  const rangeToggle = $("rangeSelect");
+  if (rangeToggle) rangeToggle.textContent = rangeLabel();
+  const rangeDrop = $("rangeDrop");
+  if (rangeDrop) {
+    rangeDrop.querySelectorAll(".dropdown-option").forEach(opt => {
+      const isSel = opt.dataset.value === range;
+      opt.classList.toggle("selected", isSel);
+      opt.setAttribute("aria-selected", String(isSel));
+    });
+  }
+}
+
+function syncHeatLimitUI(limit) {
+  document.querySelectorAll("#heatLimitSeg button").forEach(btn => {
+    const isAct = btn.dataset.limit === limit;
+    btn.classList.toggle("active", isAct);
+    btn.setAttribute("aria-pressed", String(isAct));
+  });
+}
+
+async function changeUsageRange(range) {
+  if (state.usageRange === range) return;
+  state.usageRange = range;
+  try { localStorage.setItem("opendash-range", range); } catch {}
+  syncRangeUI(range);
+  const slot = state.pollSlots.usage;
+  if (slot?.timer) clearTimeout(slot.timer);
+  let waited = 0;
+  while (slot?.busy && waited < 20) {
+    await new Promise(r => setTimeout(r, 100));
+    waited++;
+  }
+  await pollUsage();
+}
+
+function changeHeatLimit(limit) {
+  if (state.heatLimit === limit) return;
+  state.heatLimit = limit;
+  try { localStorage.setItem("opendash-heat-limit", limit); } catch {}
+  syncHeatLimitUI(limit);
+  if (state.usage) renderUsage();
+}
+
+function applyMotion(enabled) {
+  state.motion = enabled;
+  document.body.classList.toggle("still", !enabled);
+  $("motionToggle").setAttribute("aria-pressed", String(enabled));
+  $("motionToggle").textContent = enabled ? "✧ 动效开" : "✧ 动效关";
+  if (state.rateAnimation.raf) cancelAnimationFrame(state.rateAnimation.raf);
+  state.rateAnimation.raf = 0;
+  state.rateAnimation.lastSignature = "";
+  updateRateTarget(false);
+  if (state.usage) renderUsage();
+}
+
+async function refreshNow() {
+  if (state.refreshBusy) return;
+  state.refreshBusy = true;
+  $("refreshNow").disabled = true;
+  $("refreshNow").classList.add("refreshing");
+  const startedAt = Date.now();
+  try { await Promise.allSettled([pollUsage(), pollLogs(), refreshCatalog()]); }
+  finally {
+    // 本机接口响应很快，旋转不足一圈毫无反馈；保证动画至少可见 700ms
+    const remain = 700 - (Date.now() - startedAt);
+    if (remain > 0) await new Promise(resolve => window.setTimeout(resolve, remain));
+    state.refreshBusy = false;
+    $("refreshNow").disabled = false;
+    $("refreshNow").classList.remove("refreshing");
+  }
+}
+
+
+function initControlsDrawer() {
+  const toggleBtn = $("controlsToggle");
+  const drawer = $("controlsDrawer");
+  const toggleLabel = $("controlsToggleLabel");
+  if (!toggleBtn || !drawer) return;
+
+  let drawerTimer = 0;
+  function updateToggleTitle() {
+    if (!toggleBtn) return;
+    const isExpanded = drawer.classList.contains("open");
+    toggleBtn.setAttribute("title", isExpanded ? "收起控制面板" : `展开控制面板 (${rangeLabel()} · ${scopeLabel()})`);
+  }
+
+  function setControlsExpanded(expanded, animate = true) {
+    if (drawerTimer) { clearTimeout(drawerTimer); drawerTimer = 0; }
+    toggleBtn.classList.toggle("active", expanded);
+    toggleBtn.setAttribute("aria-expanded", String(expanded));
+    if (toggleLabel) toggleLabel.textContent = expanded ? "收起选项" : "控制选项";
+    updateToggleTitle();
+    drawer.setAttribute("aria-hidden", String(!expanded));
+
+    if (expanded) {
+      drawer.classList.remove("expanded-visible");
+      drawer.classList.add("open");
+      drawerTimer = setTimeout(() => {
+        if (drawer.classList.contains("open")) {
+          drawer.classList.add("expanded-visible");
+        }
+      }, animate && state.motion ? 380 : 0);
+    } else {
+      drawer.classList.remove("expanded-visible");
+      drawer.querySelectorAll(".dropdown.open").forEach(d => {
+        d.classList.remove("open");
+        d.querySelector(".dropdown-toggle")?.setAttribute("aria-expanded", "false");
+      });
+      drawer.classList.remove("open");
+    }
+    try { localStorage.setItem("opendash-controls-expanded", expanded ? "1" : "0"); } catch {}
+  }
+
+  let savedExpanded = false;
+  try { savedExpanded = localStorage.getItem("opendash-controls-expanded") === "1"; } catch {}
+  setControlsExpanded(savedExpanded, false);
+
+  toggleBtn.addEventListener("click", () => {
+    const isExpanded = drawer.classList.contains("open");
+    setControlsExpanded(!isExpanded, true);
+  });
+
+  // 点击抽屉外部且非 toggle 按钮时不自动收起，避免用户调节多个选项时频繁被打断；但按 Esc 时收起抽屉
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape" && drawer.classList.contains("open")) {
+      // 如果有下拉菜单开着，优先关下拉菜单，否则收起抽屉
+      if (!drawer.querySelector(".dropdown.open")) {
+        setControlsExpanded(false, true);
+      }
+    }
+  });
+}
+
+function boot() {
+  let savedTheme;
+  try { savedTheme = typeof localStorage !== "undefined" ? localStorage.getItem("opendash-theme") : null; } catch {}
+  applyTheme(savedTheme === "dark" ? "dark" : "light");
+  const themeBtn = $("themeToggle");
+  if (themeBtn) {
+    themeBtn.addEventListener("click", () => {
+      applyTheme(state.theme === "dark" ? "light" : "dark");
+    });
+  }
+  tickClock(); setInterval(tickClock, 1000);
+  bindRateControls();
+  const trendScroll = $("trendScroll");
+  if (trendScroll && trendScroll.addEventListener) {
+    // 鼠标滚轮横滚
+    trendScroll.addEventListener("wheel", (e) => {
+      if (trendScroll.scrollWidth > trendScroll.clientWidth) {
+        if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+          trendScroll.scrollLeft += e.deltaY;
+          if (e.cancelable) e.preventDefault();
+        }
+      }
+    }, { passive: false });
+
+    // 鼠标拖拽横向滑动（支持直接点住图表往左/右拖拽）
+    let isDown = false, startX = 0, scrollStart = 0;
+    trendScroll.addEventListener("mousedown", (e) => {
+      if (trendScroll.scrollWidth <= trendScroll.clientWidth) return;
+      isDown = true;
+      trendScroll.classList.add("dragging");
+      startX = e.pageX;
+      scrollStart = trendScroll.scrollLeft;
+    });
+    window.addEventListener("mousemove", (e) => {
+      if (!isDown) return;
+      const walk = e.pageX - startX;
+      trendScroll.scrollLeft = scrollStart - walk;
+    });
+    window.addEventListener("mouseup", () => {
+      if (!isDown) return;
+      isDown = false;
+      trendScroll.classList.remove("dragging");
+    });
+  }
+  initControlsDrawer();
+  const media = matchMedia("(prefers-reduced-motion: reduce)");
+  let saved;
+  try { saved = localStorage.getItem("opendash-motion"); } catch {}
+  applyMotion(saved === null || saved === undefined ? !media.matches : saved === "on");
+  media.addEventListener("change", e => { if (!saved) applyMotion(!e.matches); });
+  $("motionToggle").addEventListener("click", () => {
+    applyMotion(!state.motion); saved = state.motion ? "on" : "off";
+    try { localStorage.setItem("opendash-motion", saved); } catch {}
+  });
+  $("refreshNow").addEventListener("click", refreshNow);
+  $("pauseToggle").addEventListener("click", () => {
+    state.paused = !state.paused;
+    $("pauseToggle").textContent = state.paused ? "▶ 继续" : "Ⅱ 暂停";
+    $("pauseToggle").setAttribute("aria-pressed", String(state.paused));
+    updateConnectionStatus();
+    if (!state.paused) refreshNow();
+  });
+  let savedRange = "7d";
+  try { savedRange = typeof localStorage !== "undefined" ? (localStorage.getItem("opendash-range") || "7d") : "7d"; } catch {}
+  if (!["today", "7d", "30d", "all"].includes(savedRange)) savedRange = "7d";
+  state.usageRange = savedRange;
+
+  let savedHeatLimit = "20";
+  try { savedHeatLimit = typeof localStorage !== "undefined" ? (localStorage.getItem("opendash-heat-limit") || "20") : "20"; } catch {}
+  if (!["20", "all"].includes(savedHeatLimit)) savedHeatLimit = "20";
+  state.heatLimit = savedHeatLimit;
+
+  syncRangeUI(state.usageRange);
+  syncHeatLimitUI(state.heatLimit);
+
+  initDropdown("rangeDrop", value => {
+    changeUsageRange(value);
+  });
+
+
+  const heatLimitSeg = $("heatLimitSeg");
+  if (heatLimitSeg) {
+    heatLimitSeg.addEventListener("click", e => {
+      const btn = e.target.closest("button[data-limit]");
+      if (!btn || btn.dataset.limit === state.heatLimit) return;
+      changeHeatLimit(btn.dataset.limit);
+    });
+  }
+
+  initDropdown("scopeDrop", value => {
+    state.scope = value;
+    rebuildLiveData(state.logs); renderUsage(); renderLogs(); renderLiveKpis(); updateRateTarget(true); updateConnectionStatus();
+  });
+  initDropdown("logDrop", value => { state.logFilter = value; renderLogs(); });
+  $("logList").addEventListener("scroll", () => {
+    const list = $("logList");
+    state.logFollow = list.scrollHeight - list.scrollTop - list.clientHeight < 96;
+  }, { passive: true });
+  document.addEventListener("click", () => document.querySelectorAll(".dropdown.open").forEach(d => d.classList.remove("open")));
+  document.addEventListener("keydown", e => {
+    if (e.key !== "Escape") return;
+    document.querySelectorAll(".dropdown.open").forEach(d => d.classList.remove("open"));
+  });
+  document.querySelectorAll(".panel, .kpi").forEach((panel, i) => {
+    panel.style.setProperty("--enter-delay", `${i * 45}ms`);
+    panel.addEventListener("pointermove", e => {
+      if (!state.motion || e.pointerType === "touch") return;
+      const rect = panel.getBoundingClientRect();
+      panel.style.setProperty("--mx", `${e.clientX - rect.left}px`);
+      panel.style.setProperty("--my", `${e.clientY - rect.top}px`);
+    });
+    // 光标离开后熄灯，避免折射光停在原地
+    panel.addEventListener("pointerleave", () => {
+      panel.style.setProperty("--mx", "-500px");
+      panel.style.setProperty("--my", "-500px");
+    });
+  });
+  const resize = () => { renderTrend(filteredUsageDays(state.usage)); renderFlowCard(); startRateAnimation(); };
+  if (typeof ResizeObserver !== "undefined") new ResizeObserver(resize).observe($("sidebar"));
+  window.addEventListener("resize", resize);
+  document.addEventListener("visibilitychange", () => {
+    document.body.classList.toggle("backgrounded", document.hidden);
+    if (document.hidden) { cancelAnimationFrame(state.rateAnimation.raf); state.rateAnimation.raf = 0; }
+    else { startRateAnimation(); if (!state.paused) refreshNow(); }
+    updateConnectionStatus();
+  });
+  bootstrapSession().then(() => {
+    schedulePoll("usage", pollUsage, true);
+    schedulePoll("logs", pollLogs, true);
+    schedulePoll("catalog", refreshCatalog, true);
+  }).finally(hideBootOverlay);
+  setInterval(() => {
+    if (document.hidden || state.paused) return;
+    // 兜底：只负责让过期日志滑出窗口。平时（无日志过期）只做 O(窗口) 的轻量裁剪，
+    // 不重复 pollLogs 已做过的全量合并/重建。
+    const now = Date.now();
+    const oldest = state.logs.length ? Number(state.logs[0]?.timestamp) : 0;
+    if (oldest && oldest < now - HISTORY_MS) {
+      const merged = mergeLogs(state.logs, [], now);
+      state.logs = merged;
+      if (merged.changed) {
+        state.logsVersion++;
+        rebuildLiveData(state.logs);
+      } else {
+        pruneLiveWindowLogs(now);
+      }
+    } else {
+      pruneLiveWindowLogs(now);
+    }
+    updateRateTarget(true); renderLiveKpis();
+  }, 3000);
+  // 打开页面即可浏览；接口慢或离线时不生成虚构业务数据。
+  setTimeout(hideBootOverlay, 1200);
+}
+
+boot();
+
+</script>
+</body>
+</html>
