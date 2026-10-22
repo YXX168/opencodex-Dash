@@ -47,6 +47,8 @@ bash install-opendash.sh
 ```
 如需支持在任意目录下全局随时调用：
 ```bash
+mkdir -p ~/.npm-global/bin
+chmod +x install-opendash.sh
 ln -sf "$(pwd)/install-opendash.sh" ~/.npm-global/bin/install-opendash
 ```
 
@@ -64,7 +66,7 @@ ln -sf "$(pwd)/install-opendash.sh" ~/.npm-global/bin/install-opendash
 ## 验证
 
 ```powershell
-node --test tests/dashboard.test.cjs
+node --test tests/*.test.cjs
 # 可选：隔离的空数据/断线页面，不调用真实上游
 node tests/serve-fixtures.cjs
 ```
