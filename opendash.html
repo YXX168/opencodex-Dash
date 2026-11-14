@@ -79,12 +79,12 @@
     --pad-panel: 20px;   /* 面板内边距 */
 
     /* ── 供应商品牌色（CSS 侧兜底；JS 以 brandPair() 为准） ── */
-    --pv-gemini: #2E7CF6;
-    --pv-claude: #D97757;
-    --pv-codex: #8B5CF6;
-    --pv-openai: #10A37F;
-    --pv-xai: #7C8DB0;
-    --pv-kimi: #E8930C;
+    --pv-gemini: #79A2DC;
+    --pv-claude: #DA9278;
+    --pv-codex: #A08DCB;
+    --pv-openai: #70B397;
+    --pv-xai: #839CB8;
+    --pv-kimi: #9DB467;
 
     --font: "Inter", "HarmonyOS Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
     --mono: "JetBrains Mono", "SFMono-Regular", Consolas, "Courier New", monospace;
@@ -585,7 +585,7 @@
   .bar-row:nth-child(3) .rank { color: #8A5326; background: linear-gradient(145deg, rgba(240,198,150,.95), rgba(219,168,120,.75)); border-color: rgba(197,146,96,.45); }
   .model-id { min-width: 0; display: flex; align-items: baseline; gap: 7px; }
   .bar-row .name { min-width: 0; font-size: 12px; font-weight: 650; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .provider-tag { flex: none; color: color-mix(in srgb, var(--pv, var(--faint)) 72%, var(--faint)); font: 700 9px var(--mono); text-transform: uppercase; letter-spacing: .4px; }
+  .provider-tag { flex: none; color: color-mix(in srgb, var(--pv, var(--faint)) 30%, var(--text)); font: 700 9px var(--mono); text-transform: uppercase; letter-spacing: .4px; }
   .bar-row .track { grid-column: 2 / 4; height: 6px; border-radius: 5px; background: var(--fill-track); overflow: hidden; position: relative; contain: paint; }
   .bar-row .fill {
     height: 100%; border-radius: 6px; width: 0;
@@ -662,7 +662,7 @@
   .log-item .t { color: var(--faint); font-variant-numeric: tabular-nums; }
   /* 供应商标签：染上品牌色（JS 经 --pv 注入 brandPair 颜色） */
   .log-item .p {
-    color: color-mix(in srgb, var(--pv, #0E7490) 80%, #10233B);
+    color: color-mix(in srgb, var(--pv, #0E7490) 30%, #10233B);
     background: color-mix(in srgb, var(--pv, #0E7490) 10%, transparent);
     border: 1px solid color-mix(in srgb, var(--pv, #0E7490) 30%, transparent);
     border-radius: 5px;
@@ -907,12 +907,12 @@
     --pad-panel: 20px;
 
     /* ── 供应商品牌色（CSS 侧兜底；JS 以 brandPair() 为准） ── */
-    --pv-gemini: #2E7CF6;
-    --pv-claude: #D97757;
-    --pv-codex: #8B5CF6;
-    --pv-openai: #10A37F;
-    --pv-xai: #7C8DB0;
-    --pv-kimi: #E8930C;
+    --pv-gemini: #79A2DC;
+    --pv-claude: #DA9278;
+    --pv-codex: #A08DCB;
+    --pv-openai: #70B397;
+    --pv-xai: #839CB8;
+    --pv-kimi: #9DB467;
 
     --font: "Inter", "HarmonyOS Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
     --mono: "JetBrains Mono", "SFMono-Regular", Consolas, "Courier New", monospace;
@@ -1820,45 +1820,43 @@ const HISTORY_MS = 60 * 60 * 1000;
 const MAX_LOGS = 20000;
 const POLL_BASE_DELAYS = { usage: 15000, logs: POLL_MS, catalog: 60000 };
 const POLL_MAX_DELAY = 60000;
-/* 分类色板：浅色玻璃底上提高饱和度、压低明度，保证条纹与文字的对比度。 */
+/* 马卡龙分类色：提高色块浓度，保留柔和色相与浅底上的清晰度。 */
 /* ── 双主题调色板与核心配置 ── */
 const PALETTE_LIGHT = [
-  ["#2868D8", "#5B9BFF"], ["#5B3FE0", "#A78BFA"], ["#0B9A6A", "#4ADE9F"],
-  ["#E08000", "#FFB547"], ["#D9384E", "#FF7A8A"], ["#0E86B8", "#5CD5FA"],
-  ["#4E64D8", "#82E299"], ["#9333EA", "#5B9BFF"], ["#059669", "#5CD5FA"],
-  ["#D97706", "#FFB547"],
+  ["#79A2DC", "#A6C2EA"], ["#A08DCB", "#C1B1E1"], ["#70B397", "#9ACFB7"],
+  ["#DDA45F", "#EDC28E"], ["#D985A2", "#E9ACC1"], ["#65B0C0", "#96CDDA"],
+  ["#9DB467", "#C2D496"], ["#BB88C0", "#D7ACDB"], ["#DA9278", "#EAB7A2"],
+  ["#839CB8", "#ADBFD3"],
 ];
 
 const PALETTE_DARK = [
-  ["#38e1ff", "#4f7cff"], ["#9d6bff", "#d17bff"], ["#2be3a3", "#38e1ff"],
-  ["#ffb547", "#ff7a59"], ["#ff5d73", "#ff9d6b"], ["#6ee7ff", "#9d6bff"],
-  ["#7c9cff", "#2be3a3"], ["#e879f9", "#4f7cff"], ["#5eead4", "#38e1ff"],
-  ["#fda4af", "#ffb547"],
+  ["#ABC9F0", "#89ACDE"], ["#C5B8ED", "#A797D4"], ["#ADDCC7", "#87BFA7"],
+  ["#F0CFA3", "#D9B17D"], ["#F0BFCF", "#D99DB2"], ["#A8DCE4", "#82BCC7"],
+  ["#CCDBA7", "#ADBF83"], ["#E0BFE1", "#C39AC5"], ["#F0C4B0", "#D9A58D"],
+  ["#BFCDDF", "#98AEC8"],
 ];
 
-/* ── 供应商品牌色 ─────────────────────────────
-   按供应商名取色：donut 弧段 / 图例 / 实时吞吐堆叠 / 模型热度条 / 日志供应商标签
-   全部走这里，保证同一供应商在各处颜色一致（供应商导向的视觉语言）。
-   未命中时按名字哈希落到当前主题调色板，保证稳定、可区分。 */
+/* 统一供应商配色：图环、图例、吞吐、模型热度和日志标签共用。
+   常用供应商固定色槽，不随请求量和排序变化；其他供应商按名称稳定取色。 */
 const PROVIDER_BRAND = {
-  "gemini":   ["#2E7CF6", "#7FB0FF"],  /* Google 蓝 */
-  "claude":   ["#D97757", "#F0A583"],  /* Anthropic 珊瑚 */
-  "codex":    ["#8B5CF6", "#B79CFF"],  /* 堇紫 */
-  "openai":   ["#10A37F", "#4ADE9F"],  /* OpenAI 绿 */
-  "xai":      ["#7C8DB0", "#B9C6DE"],  /* X 银灰 */
-  "kimi":     ["#E8930C", "#FFC25E"],  /* 月之暗面 琥珀 */
-  "moonshot": ["#E8930C", "#FFC25E"],
-  "deepseek": ["#4D6BFE", "#8FA0FF"],
-  "qwen":     ["#7C5CFF", "#A68FFF"],
-  "zhipu":    ["#3E6BFA", "#7E9DFF"],
-  "glm":      ["#3E6BFA", "#7E9DFF"],
+  "google-antigravity": 0, "google-antigra": 0, "antigravity": 0, "gemini": 0,
+  "openai": 2,
+  "qy": 4,
+  "aws": 3,
+  "claude": 8,
+  "codex": 1,
+  "xai": 9,
+  "kimi": 6, "moonshot": 6,
+  "deepseek": 5,
+  "qwen": 7,
+  "zhipu": 1, "glm": 1,
 };
 function brandKeyOf(provider) {
   return String(provider || "").replace(/^provider-/i, "").trim().toLowerCase();
 }
 function brandPair(provider) {
-  const hit = PROVIDER_BRAND[brandKeyOf(provider)];
-  if (hit) return hit;
+  const keyOfProvider = brandKeyOf(provider);
+  if (Object.hasOwn(PROVIDER_BRAND, keyOfProvider)) return PALETTE[PROVIDER_BRAND[keyOfProvider]];
   const key = brandKeyOf(provider) || "unknown";
   let h = 0;
   for (let i = 0; i < key.length; i++) h = (h * 31 + key.charCodeAt(i)) >>> 0;
